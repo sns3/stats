@@ -33,6 +33,7 @@ def build(bld):
         'model/gnuplot-aggregator.cc',
         'model/get-wildcard-matches.cc',
         'model/packet-data-rate-collector.cc',
+        'model/multi-file-aggregator.cc',
         ]
 
     module_test = bld.create_ns3_module_test_library('stats')
@@ -67,6 +68,7 @@ def build(bld):
         'model/gnuplot-aggregator.h',
         'model/get-wildcard-matches.h',
         'model/packet-data-rate-collector.h',
+        'model/multi-file-aggregator.h',
         ]
 
     if bld.env['SQLITE_STATS']:
