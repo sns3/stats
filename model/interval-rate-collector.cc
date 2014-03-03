@@ -68,8 +68,25 @@ IntervalRateCollector::GetTypeId ()
                    MakeTimeAccessor (&IntervalRateCollector::SetIntervalLength,
                                      &IntervalRateCollector::GetIntervalLength),
                    MakeTimeChecker ())
+    .AddAttribute ("InputDataType",
+                   "The data type accepted as inputs. "
+                   "The value INPUT_DATA_TYPE_DOUBLE (the default) will "
+                   "activate the TraceSinkDouble() method. "
+                   "The value INPUT_DATA_TYPE_UINTEGER will activate the "
+                   "TraceSinkUinteger8(), TraceSinkUinteger16(), "
+                   "TraceSinkUinteger32(), and TraceSinkUinteger64() methods. "
+                   "The separation of input data type is useful for preserving "
+                   "accuracy (e.g., Uinteger has better accuracy at handling "
+                   "packet sizes. In spite of this, output data type from "
+                   "trace sources are still fixed to double in any case.",
+                   EnumValue (IntervalRateCollector::INPUT_DATA_TYPE_DOUBLE),
+                   MakeEnumAccessor (&IntervalRateCollector::SetInputDataType,
+                                     &IntervalRateCollector::GetInputDataType),
+                   MakeEnumChecker (IntervalRateCollector::INPUT_DATA_TYPE_DOUBLE,   "DOUBLE",
+                                    IntervalRateCollector::INPUT_DATA_TYPE_UINTEGER, "UINTEGER"))
     .AddAttribute ("TimeUnit",
-                   "",
+                   "Determines the unit used for the time output (i.e., the "
+                   "`OutputWithTime` trace source",
                    EnumValue (Time::S),
                    MakeEnumAccessor (&IntervalRateCollector::SetTimeUnit,
                                      &IntervalRateCollector::GetTimeUnit),
@@ -107,8 +124,19 @@ IntervalRateCollector::DoDispose ()
 
   if (IsEnabled ())
     {
-      const double combinedSum = m_overallSumDouble + static_cast<double> (m_overallSumUinteger);
-      m_outputOverall (combinedSum);
+      switch (m_inputDataType)
+        {
+        case IntervalRateCollector::INPUT_DATA_TYPE_DOUBLE:
+          m_outputOverall (m_overallSumDouble);
+          break;
+
+        case IntervalRateCollector::INPUT_DATA_TYPE_UINTEGER:
+          m_outputOverall (static_cast<double> (m_overallSumUinteger));
+          break;
+
+        default:
+          break;
+        }
     }
 }
 
@@ -125,6 +153,21 @@ Time
 IntervalRateCollector::GetIntervalLength () const
 {
   return m_intervalLength;
+}
+
+
+void
+IntervalRateCollector::SetInputDataType (IntervalRateCollector::InputDataType_t inputDataType)
+{
+  NS_LOG_FUNCTION (this << GetName () << inputDataType);
+  m_inputDataType = inputDataType;
+}
+
+
+IntervalRateCollector::InputDataType_t
+IntervalRateCollector::GetInputDataType () const
+{
+  return m_inputDataType;
 }
 
 
@@ -166,9 +209,25 @@ IntervalRateCollector::NewInterval ()
   if (IsEnabled ())
     {
       const double time = Simulator::Now ().ToDouble (m_timeUnit);
-      const double combinedSum = m_intervalSumDouble + static_cast<double> (m_intervalSumUinteger);
-      m_outputWithTime (time, combinedSum);
-      m_outputWithoutTime (combinedSum);
+
+      switch (m_inputDataType)
+        {
+        case IntervalRateCollector::INPUT_DATA_TYPE_DOUBLE:
+          m_outputWithTime (time, m_intervalSumDouble);
+          m_outputWithoutTime (m_intervalSumDouble);
+          break;
+
+        case IntervalRateCollector::INPUT_DATA_TYPE_UINTEGER:
+          {
+            const double sum = static_cast<double> (m_intervalSumUinteger);
+            m_outputWithTime (time, sum);
+            m_outputWithoutTime (sum);
+            break;
+          }
+
+        default:
+          break;
+        }
     }
 
   // Reset the accumulated values.
@@ -190,7 +249,8 @@ IntervalRateCollector::TraceSinkDouble (double oldData, double newData)
 {
   NS_LOG_FUNCTION (this << GetName () << oldData << newData);
 
-  if (IsEnabled ())
+  if (IsEnabled ()
+      && (m_inputDataType == IntervalRateCollector::INPUT_DATA_TYPE_DOUBLE))
     {
       m_intervalSumDouble += newData;
       m_overallSumDouble += newData;
@@ -227,7 +287,8 @@ IntervalRateCollector::TraceSinkUinteger64 (uint64_t oldData, uint64_t newData)
 {
   NS_LOG_FUNCTION (this << GetName () << oldData << newData);
 
-  if (IsEnabled ())
+  if (IsEnabled ()
+      && (m_inputDataType == IntervalRateCollector::INPUT_DATA_TYPE_UINTEGER))
     {
       m_intervalSumUinteger += newData;
       m_overallSumUinteger += newData;

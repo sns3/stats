@@ -37,11 +37,23 @@ namespace ns3 {
 class IntervalRateCollector : public DataCollectionObject
 {
 public:
+  /**
+   * \enum InputDataType_t
+   * \brief
+   */
+  typedef enum
+  {
+    INPUT_DATA_TYPE_DOUBLE = 0,
+    INPUT_DATA_TYPE_UINTEGER
+  } InputDataType_t;
+
   ///
   IntervalRateCollector ();
 
   // inherited from ObjectBase base class
   static TypeId GetTypeId ();
+
+  // ATTRIBUTE SETTERS AND GETTERS ////////////////////////////////////////////
 
   /**
    * \param intervalLength
@@ -56,6 +68,16 @@ public:
   Time GetIntervalLength () const;
 
   /**
+   * \param inputDataType
+   */
+  void SetInputDataType (InputDataType_t inputDataType);
+
+  /**
+   * \return
+   */
+  InputDataType_t GetInputDataType () const;
+
+  /**
    * \param unit
    */
   void SetTimeUnit (Time::Unit unit);
@@ -64,6 +86,8 @@ public:
    * \return
    */
   Time::Unit GetTimeUnit () const;
+
+  // TRACE SINKS //////////////////////////////////////////////////////////////
 
   /**
    * \brief
@@ -111,13 +135,14 @@ private:
   ///
   void NewInterval ();
 
-  double     m_intervalSumDouble;
-  double     m_overallSumDouble;
-  uint64_t   m_intervalSumUinteger;
-  uint64_t   m_overallSumUinteger;
-  Time       m_intervalLength;
-  Time::Unit m_timeUnit;
-  EventId    m_nextReset;
+  double           m_intervalSumDouble;
+  double           m_overallSumDouble;
+  uint64_t         m_intervalSumUinteger;
+  uint64_t         m_overallSumUinteger;
+  Time             m_intervalLength;
+  InputDataType_t  m_inputDataType;
+  Time::Unit       m_timeUnit;
+  EventId          m_nextReset;
 
   TracedCallback<double> m_outputOverall;
   TracedCallback<double, double> m_outputWithTime;
