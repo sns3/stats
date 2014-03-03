@@ -115,11 +115,9 @@ private:
   double     m_overallSumDouble;
   uint64_t   m_intervalSumUinteger;
   uint64_t   m_overallSumUinteger;
-  Time       m_currentIntervalStart;
   Time       m_intervalLength;
   Time::Unit m_timeUnit;
   EventId    m_nextReset;
-  bool       m_isDisposing;
 
   TracedCallback<double> m_outputOverall;
   TracedCallback<double, double> m_outputWithTime;
