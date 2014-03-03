@@ -40,7 +40,8 @@ IntervalRateCollector::IntervalRateCollector ()
     m_currentIntervalStart (Simulator::Now ()),
     m_intervalLength (Seconds (1.0)),
     m_timeUnit (Time::S),
-    m_nextReset ()
+    m_nextReset (),
+    m_isDisposing (false)
 {
   NS_LOG_FUNCTION (this << GetName ());
 
@@ -111,6 +112,7 @@ IntervalRateCollector::DoDispose ()
       m_outputOverall (combinedSum);
     }
 
+  m_isDisposing = true;
   NewInterval (); // also invoke interval-based output at the end of simulation
 }
 
@@ -183,17 +185,20 @@ IntervalRateCollector::NewInterval ()
       m_outputWithoutTime (combinedSum);
     }
 
-  // Reset the accumulated values.
-  m_intervalSumDouble = 0.0;
-  m_intervalSumUinteger = 0;
-  m_currentIntervalStart = Simulator::Now ();
-
-  if (m_intervalLength > MilliSeconds (0))
+  if (!m_isDisposing)
     {
-      // Schedule the next interval
-      m_nextReset = Simulator::Schedule (m_intervalLength,
-                                         &IntervalRateCollector::NewInterval,
-                                         this);
+      // Reset the accumulated values.
+      m_intervalSumDouble = 0.0;
+      m_intervalSumUinteger = 0;
+      m_currentIntervalStart = Simulator::Now ();
+
+      if (m_intervalLength > MilliSeconds (0))
+        {
+          // Schedule the next interval
+          m_nextReset = Simulator::Schedule (m_intervalLength,
+                                             &IntervalRateCollector::NewInterval,
+                                             this);
+        }
     }
 }
 

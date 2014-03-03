@@ -119,6 +119,7 @@ private:
   Time       m_intervalLength;
   Time::Unit m_timeUnit;
   EventId    m_nextReset;
+  bool       m_isDisposing;
 
   TracedCallback<double> m_outputOverall;
   TracedCallback<double, double> m_outputWithTime;
