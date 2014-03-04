@@ -19,22 +19,20 @@
  *
  */
 
-#ifndef INTERVAL_RATE_COLLECTOR_H
-#define INTERVAL_RATE_COLLECTOR_H
+#ifndef SCALAR_COLLECTOR_H
+#define SCALAR_COLLECTOR_H
 
 #include <ns3/data-collection-object.h>
 #include <ns3/traced-callback.h>
-#include <ns3/event-id.h>
 #include <ns3/nstime.h>
 
 
 namespace ns3 {
 
-
 /**
  * \brief
  */
-class IntervalRateCollector : public DataCollectionObject
+class ScalarCollector : public DataCollectionObject
 {
 public:
   /**
@@ -53,25 +51,30 @@ public:
    */
   static std::string GetInputDataTypeName (InputDataType_t inputDataType);
 
+  /**
+   * \enum OutputType_t
+   * \brief
+   */
+  typedef enum
+  {
+    OUTPUT_TYPE_SUM = 0,
+    OUTPUT_TYPE_AVERAGE_PER_SAMPLE,
+    OUTPUT_TYPE_AVERAGE_PER_SECOND
+  } OutputType_t;
+
+  /**
+   * \param outputType
+   * \return
+   */
+  static std::string GetOutputTypeName (OutputType_t outputType);
+
   ///
-  IntervalRateCollector ();
+  ScalarCollector ();
 
   // inherited from ObjectBase base class
   static TypeId GetTypeId ();
 
   // ATTRIBUTE SETTERS AND GETTERS ////////////////////////////////////////////
-
-  /**
-   * \param intervalLength
-   * \warning Updating interval length after the simulation has started may
-   *          produce undefined behaviour.
-   */
-  void SetIntervalLength (Time intervalLength);
-
-  /**
-   * \return
-   */
-  Time GetIntervalLength () const;
 
   /**
    * \param inputDataType
@@ -84,14 +87,14 @@ public:
   InputDataType_t GetInputDataType () const;
 
   /**
-   * \param unit
+   * \param outputType
    */
-  void SetTimeUnit (Time::Unit unit);
+  void SetOutputType (OutputType_t outputType);
 
   /**
    * \return
    */
-  Time::Unit GetTimeUnit () const;
+  OutputType_t GetOutputType () const;
 
   // TRACE SINKS //////////////////////////////////////////////////////////////
 
@@ -135,29 +138,22 @@ protected:
   virtual void DoDispose ();
 
 private:
-  ///
-  void FirstInterval ();
+  double    m_sumDouble;
+  uint64_t  m_sumUinteger;
+  uint32_t  m_numOfSamples;
+  Time      m_firstSample;
+  Time      m_lastSample;
+  bool      m_hasReceivedSample;
 
-  ///
-  void NewInterval ();
-
-  double           m_intervalSumDouble;
-  double           m_overallSumDouble;
-  uint64_t         m_intervalSumUinteger;
-  uint64_t         m_overallSumUinteger;
-  Time             m_intervalLength;
   InputDataType_t  m_inputDataType;
-  Time::Unit       m_timeUnit;
-  EventId          m_nextReset;
+  OutputType_t     m_outputType;
 
-  TracedCallback<double> m_outputOverall;
-  TracedCallback<double, double> m_outputWithTime;
-  TracedCallback<double> m_outputWithoutTime;
+  TracedCallback<double> m_output;
 
-}; // end of class IntervalRateCollector
+}; // end of class ScalarCollector
 
 
 } // end of namespace ns3
 
 
-#endif /* INTERVAL_RATE_COLLECTOR_H */
+#endif /* SCALAR_COLLECTOR_H */

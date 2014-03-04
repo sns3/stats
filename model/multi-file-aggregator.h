@@ -59,20 +59,14 @@ public:
   static TypeId GetTypeId ();
 
   /**
-   * \param outputFilePrefix used to derive the output file names to write.
-   * \param fileType type of file to write.
-   *
    * Constructs a multi-file aggregator instance. When the writing methods
    * (e.g., Write1d(), Write2d(), etc.) are invoked, the instance will write
-   * the given values into several files. The `outputFilePrefix` argument of
-   * this constructor determines the first part of each file name, while the
-   * `context` argument of the writing methods determine the second part.
+   * the given values into several files.
    *
-   * The `fileType` specifies the format to be used for writing the files. The
-   * default file type is space-separated.
+   * The `OutputFileName` attribute should be set immediately after this,
+   * otherwise the instance will write to a default file named "untitled".
    */
-  MultiFileAggregator (const std::string &outputFilePrefix,
-                       enum FileType fileType = SPACE_SEPARATED);
+  MultiFileAggregator ();
 
   virtual ~MultiFileAggregator ();
 
@@ -369,19 +363,25 @@ private:
    *         context.
    *
    * \brief Get a pointer to an output file stream which belongs to a specified
-   *        context string. A new file will be created if no such file has not
-   *        been created yet.
+   *        context string.
+   *
+   * A new file will be created if a file for the context has not been created
+   * yet. This file will be stored in #m_files map using the context as the key.
+   * If the current active mode is single-file, then "0" is used as the key.
    */
   std::ofstream * GetFileStream (std::string context);
 
   /// The file name.
-  std::string m_outputFilePrefix;
+  std::string m_outputFileName;
 
   /// Map of (pointer to) output file streams, indexed by its context.
   std::map<std::string, std::ofstream*> m_files;
 
   /// Determines the kind of file written by the aggregator.
   enum FileType m_fileType;
+
+  /// If true, write each context to a separate output file.
+  bool m_isMultiFileMode;
 
   /// Printed between values in the file.
   std::string m_separator;

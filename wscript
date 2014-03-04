@@ -34,6 +34,7 @@ def build(bld):
         'model/get-wildcard-matches.cc',
         'model/packet-data-rate-collector.cc',
         'model/interval-rate-collector.cc',
+        'model/scalar-collector.cc',
         'model/scatter-collector.cc',
         'model/multi-file-aggregator.cc',
         ]
@@ -71,6 +72,7 @@ def build(bld):
         'model/get-wildcard-matches.h',
         'model/packet-data-rate-collector.h',
         'model/interval-rate-collector.h',
+        'model/scalar-collector.h',
         'model/scatter-collector.h',
         'model/multi-file-aggregator.h',
         ]

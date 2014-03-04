@@ -32,12 +32,32 @@ namespace ns3 {
 NS_OBJECT_ENSURE_REGISTERED (IntervalRateCollector);
 
 
+std::string // static
+IntervalRateCollector::GetInputDataTypeName (IntervalRateCollector::InputDataType_t inputDataType)
+{
+  switch (inputDataType)
+    {
+    case IntervalRateCollector::INPUT_DATA_TYPE_DOUBLE:
+      return "INPUT_DATA_TYPE_DOUBLE";
+    case IntervalRateCollector::INPUT_DATA_TYPE_UINTEGER:
+      return "INPUT_DATA_TYPE_UINTEGER";
+    default:
+      NS_FATAL_ERROR ("IntervalRateCollector - Invalid input data type");
+      break;
+    }
+
+  NS_FATAL_ERROR ("IntervalRateCollector - Invalid input data type");
+  return "";
+}
+
+
 IntervalRateCollector::IntervalRateCollector ()
   : m_intervalSumDouble (0.0),
     m_overallSumDouble (0.0),
     m_intervalSumUinteger (0),
     m_overallSumUinteger (0),
     m_intervalLength (Seconds (1.0)),
+    m_inputDataType (IntervalRateCollector::INPUT_DATA_TYPE_DOUBLE),
     m_timeUnit (Time::S),
     m_nextReset ()
 {
@@ -77,8 +97,9 @@ IntervalRateCollector::GetTypeId ()
                    "TraceSinkUinteger32(), and TraceSinkUinteger64() methods. "
                    "The separation of input data type is useful for preserving "
                    "accuracy (e.g., Uinteger has better accuracy at handling "
-                   "packet sizes. In spite of this, output data type from "
-                   "trace sources are still fixed to double in any case.",
+                   "packet sizes, but has the risk of overflow). In spite of "
+                   "this separation, output data type from trace sources are "
+                   "still fixed to double in any case.",
                    EnumValue (IntervalRateCollector::INPUT_DATA_TYPE_DOUBLE),
                    MakeEnumAccessor (&IntervalRateCollector::SetInputDataType,
                                      &IntervalRateCollector::GetInputDataType),
@@ -159,7 +180,7 @@ IntervalRateCollector::GetIntervalLength () const
 void
 IntervalRateCollector::SetInputDataType (IntervalRateCollector::InputDataType_t inputDataType)
 {
-  NS_LOG_FUNCTION (this << GetName () << inputDataType);
+  NS_LOG_FUNCTION (this << GetName () << GetInputDataTypeName (inputDataType));
   m_inputDataType = inputDataType;
 }
 
