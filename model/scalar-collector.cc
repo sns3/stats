@@ -169,9 +169,17 @@ ScalarCollector::DoDispose ()
         case ScalarCollector::OUTPUT_TYPE_AVERAGE_PER_SECOND:
           if (m_hasReceivedSample)
             {
-              Time duration = m_lastSample - m_firstSample;
-              NS_ASSERT (duration.IsStrictlyPositive ());
-              output = sum / duration.GetSeconds ();
+              const Time duration = m_lastSample - m_firstSample;
+
+              if (duration.IsZero ())
+                {
+                  output = 0.0;
+                }
+              else
+                {
+                  NS_ASSERT (duration.IsStrictlyPositive ());
+                  output = sum / duration.GetSeconds ();
+                }
             }
           break;
 
@@ -180,8 +188,10 @@ ScalarCollector::DoDispose ()
         }
 
       m_output (output);
-    }
-}
+
+    } // end of if (IsEnabled ())
+
+} // end of void DoDispose ();
 
 
 void
