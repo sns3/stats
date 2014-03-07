@@ -23,7 +23,6 @@
 #include <ns3/log.h>
 #include <ns3/simulator.h>
 #include <ns3/enum.h>
-#include <ns3/double.h>
 
 NS_LOG_COMPONENT_DEFINE ("ScalarCollector");
 
@@ -229,18 +228,25 @@ ScalarCollector::TraceSinkDouble (double oldData, double newData)
 {
   NS_LOG_FUNCTION (this << GetName () << oldData << newData);
 
-  if (IsEnabled ()
-      && (m_inputDataType == ScalarCollector::INPUT_DATA_TYPE_DOUBLE))
+  if (IsEnabled ())
     {
-      m_sumDouble += newData;
-      m_numOfSamples++;
-      m_lastSample = Simulator::Now ();
-
-      if (!m_hasReceivedSample)
+      if (m_inputDataType == ScalarCollector::INPUT_DATA_TYPE_DOUBLE)
         {
-          m_firstSample = Simulator::Now ();
-          m_hasReceivedSample = true;
-          NS_LOG_INFO (this << " first sample at " << m_firstSample.GetSeconds ());
+          m_sumDouble += newData;
+          m_numOfSamples++;
+          m_lastSample = Simulator::Now ();
+
+          if (!m_hasReceivedSample)
+            {
+              m_firstSample = Simulator::Now ();
+              m_hasReceivedSample = true;
+              NS_LOG_INFO (this << " first sample at " << m_firstSample.GetSeconds ());
+            }
+        }
+      else
+        {
+          NS_LOG_WARN (this << " ignoring the incoming sample " << newData
+                            << " because of unexpected data type");
         }
     }
 }
@@ -275,18 +281,25 @@ ScalarCollector::TraceSinkUinteger64 (uint64_t oldData, uint64_t newData)
 {
   NS_LOG_FUNCTION (this << GetName () << oldData << newData);
 
-  if (IsEnabled ()
-      && (m_inputDataType == ScalarCollector::INPUT_DATA_TYPE_UINTEGER))
+  if (IsEnabled ())
     {
-      m_sumUinteger += newData;
-      m_numOfSamples++;
-      m_lastSample = Simulator::Now ();
-
-      if (!m_hasReceivedSample)
+      if (m_inputDataType == ScalarCollector::INPUT_DATA_TYPE_UINTEGER)
         {
-          m_firstSample = Simulator::Now ();
-          m_hasReceivedSample = true;
-          NS_LOG_INFO (this << " first sample at " << m_firstSample.GetSeconds ());
+          m_sumUinteger += newData;
+          m_numOfSamples++;
+          m_lastSample = Simulator::Now ();
+
+          if (!m_hasReceivedSample)
+            {
+              m_firstSample = Simulator::Now ();
+              m_hasReceivedSample = true;
+              NS_LOG_INFO (this << " first sample at " << m_firstSample.GetSeconds ());
+            }
+        }
+      else
+        {
+          NS_LOG_WARN (this << " ignoring the incoming sample " << newData
+                            << " because of unexpected data type");
         }
     }
 }

@@ -270,11 +270,18 @@ IntervalRateCollector::TraceSinkDouble (double oldData, double newData)
 {
   NS_LOG_FUNCTION (this << GetName () << oldData << newData);
 
-  if (IsEnabled ()
-      && (m_inputDataType == IntervalRateCollector::INPUT_DATA_TYPE_DOUBLE))
+  if (IsEnabled ())
     {
-      m_intervalSumDouble += newData;
-      m_overallSumDouble += newData;
+      if (m_inputDataType == IntervalRateCollector::INPUT_DATA_TYPE_DOUBLE)
+        {
+          m_intervalSumDouble += newData;
+          m_overallSumDouble += newData;
+        }
+      else
+        {
+          NS_LOG_WARN (this << " ignoring the incoming sample " << newData
+                            << " because of unexpected data type");
+        }
     }
 }
 
@@ -308,11 +315,18 @@ IntervalRateCollector::TraceSinkUinteger64 (uint64_t oldData, uint64_t newData)
 {
   NS_LOG_FUNCTION (this << GetName () << oldData << newData);
 
-  if (IsEnabled ()
-      && (m_inputDataType == IntervalRateCollector::INPUT_DATA_TYPE_UINTEGER))
+  if (IsEnabled ())
     {
-      m_intervalSumUinteger += newData;
-      m_overallSumUinteger += newData;
+      if (m_inputDataType == IntervalRateCollector::INPUT_DATA_TYPE_UINTEGER)
+        {
+          m_intervalSumUinteger += newData;
+          m_overallSumUinteger += newData;
+        }
+      else
+        {
+          NS_LOG_WARN (this << " ignoring the incoming sample " << newData
+                            << " because of unexpected data type");
+        }
     }
 }
 
