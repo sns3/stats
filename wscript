@@ -36,6 +36,7 @@ def build(bld):
         'model/interval-rate-collector.cc',
         'model/scalar-collector.cc',
         'model/scatter-collector.cc',
+        'model/unit-conversion-collector.cc',
         'model/multi-file-aggregator.cc',
         ]
 
@@ -74,6 +75,7 @@ def build(bld):
         'model/interval-rate-collector.h',
         'model/scalar-collector.h',
         'model/scatter-collector.h',
+        'model/unit-conversion-collector.h',
         'model/multi-file-aggregator.h',
         ]
 
