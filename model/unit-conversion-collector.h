@@ -167,6 +167,16 @@ private:
   ///
   Time::Unit m_timeUnit;
 
+  /**
+   * \brief Indicate that the next sample would be the first sample received.
+   *
+   * The first sample of data received from the probe usually contains
+   * uninitialized old data values. This fact makes Valgrind unhappy. Because
+   * of this, the trace sinks "force initialize" the first sample of this old
+   * data value to zero.
+   */
+  bool m_isFirstSample;
+
   ///< Output trace source.
   TracedCallback<double, double> m_output;
 

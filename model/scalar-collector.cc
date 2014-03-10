@@ -226,7 +226,7 @@ ScalarCollector::GetOutputType () const
 void
 ScalarCollector::TraceSinkDouble (double oldData, double newData)
 {
-  NS_LOG_FUNCTION (this << GetName () << oldData << newData);
+  NS_LOG_FUNCTION (this << GetName () << newData);
 
   if (IsEnabled ())
     {
@@ -255,31 +255,31 @@ ScalarCollector::TraceSinkDouble (double oldData, double newData)
 void
 ScalarCollector::TraceSinkUinteger8 (uint8_t oldData, uint8_t newData)
 {
-  TraceSinkUinteger64 (static_cast<uint64_t> (oldData),
-                       static_cast<uint64_t> (newData));
+  TraceSinkUinteger64 (0, static_cast<uint64_t> (newData));
+  // Note: old data is discarded.
 }
 
 
 void
 ScalarCollector::TraceSinkUinteger16 (uint16_t oldData, uint16_t newData)
 {
-  TraceSinkUinteger64 (static_cast<uint64_t> (oldData),
-                       static_cast<uint64_t> (newData));
+  TraceSinkUinteger64 (0, static_cast<uint64_t> (newData));
+  // Note: old data is discarded.
 }
 
 
 void
 ScalarCollector::TraceSinkUinteger32 (uint32_t oldData, uint32_t newData)
 {
-  TraceSinkUinteger64 (static_cast<uint64_t> (oldData),
-                       static_cast<uint64_t> (newData));
+  TraceSinkUinteger64 (0, static_cast<uint64_t> (newData));
+  // Note: old data is discarded.
 }
 
 
 void
 ScalarCollector::TraceSinkUinteger64 (uint64_t oldData, uint64_t newData)
 {
-  NS_LOG_FUNCTION (this << GetName () << oldData << newData);
+  NS_LOG_FUNCTION (this << GetName () << newData);
 
   if (IsEnabled ())
     {

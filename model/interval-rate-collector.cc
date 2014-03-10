@@ -268,7 +268,7 @@ IntervalRateCollector::NewInterval ()
 void
 IntervalRateCollector::TraceSinkDouble (double oldData, double newData)
 {
-  NS_LOG_FUNCTION (this << GetName () << oldData << newData);
+  NS_LOG_FUNCTION (this << GetName () << newData);
 
   if (IsEnabled ())
     {
@@ -289,31 +289,31 @@ IntervalRateCollector::TraceSinkDouble (double oldData, double newData)
 void
 IntervalRateCollector::TraceSinkUinteger8 (uint8_t oldData, uint8_t newData)
 {
-  TraceSinkUinteger64 (static_cast<uint64_t> (oldData),
-                       static_cast<uint64_t> (newData));
+  TraceSinkUinteger64 (0, static_cast<uint64_t> (newData));
+  // Note: old data is discarded.
 }
 
 
 void
 IntervalRateCollector::TraceSinkUinteger16 (uint16_t oldData, uint16_t newData)
 {
-  TraceSinkUinteger64 (static_cast<uint64_t> (oldData),
-                       static_cast<uint64_t> (newData));
+  TraceSinkUinteger64 (0, static_cast<uint64_t> (newData));
+  // Note: old data is discarded.
 }
 
 
 void
 IntervalRateCollector::TraceSinkUinteger32 (uint32_t oldData, uint32_t newData)
 {
-  TraceSinkUinteger64 (static_cast<uint64_t> (oldData),
-                       static_cast<uint64_t> (newData));
+  TraceSinkUinteger64 (0, static_cast<uint64_t> (newData));
+  // Note: old data is discarded.
 }
 
 
 void
 IntervalRateCollector::TraceSinkUinteger64 (uint64_t oldData, uint64_t newData)
 {
-  NS_LOG_FUNCTION (this << GetName () << oldData << newData);
+  NS_LOG_FUNCTION (this << GetName () << newData);
 
   if (IsEnabled ())
     {

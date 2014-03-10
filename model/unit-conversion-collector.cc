@@ -63,7 +63,8 @@ UnitConversionCollector::GetConversionTypeName (UnitConversionCollector::Convers
 
 UnitConversionCollector::UnitConversionCollector ()
   : m_conversionType (UnitConversionCollector::TRANSPARENT),
-    m_timeUnit (Time::S)
+    m_timeUnit (Time::S),
+    m_isFirstSample (true)
 {
   NS_LOG_FUNCTION (this << GetName ());
 }
@@ -161,7 +162,13 @@ UnitConversionCollector::GetTimeUnit () const
 void
 UnitConversionCollector::TraceSinkDouble (double oldData, double newData)
 {
-  NS_LOG_FUNCTION (this << GetName () << oldData << newData);
+  NS_LOG_FUNCTION (this << GetName () << newData);
+
+  if (m_isFirstSample)
+    {
+      oldData = 0.0;
+      m_isFirstSample = false;
+    }
 
   if (IsEnabled ())
     {
@@ -178,6 +185,12 @@ UnitConversionCollector::TraceSinkDouble (double oldData, double newData)
 void
 UnitConversionCollector::TraceSinkInteger8 (int8_t oldData, int8_t newData)
 {
+  if (m_isFirstSample)
+    {
+      oldData = 0;
+      m_isFirstSample = false;
+    }
+
   TraceSinkDouble (static_cast<double> (oldData),
                    static_cast<double> (newData));
 }
@@ -186,6 +199,12 @@ UnitConversionCollector::TraceSinkInteger8 (int8_t oldData, int8_t newData)
 void
 UnitConversionCollector::TraceSinkInteger16 (int16_t oldData, int16_t newData)
 {
+  if (m_isFirstSample)
+    {
+      oldData = 0;
+      m_isFirstSample = false;
+    }
+
   TraceSinkDouble (static_cast<double> (oldData),
                    static_cast<double> (newData));
 }
@@ -194,6 +213,12 @@ UnitConversionCollector::TraceSinkInteger16 (int16_t oldData, int16_t newData)
 void
 UnitConversionCollector::TraceSinkInteger32 (int32_t oldData, int32_t newData)
 {
+  if (m_isFirstSample)
+    {
+      oldData = 0;
+      m_isFirstSample = false;
+    }
+
   TraceSinkDouble (static_cast<double> (oldData),
                    static_cast<double> (newData));
 }
@@ -202,6 +227,12 @@ UnitConversionCollector::TraceSinkInteger32 (int32_t oldData, int32_t newData)
 void
 UnitConversionCollector::TraceSinkInteger64 (int64_t oldData, int64_t newData)
 {
+  if (m_isFirstSample)
+    {
+      oldData = 0;
+      m_isFirstSample = false;
+    }
+
   TraceSinkDouble (static_cast<double> (oldData),
                    static_cast<double> (newData));
 }
@@ -210,6 +241,12 @@ UnitConversionCollector::TraceSinkInteger64 (int64_t oldData, int64_t newData)
 void
 UnitConversionCollector::TraceSinkUinteger8 (uint8_t oldData, uint8_t newData)
 {
+  if (m_isFirstSample)
+    {
+      oldData = 0;
+      m_isFirstSample = false;
+    }
+
   TraceSinkDouble (static_cast<double> (oldData),
                    static_cast<double> (newData));
 }
@@ -218,6 +255,12 @@ UnitConversionCollector::TraceSinkUinteger8 (uint8_t oldData, uint8_t newData)
 void
 UnitConversionCollector::TraceSinkUinteger16 (uint16_t oldData, uint16_t newData)
 {
+  if (m_isFirstSample)
+    {
+      oldData = 0;
+      m_isFirstSample = false;
+    }
+
   TraceSinkDouble (static_cast<double> (oldData),
                    static_cast<double> (newData));
 }
@@ -226,6 +269,12 @@ UnitConversionCollector::TraceSinkUinteger16 (uint16_t oldData, uint16_t newData
 void
 UnitConversionCollector::TraceSinkUinteger32 (uint32_t oldData, uint32_t newData)
 {
+  if (m_isFirstSample)
+    {
+      oldData = 0;
+      m_isFirstSample = false;
+    }
+
   TraceSinkDouble (static_cast<double> (oldData),
                    static_cast<double> (newData));
 }
@@ -234,6 +283,16 @@ UnitConversionCollector::TraceSinkUinteger32 (uint32_t oldData, uint32_t newData
 void
 UnitConversionCollector::TraceSinkUinteger64 (uint64_t oldData, uint64_t newData)
 {
+  if (m_isFirstSample)
+    {
+      /*
+       * Then oldData is probably uninitialized here, which makes Valgrind
+       * unhappy. So we force initialize it to zero here.
+       */
+      oldData = 0;
+      m_isFirstSample = false;
+    }
+
   TraceSinkDouble (static_cast<double> (oldData),
                    static_cast<double> (newData));
 }
