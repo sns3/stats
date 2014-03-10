@@ -52,12 +52,8 @@ UnitConversionCollector::GetConversionTypeName (UnitConversionCollector::Convers
     case UnitConversionCollector::FROM_LINEAR_TO_DBM:
       return "FROM_LINEAR_TO_DBM";
     default:
-      NS_FATAL_ERROR ("UnitConversionCollector - Invalid conversion type");
-      break;
+      return "";
     }
-
-  NS_FATAL_ERROR ("UnitConversionCollector - Invalid conversion type");
-  return "";
 }
 
 
@@ -77,7 +73,7 @@ UnitConversionCollector::GetTypeId ()
     .SetParent<DataCollectionObject> ()
     .AddConstructor<UnitConversionCollector> ()
     .AddAttribute ("ConversionType",
-                   "Determines the unit conversion mechanism utilized to "
+                   "Determines the unit conversion procedure utilized to "
                    "process the incoming samples.",
                    EnumValue (UnitConversionCollector::TRANSPARENT),
                    MakeEnumAccessor (&UnitConversionCollector::SetConversionType,
@@ -90,7 +86,7 @@ UnitConversionCollector::GetTypeId ()
                                     UnitConversionCollector::FROM_LINEAR_TO_DB,  "FROM_LINEAR_TO_DB",
                                     UnitConversionCollector::FROM_LINEAR_TO_DBM, "FROM_LINEAR_TO_DBM"))
     .AddAttribute ("TimeUnit",
-                   "Determines the unit used for the time output (i.e., the "
+                   "Determines the unit used for the timed output (i.e., the "
                    "`OutputTimeValue` trace source",
                    EnumValue (Time::S),
                    MakeEnumAccessor (&UnitConversionCollector::SetTimeUnit,
@@ -114,8 +110,8 @@ UnitConversionCollector::GetTypeId ()
                      "The result of the conversion of an input sample.",
                      MakeTraceSourceAccessor (&UnitConversionCollector::m_outputValue))
     .AddTraceSource ("OutputTimeValue",
-                     "The current simulation time and the result of the "
-                     "conversion of an input sample.",
+                     "The current simulation time (in seconds) "
+                     "and the result of the conversion of an input sample.",
                      MakeTraceSourceAccessor (&UnitConversionCollector::m_outputTimeValue))
   ;
   return tid;
@@ -324,10 +320,14 @@ UnitConversionCollector::Convert (double original) const
       break;
 
     case UnitConversionCollector::FROM_LINEAR_TO_DB:
+      NS_ASSERT_MSG (original > 0.0,
+                     "Error converting negative value " << original << " to decibel unit");
       return 10.0 * std::log10 (original);
       break;
 
     case UnitConversionCollector::FROM_LINEAR_TO_DBM:
+      NS_ASSERT_MSG (original > 0.0,
+                     "Error converting negative value " << original << " to decibel unit");
       return 10.0 * std::log10 (1000.0 * original);
       break;
 

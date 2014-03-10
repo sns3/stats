@@ -32,28 +32,63 @@ namespace ns3 {
 
 
 /**
- * \brief
+ * \brief Collector which partitions the simulation into fixed length time
+ *        intervals and produce the sum of input sample data during each
+ *        interval as output.
+ *
+ * ### Input ###
+ * This class provides 5 trace sinks for receiving inputs. Each trace sink
+ * is a function with a signature similar to the following:
+ * \code
+ *   void TraceSinkP (P oldData, P newData);
+ * \endcode
+ * where `P` is one of the 5 supported data types. This type of signature
+ * follows the trace source signature types commonly exported by probes. The
+ * input data is processed using either `double` (the default) or `uint64_t`
+ * data types, depending on the input data type selected by calling the
+ * SetInputDataType() method or setting the `InputDataType` attribute.
+ *
+ * ### Processing ###
+ * Upon created, this class instance begins an interval. It lasts for a fixed
+ * time duration (one second by default) that can be specified by calling the
+ * SetIntervalLength() method or setting the `IntervalLength` attribute. The
+ * instance accumulates the received input during the interval into a summed
+ * value. Then at the end of each interval, the summed value is emitted as
+ * output and reset back to zero.
+ *
+ * ### Output ###
+ * This class utilizes 3 trace sources to export the output:
+ * - `OutputWithoutTime`: the summed value from an interval, emitted at the end
+ *   of every interval.
+ * - `OutputWithTime`: the interval's ending time and its summed value, emitted
+ *   at the end of every interval.
+ * - `OutputOverall`: the total sum from all intervals, emitted when the
+ *   instance is destroyed.
+ * The summed values are exported in `double` data type in the same unit as the
+ * inputs. The time information is exported in unit of seconds by default, or
+ * as specified otherwise by calling the SetTimeUnit() method or setting the
+ * `TimeUnit` attribute.
  */
 class IntervalRateCollector : public DataCollectionObject
 {
 public:
   /**
    * \enum InputDataType_t
-   * \brief
+   * \brief Data types that can serve as inputs for this class.
    */
   typedef enum
   {
-    INPUT_DATA_TYPE_DOUBLE = 0,
-    INPUT_DATA_TYPE_UINTEGER
+    INPUT_DATA_TYPE_DOUBLE = 0,  ///< Accepts `double` data type as input.
+    INPUT_DATA_TYPE_UINTEGER     ///< Accepts unsigned integer data types as input.
   } InputDataType_t;
 
   /**
-   * \param inputDataType
-   * \return
+   * \param inputDataType an arbitrary input data type.
+   * \return representation of the input data type in string.
    */
   static std::string GetInputDataTypeName (InputDataType_t inputDataType);
 
-  ///
+  /// Creates a new collector instance.
   IntervalRateCollector ();
 
   // inherited from ObjectBase base class
@@ -62,71 +97,107 @@ public:
   // ATTRIBUTE SETTERS AND GETTERS ////////////////////////////////////////////
 
   /**
-   * \param intervalLength
+   * \param intervalLength the length of interval.
    * \warning Updating interval length after the simulation has started may
-   *          produce undefined behaviour.
+   *          produce unpredictable behaviour.
    */
   void SetIntervalLength (Time intervalLength);
 
   /**
-   * \return
+   * \return the length of interval.
    */
   Time GetIntervalLength () const;
 
   /**
-   * \param inputDataType
+   * \param inputDataType the data type accepted as input.
    */
   void SetInputDataType (InputDataType_t inputDataType);
 
   /**
-   * \return
+   * \return the data type accepted as input.
    */
   InputDataType_t GetInputDataType () const;
 
   /**
-   * \param unit
+   * \param unit the unit used for the time output.
    */
   void SetTimeUnit (Time::Unit unit);
 
   /**
-   * \return
+   * \return the unit used for the time output.
    */
   Time::Unit GetTimeUnit () const;
 
   // TRACE SINKS //////////////////////////////////////////////////////////////
 
   /**
-   * \brief
-   * \param oldData
-   * \param newData
+   * \brief Trace sink for receiving data from `double` valued trace sources.
+   * \param oldData the original value.
+   * \param newData the new value.
+   *
+   * This method serves as a trace sink to `double` valued trace sources.
+   *
+   * This trace sink is only operating when the current input data type is set
+   * to `INPUT_DATA_TYPE_DOUBLE`. This can be set by calling the
+   * SetInputDataType() method or setting the `InputDataType` attribute.
    */
   void TraceSinkDouble (double oldData, double newData);
 
   /**
-   * \brief
-   * \param oldData
-   * \param newData
+   * \brief Trace sink for receiving data from `uint8_t` valued trace sources.
+   * \param oldData the original value.
+   * \param newData the new value.
+   *
+   * This method serves as a trace sink to `uint8_t` valued trace sources.
+   * The data will be converted to `uint64_t` and then simply passed to the
+   * TraceSinkuint64_t() method.
+   *
+   * This trace sink is only operating when the current input data type is set
+   * to `INPUT_DATA_TYPE_UINTEGER`. This can be set by calling the
+   * SetInputDataType() method or setting the `InputDataType` attribute.
    */
   void TraceSinkUinteger8 (uint8_t oldData, uint8_t newData);
 
   /**
-   * \brief
-   * \param oldData
-   * \param newData
+   * \brief Trace sink for receiving data from `uint16_t` valued trace sources.
+   * \param oldData the original value.
+   * \param newData the new value.
+   *
+   * This method serves as a trace sink to `uint16_t` valued trace sources.
+   * The data will be converted to `uint64_t` and then simply passed to the
+   * TraceSinkuint64_t() method.
+   *
+   * This trace sink is only operating when the current input data type is set
+   * to `INPUT_DATA_TYPE_UINTEGER`. This can be set by calling the
+   * SetInputDataType() method or setting the `InputDataType` attribute.
    */
   void TraceSinkUinteger16 (uint16_t oldData, uint16_t newData);
 
   /**
-   * \brief
-   * \param oldData
-   * \param newData
+   * \brief Trace sink for receiving data from `uint32_t` valued trace sources.
+   * \param oldData the original value.
+   * \param newData the new value.
+   *
+   * This method serves as a trace sink to `uint32_t` valued trace sources.
+   * The data will be converted to `uint64_t` and then simply passed to the
+   * TraceSinkuint64_t() method.
+   *
+   * This trace sink is only operating when the current input data type is set
+   * to `INPUT_DATA_TYPE_UINTEGER`. This can be set by calling the
+   * SetInputDataType() method or setting the `InputDataType` attribute.
    */
   void TraceSinkUinteger32 (uint32_t oldData, uint32_t newData);
 
   /**
-   * \brief
-   * \param oldData
-   * \param newData
+   * \brief Trace sink for receiving data from `uint64_t` valued trace sources.
+   * \param oldData the original value.
+   * \param newData the new value.
+   *
+   * This method serves as a trace sink to `uint64_t` valued trace sources.
+   *
+   * This trace sink is only operating when the current input data type is set
+   * to `INPUT_DATA_TYPE_UINTEGER`. This can be set by calling the
+   * SetInputDataType() method or setting the `InputDataType` attribute.
    */
   void TraceSinkUinteger64 (uint64_t oldData, uint64_t newData);
 
@@ -145,13 +216,24 @@ private:
   double           m_overallSumDouble;
   uint64_t         m_intervalSumUinteger;
   uint64_t         m_overallSumUinteger;
-  Time             m_intervalLength;
-  InputDataType_t  m_inputDataType;
-  Time::Unit       m_timeUnit;
   EventId          m_nextReset;
 
+  /// `IntervalLength` attribute.
+  Time             m_intervalLength;
+
+  /// `InputDataType` attribute.
+  InputDataType_t  m_inputDataType;
+
+  /// `TimeUnit` attribute.
+  Time::Unit       m_timeUnit;
+
+  /// `OutputOverall` trace source.
   TracedCallback<double> m_outputOverall;
+
+  /// `OutputWithTime` trace source.
   TracedCallback<double, double> m_outputWithTime;
+
+  /// `OutputWithoutTime` trace source.
   TracedCallback<double> m_outputWithoutTime;
 
 }; // end of class IntervalRateCollector

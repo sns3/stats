@@ -42,12 +42,8 @@ ScalarCollector::GetInputDataTypeName (ScalarCollector::InputDataType_t inputDat
     case ScalarCollector::INPUT_DATA_TYPE_UINTEGER:
       return "INPUT_DATA_TYPE_UINTEGER";
     default:
-      NS_FATAL_ERROR ("ScalarCollector - Invalid input data type");
-      break;
+      return "";
     }
-
-  NS_FATAL_ERROR ("ScalarCollector - Invalid input data type");
-  return "";
 }
 
 
@@ -58,17 +54,15 @@ ScalarCollector::GetOutputTypeName (ScalarCollector::OutputType_t outputType)
     {
     case ScalarCollector::OUTPUT_TYPE_SUM:
       return "OUTPUT_TYPE_SUM";
+    case ScalarCollector::OUTPUT_TYPE_NUMBER_OF_SAMPLE:
+      return "OUTPUT_TYPE_NUMBER_OF_SAMPLE";
     case ScalarCollector::OUTPUT_TYPE_AVERAGE_PER_SAMPLE:
       return "OUTPUT_TYPE_AVERAGE_PER_SAMPLE";
     case ScalarCollector::OUTPUT_TYPE_AVERAGE_PER_SECOND:
       return "OUTPUT_TYPE_AVERAGE_PER_SECOND";
     default:
-      NS_FATAL_ERROR ("ScalarCollector - Invalid output type");
-      break;
+      return "";
     }
-
-  NS_FATAL_ERROR ("ScalarCollector - Invalid output type");
-  return "";
 }
 
 
@@ -116,6 +110,7 @@ ScalarCollector::GetTypeId ()
                    MakeEnumAccessor (&ScalarCollector::SetOutputType,
                                      &ScalarCollector::GetOutputType),
                    MakeEnumChecker (ScalarCollector::OUTPUT_TYPE_SUM,                "SUM",
+                                    ScalarCollector::OUTPUT_TYPE_NUMBER_OF_SAMPLE,   "NUMBER_OF_SAMPLE",
                                     ScalarCollector::OUTPUT_TYPE_AVERAGE_PER_SAMPLE, "AVERAGE_PER_SAMPLE",
                                     ScalarCollector::OUTPUT_TYPE_AVERAGE_PER_SECOND, "AVERAGE_PER_SECOND"))
     .AddTraceSource ("Output",
@@ -155,6 +150,10 @@ ScalarCollector::DoDispose ()
         {
         case ScalarCollector::OUTPUT_TYPE_SUM:
           output = sum;
+          break;
+
+        case ScalarCollector::OUTPUT_TYPE_NUMBER_OF_SAMPLE:
+          output = m_numOfSamples;
           break;
 
         case ScalarCollector::OUTPUT_TYPE_AVERAGE_PER_SAMPLE:

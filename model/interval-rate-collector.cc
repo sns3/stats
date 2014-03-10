@@ -42,12 +42,8 @@ IntervalRateCollector::GetInputDataTypeName (IntervalRateCollector::InputDataTyp
     case IntervalRateCollector::INPUT_DATA_TYPE_UINTEGER:
       return "INPUT_DATA_TYPE_UINTEGER";
     default:
-      NS_FATAL_ERROR ("IntervalRateCollector - Invalid input data type");
-      break;
+      return "";
     }
-
-  NS_FATAL_ERROR ("IntervalRateCollector - Invalid input data type");
-  return "";
 }
 
 
@@ -56,14 +52,14 @@ IntervalRateCollector::IntervalRateCollector ()
     m_overallSumDouble (0.0),
     m_intervalSumUinteger (0),
     m_overallSumUinteger (0),
+    m_nextReset (),
     m_intervalLength (Seconds (1.0)),
     m_inputDataType (IntervalRateCollector::INPUT_DATA_TYPE_DOUBLE),
-    m_timeUnit (Time::S),
-    m_nextReset ()
+    m_timeUnit (Time::S)
 {
   NS_LOG_FUNCTION (this << GetName ());
 
-  // delayed start to ensure attributes are completely initialized
+  // Delayed start to ensure attributes are completely initialized.
   Simulator::ScheduleNow (&IntervalRateCollector::FirstInterval, this);
 }
 
@@ -90,16 +86,16 @@ IntervalRateCollector::GetTypeId ()
                    MakeTimeChecker ())
     .AddAttribute ("InputDataType",
                    "The data type accepted as inputs. "
-                   "The value INPUT_DATA_TYPE_DOUBLE (the default) will "
+                   "The value `INPUT_DATA_TYPE_DOUBLE` (the default) will "
                    "activate the TraceSinkDouble() method. "
-                   "The value INPUT_DATA_TYPE_UINTEGER will activate the "
+                   "The value `INPUT_DATA_TYPE_UINTEGER` will activate the "
                    "TraceSinkUinteger8(), TraceSinkUinteger16(), "
                    "TraceSinkUinteger32(), and TraceSinkUinteger64() methods. "
                    "The separation of input data type is useful for preserving "
-                   "accuracy (e.g., Uinteger has better accuracy at handling "
-                   "packet sizes, but has the risk of overflow). In spite of "
-                   "this separation, output data type from trace sources are "
-                   "still fixed to double in any case.",
+                   "accuracy (e.g., unsigned integer has better accuracy "
+                   "at handling packet sizes, but has the risk of overflow). "
+                   "In spite of this separation, output data type from trace "
+                   "sources are still fixed to `double` in any case.",
                    EnumValue (IntervalRateCollector::INPUT_DATA_TYPE_DOUBLE),
                    MakeEnumAccessor (&IntervalRateCollector::SetInputDataType,
                                      &IntervalRateCollector::GetInputDataType),
