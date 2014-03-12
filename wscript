@@ -34,6 +34,7 @@ def build(bld):
         'model/get-wildcard-matches.cc',
         'model/collector-map.cc',
         'model/interval-rate-collector.cc',
+        'model/distribution-collector.cc',
         'model/scalar-collector.cc',
         'model/scatter-collector.cc',
         'model/unit-conversion-collector.cc',
@@ -45,6 +46,7 @@ def build(bld):
         'test/basic-data-calculators-test-suite.cc',
         'test/average-test-suite.cc',
         'test/double-probe-test-suite.cc',
+        'test/distribution-collector-test-suite.cc',
         ]
 
     headers = bld(features='ns3header')
@@ -73,6 +75,7 @@ def build(bld):
         'model/get-wildcard-matches.h',
         'model/collector-map.h',
         'model/interval-rate-collector.h',
+        'model/distribution-collector.h',
         'model/scalar-collector.h',
         'model/scatter-collector.h',
         'model/unit-conversion-collector.h',
