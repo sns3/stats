@@ -91,15 +91,21 @@ public:
   typedef enum
   {
     /**
-     *
+     * Number of samples from each bin is presented as it is (i.e., absolute
+     * value).
      */
     OUTPUT_TYPE_HISTOGRAM = 0,
     /**
-     *
+     * Number of samples from each bin is presented as a value relative to
+     * the total number of samples (i.e., ranging between 0.0 and 1.0). Thus,
+     * producing a probability distribution function (PDF).
      */
     OUTPUT_TYPE_PROBABILITY,
     /**
-     *
+     * The values associated with each bin is the sum of number of samples from
+     * that bin and all the preceding bins, presented as a value relative to
+     * the total number of samples (i.e., ranging between 0.0 and 1.0). Thus,
+     * producing a cumulative distribution function (CDF).
      */
     OUTPUT_TYPE_CUMULATIVE
   } OutputType_t;
@@ -119,32 +125,32 @@ public:
   // ATTRIBUTE SETTERS AND GETTERS ////////////////////////////////////////////
 
   /**
-   * \param minValue
+   * \param minValue the smallest value accepted by this collector.
    */
   void SetMinValue (double minValue);
 
   /**
-   * \return
+   * \return the smallest value accepted by this collector.
    */
   double GetMinValue () const;
 
   /**
-   * \param maxValue
+   * \param maxValue the largest value accepted by this collector.
    */
   void SetMaxValue (double maxValue);
 
   /**
-   * \return
+   * \return the largest value accepted by this collector.
    */
   double GetMaxValue () const;
 
   /**
-   * \param binLength
+   * \param binLength the length of each bin category.
    */
   void SetBinLength (double binLength);
 
   /**
-   * \return
+   * \return the length of each bin category.
    */
   double GetBinLength () const;
 
@@ -294,7 +300,6 @@ private:
     uint32_t GetCountOfBin (uint32_t binIndex) const;
     double GetCenterOfBin (uint32_t binIndex) const;
     uint32_t DetermineBin (double sample) const;
-
   private:
     double                 m_minValue;
     double                 m_maxValue;
@@ -304,7 +309,7 @@ private:
 
   }; // end of class Bins
 
-  ///
+  /// The bin categories.
   Bins *m_bins;
 
 }; // end of class DistributionCollector

@@ -75,19 +75,25 @@ DistributionCollector::GetTypeId ()
     .SetParent<DataCollectionObject> ()
     .AddConstructor<DistributionCollector> ()
     .AddAttribute ("MinValue",
-                   "",
-                   DoubleValue (std::numeric_limits<double>::infinity ()),
+                   "The smallest sample value accepted by this collector. "
+                   "Input samples less than this value will be filed as the "
+                   "first bin.",
+                   DoubleValue (std::numeric_limits<double>::max ()),
                    MakeDoubleAccessor (&DistributionCollector::SetMinValue,
                                        &DistributionCollector::GetMinValue),
                    MakeDoubleChecker<double> ())
     .AddAttribute ("MaxValue",
-                   "",
-                   DoubleValue (-std::numeric_limits<double>::infinity ()),
+                   "The largest sample value accepted by this collector. "
+                   "Input samples less than this value will be filed as the "
+                   "last bin.",
+                   DoubleValue (-std::numeric_limits<double>::max ()),
                    MakeDoubleAccessor (&DistributionCollector::SetMaxValue,
                                        &DistributionCollector::GetMaxValue),
                    MakeDoubleChecker<double> ())
     .AddAttribute ("BinLength",
-                   "",
+                   "The length of each bin category, which has also a counter "
+                   "to keep track of the number of times samples have occurred "
+                   "within the bin's range.",
                    DoubleValue (-1.0),
                    MakeDoubleAccessor (&DistributionCollector::SetBinLength,
                                        &DistributionCollector::GetBinLength),
