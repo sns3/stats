@@ -72,7 +72,12 @@ private:
   void FeedInput () const;
   void CollectorCallback (double sample, double count);
 
+  DistributionCollector::OutputType_t m_type;
+  double m_minValue;
+  double m_maxValue;
+  double m_binLength;
   std::string m_input;
+  std::string m_expectedOutput;
   std::list<double> m_expectedSample;
   std::list<uint32_t> m_expectedCount;
   Ptr<DistributionCollector> m_collector;
@@ -88,33 +93,17 @@ DistributionCollectorTestCase::DistributionCollectorTestCase (std::string name,
                                                               std::string input,
                                                               std::string expectedOutput)
   : TestCase (name),
-    m_input (input)
+    m_type (type),
+    m_minValue (minValue),
+    m_maxValue (maxValue),
+    m_binLength (binLength),
+    m_input (input),
+    m_expectedOutput (expectedOutput)
 {
   NS_LOG_FUNCTION (this << name
                         << DistributionCollector::GetOutputTypeName (type)
                         << minValue << maxValue << binLength
                         << input << expectedOutput);
-
-  double sample = 0.0;
-  uint32_t count = 0;
-  std::istringstream iss (expectedOutput);
-
-  while (iss.good ())
-    {
-      iss >> sample;
-      m_expectedSample.push_back (sample);
-      NS_ASSERT (iss.good ());
-      iss >> count;
-      m_expectedCount.push_back (count);
-    }
-
-  NS_ASSERT (m_expectedSample.size () == m_expectedCount.size ());
-
-  m_collector = CreateObject<DistributionCollector> ();
-  m_collector->SetMinValue (minValue);
-  m_collector->SetMaxValue (maxValue);
-  m_collector->SetBinLength (binLength);
-  m_collector->SetOutputType (type);
 }
 
 
@@ -123,19 +112,40 @@ DistributionCollectorTestCase::DoRun ()
 {
   NS_LOG_FUNCTION (this << GetName ());
 
+  // Convert expectedOutput string to list.
+  double sample = 0.0;
+  uint32_t count = 0;
+  std::istringstream iss (m_expectedOutput);
+  while (iss.good ())
+    {
+      iss >> sample;
+      m_expectedSample.push_back (sample);
+      NS_ASSERT (iss.good ());
+      iss >> count;
+      m_expectedCount.push_back (count);
+    }
+  NS_ASSERT (m_expectedSample.size () == m_expectedCount.size ());
+
+  // Create the collector to test.
+  m_collector = CreateObject<DistributionCollector> ();
+  m_collector->SetMinValue (m_minValue);
+  m_collector->SetMaxValue (m_maxValue);
+  m_collector->SetBinLength (m_binLength);
+  m_collector->SetOutputType (m_type);
+
+  // Connect the collector's output to a callback of this class.
   const bool ret = m_collector->TraceConnectWithoutContext (
     "Output", MakeCallback (&DistributionCollectorTestCase::CollectorCallback,
                             this));
   NS_ASSERT (ret);
 
+  // Push inputs into the collector after 1 ms of simulation time.
   Simulator::Schedule (MilliSeconds (1),
                        &DistributionCollectorTestCase::FeedInput,
                        this);
+
   Simulator::Stop (MilliSeconds (2));
   Simulator::Run ();
-
-  //NS_TEST_ASSERT_MSG_EQ (m_expectedSample.size (), 0,
-  //                       "Too few actual samples produced");
   Simulator::Destroy ();
 }
 
@@ -144,6 +154,10 @@ void
 DistributionCollectorTestCase::DoTeardown ()
 {
   NS_LOG_FUNCTION (this << GetName ());
+  /*
+   * We destroy the collector here, earlier than it's supposed to be, in order
+   * to flush the output of the collector out.
+   */
   m_collector->Dispose ();
   m_collector = 0;
 }
@@ -172,7 +186,7 @@ DistributionCollectorTestCase::CollectorCallback (double sample, double count)
 
   NS_ASSERT (m_expectedSample.size () == m_expectedCount.size ());
   NS_TEST_ASSERT_MSG_GT (m_expectedSample.size (), 0,
-                         "Too many actual samples produced");
+                         "Received more samples than expected");
 
   if (m_expectedSample.size () > 0)
     {
