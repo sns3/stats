@@ -160,13 +160,48 @@ DistributionCollector::DoDispose ()
 
   if (IsEnabled ())
     {
-      for (uint32_t i = 0; i < m_bins->GetNumOfBins (); i++)
+      switch (m_outputType)
         {
-          m_output (m_bins->GetCenterOfBin (i),
-                    static_cast<double> (m_bins->GetCountOfBin (i)));
-          /// \todo Implement PROBABILITY and CUMULATIVE output types here.
-        }
-    }
+        case DistributionCollector::OUTPUT_TYPE_HISTOGRAM:
+          {
+            for (uint32_t i = 0; i < m_bins->GetNumOfBins (); i++)
+              {
+                m_output (m_bins->GetCenterOfBin (i),
+                          static_cast<double> (m_bins->GetCountOfBin (i)));
+              }
+            break;
+          }
+
+        case DistributionCollector::OUTPUT_TYPE_PROBABILITY:
+          {
+            double p = 0.0;
+            for (uint32_t i = 0; i < m_bins->GetNumOfBins (); i++)
+              {
+                p = static_cast<double> (m_bins->GetCountOfBin (i)) / m_numOfSamples;
+                m_output (m_bins->GetCenterOfBin (i), p);
+              }
+            break;
+          }
+
+        case DistributionCollector::OUTPUT_TYPE_CUMULATIVE:
+          {
+            double c = 0.0;
+            double p = 0.0;
+            for (uint32_t i = 0; i < m_bins->GetNumOfBins (); i++)
+              {
+                p = static_cast<double> (m_bins->GetCountOfBin (i)) / m_numOfSamples;
+                c += p;
+                m_output (m_bins->GetCenterOfBin (i), c);
+              }
+            break;
+          }
+
+        default:
+          break;
+
+        } // end of `switch (m_outputType)`
+
+    } // end of `if (IsEnabled ())`
 
   if (m_isInitialized)
     {
@@ -174,7 +209,7 @@ DistributionCollector::DoDispose ()
       m_bins = 0;
     }
 
-}
+} // end of `void DoDispose ()`
 
 
 // ATTRIBUTE SETTERS AND GETTERS //////////////////////////////////////////////
@@ -254,6 +289,7 @@ DistributionCollector::TraceSinkDouble (double oldData, double newData)
   if (IsEnabled ())
     {
       m_bins->NewSample (newData);
+      m_numOfSamples++;
     }
 }
 
