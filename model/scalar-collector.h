@@ -30,6 +30,7 @@
 namespace ns3 {
 
 /**
+ * \ingroup aggregator
  * \brief Collector which sums all the input data and emits the sum as a single
  *        scalar output value.
  *

@@ -31,6 +31,7 @@ namespace ns3 {
 
 
 /**
+ * \ingroup aggregator
  * \brief Collector which compute the value distribution of the input samples.
  *
  * ### Input ###

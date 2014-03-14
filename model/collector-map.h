@@ -35,6 +35,7 @@
 namespace ns3 {
 
 /**
+ * \ingroup aggregator
  * \brief Keep track and manipulate a set of statistics collectors within the
  *        data collection framework.
  */

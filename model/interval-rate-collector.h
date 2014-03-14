@@ -32,6 +32,7 @@ namespace ns3 {
 
 
 /**
+ * \ingroup aggregator
  * \brief Collector which partitions the simulation into fixed length time
  *        intervals and produce the sum of input sample data during each
  *        interval as output.

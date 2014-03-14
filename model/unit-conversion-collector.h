@@ -31,6 +31,7 @@
 namespace ns3 {
 
 /**
+ * \ingroup aggregator
  * \brief Collector which converts input sample data to a different unit.
  *
  * ### Input ###
