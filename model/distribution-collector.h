@@ -81,6 +81,27 @@ namespace ns3 {
  * type, which can be modified by calling the SetOutputType() method or setting
  * the `OutputType` attribute. The burst of output is guaranteed to be in order
  * from the first bin (the lowest identifier) until the last bin.
+ *
+ * In addition, the class also computes several statistical information and
+ * export them as output trace sources.
+ * - `OutputCount`
+ * - `OutputSum`
+ * - `OutputMin`
+ * - `OutputMax`
+ * - `OutputMean`
+ * - `OutputStddev`
+ * - `OutputVariance`
+ * - `OutputSqrSum`
+ *
+ * Finally, when the OUTPUT_TYPE_CUMULATIVE is selected as the output type, the
+ * class also includes percentile information in the following trace sources.
+ * - `Output5thPercentile`
+ * - `Output25thPercentile`
+ * - `Output50thPercentile`
+ * - `Output75thPercentile`
+ * - `Output95thPercentile`
+ * Note that linear interpolation is used to calculate these percentile
+ * information, and thus might have some errors.
  */
 class DistributionCollector : public DataCollectionObject
 {
@@ -276,6 +297,29 @@ private:
    */
   void InitializeBins ();
 
+  /**
+   * \code
+   *   Y
+   *   ^        + (x2, y2)
+   *   |       /
+   *   |      + (x1, y1)
+   *   |     /
+   *   |    /
+   *   |   + (x0, y0)
+   *   |
+   *   +-----------------> X
+   * \endcode
+   *
+   * We assume \f$x_0\f$ and \f$x_2\f$ are the center of two adjacent bins.
+   * Thus it follows that \f$x_2 - x_0\f$ equals to bin length \f$l\f$. The
+   * formula for computing \f$x_1\f$ is therefore:
+   *
+   *    \f[
+   *    x_1 = x_0 + (\frac{y_1 - y_0}{y_2 - y_0} \times l)
+   *    \f]
+   */
+  double GetInterpolatedX1 (double x0, double y0, double y1, double y2) const;
+
   OutputType_t  m_outputType;      ///< `OutputType` attribute.
   double        m_minValue;        ///< `MinValue` attribute.
   double        m_maxValue;        ///< `MaxValue` attribute.
@@ -283,10 +327,17 @@ private:
   bool          m_isInitialized;   ///< True after InitializeBins().
   double        m_sum;             ///< Sum of all input samples received so far.
 
-  TracedCallback<double, double> m_output;  ///< `Output` trace source.
+  TracedCallback<double, double> m_output;        ///< `Output` trace source.
+
+  TracedCallback<double> m_output5thPercentile;   ///< `Output5thPercentile` trace source.
+  TracedCallback<double> m_output25thPercentile;  ///< `Output25thPercentile` trace source.
+  TracedCallback<double> m_output50thPercentile;  ///< `Output50thPercentile` trace source.
+  TracedCallback<double> m_output75thPercentile;  ///< `Output75thPercentile` trace source.
+  TracedCallback<double> m_output95thPercentile;  ///< `Output95thPercentile` trace source.
+
   TracedCallback<uint32_t> m_outputCount;   ///< `OutputCount` trace source.
   TracedCallback<double> m_outputSum;       ///< `OutputSum` trace source.
-  TracedCallback<double> m_outputMin;       ///< `OutputMinn` trace source.
+  TracedCallback<double> m_outputMin;       ///< `OutputMin` trace source.
   TracedCallback<double> m_outputMax;       ///< `OutputMax` trace source.
   TracedCallback<double> m_outputMean;      ///< `OutputMean` trace source.
   TracedCallback<double> m_outputStddev;    ///< `OutputStddev` trace source.

@@ -105,10 +105,38 @@ DistributionCollector::GetTypeId ()
                    MakeEnumChecker (DistributionCollector::OUTPUT_TYPE_HISTOGRAM,   "HISTOGRAM",
                                     DistributionCollector::OUTPUT_TYPE_PROBABILITY, "PROBABILITY",
                                     DistributionCollector::OUTPUT_TYPE_CUMULATIVE,  "CUMULATIVE"))
+    // MAIN TRACE SOURCE //////////////////////////////////////////////////////
     .AddTraceSource ("Output",
                      "A bin identifier and the value corresponding to that bin. "
                      "Emitted upon the instance's destruction.",
                      MakeTraceSourceAccessor (&DistributionCollector::m_output))
+    // PERCENTILE TRACE SOURCES FOR CUMULATIVE OUTPUT TYPE ////////////////////
+    .AddTraceSource ("Output5thPercentile",
+                     "The 5th percentile of the received samples. "
+                     "Only available for cumulative output type. "
+                     "Emitted upon the instance's destruction.",
+                     MakeTraceSourceAccessor (&DistributionCollector::m_output5thPercentile))
+    .AddTraceSource ("Output25thPercentile",
+                     "The 25th percentile (first quartile) of the received samples. "
+                     "Only available for cumulative output type. "
+                     "Emitted upon the instance's destruction.",
+                     MakeTraceSourceAccessor (&DistributionCollector::m_output25thPercentile))
+    .AddTraceSource ("Output50thPercentile",
+                     "The 50th percentile (median) of the received samples. "
+                     "Only available for cumulative output type. "
+                     "Emitted upon the instance's destruction.",
+                     MakeTraceSourceAccessor (&DistributionCollector::m_output50thPercentile))
+    .AddTraceSource ("Output75thPercentile",
+                     "The 75th percentile (third quartile) of the received samples. "
+                     "Only available for cumulative output type. "
+                     "Emitted upon the instance's destruction.",
+                     MakeTraceSourceAccessor (&DistributionCollector::m_output75thPercentile))
+    .AddTraceSource ("Output95thPercentile",
+                     "The 95th percentile of the received samples. "
+                     "Only available for cumulative output type. "
+                     "Emitted upon the instance's destruction.",
+                     MakeTraceSourceAccessor (&DistributionCollector::m_output95thPercentile))
+    // OTHER BASIC STATISTICAL INFORMATION TRACE SOURCES //////////////////////
     .AddTraceSource ("OutputCount",
                      "The number of received samples. "
                      "Emitted upon the instance's destruction.",
@@ -220,16 +248,53 @@ DistributionCollector::DoDispose ()
         case DistributionCollector::OUTPUT_TYPE_CUMULATIVE:
           {
             const uint32_t n = m_calculator.getCount ();
-            double c = 0.0;
             double p = 0.0;
+            double x0 = m_minValue;
+            double y0 = 0.0;
+            double x2 = 0.0; // will be computed in the loop below
+            double y2 = 0.0; // will be computed in the loop below
+
             for (uint32_t i = 0; i < m_bins->GetNumOfBins (); i++)
               {
                 p = static_cast<double> (m_bins->GetCountOfBin (i)) / n;
-                c += p;
-                m_output (m_bins->GetCenterOfBin (i), c);
-              }
+                y2 += p;
+                x2 = m_bins->GetCenterOfBin (i);
+                m_output (x2, y2);
+
+                if ((y0 < 0.05) && (y2 >= 0.05))
+                  {
+                    m_output5thPercentile (GetInterpolatedX1 (x0, y0, 0.05, y2));
+                  }
+
+                if ((y0 < 0.25) && (y2 >= 0.25))
+                  {
+                    m_output25thPercentile (GetInterpolatedX1 (x0, y0, 0.25, y2));
+                  }
+
+                if ((y0 < 0.50) && (y2 >= 0.50))
+                  {
+                    m_output50thPercentile (GetInterpolatedX1 (x0, y0, 0.50, y2));
+                  }
+
+                if ((y0 < 0.75) && (y2 >= 0.75))
+                  {
+                    m_output75thPercentile (GetInterpolatedX1 (x0, y0, 0.75, y2));
+                  }
+
+                if ((y0 < 0.95) && (y2 >= 0.95))
+                  {
+                    m_output95thPercentile (GetInterpolatedX1 (x0, y0, 0.95, y2));
+                  }
+
+                // Advance x0 and y0.
+                x0 = x2;
+                y0 = y2;
+
+              } // end of  `for (i = 0; i < m_bins->GetNumOfBins (); i++)`
+
             break;
-          }
+
+          } // end of `case DistributionCollector::OUTPUT_TYPE_CUMULATIVE:`
 
         default:
           break;
@@ -256,6 +321,14 @@ DistributionCollector::DoDispose ()
     }
 
 } // end of `void DoDispose ()`
+
+
+double
+DistributionCollector::GetInterpolatedX1 (double x0, double y0,
+                                          double y1, double y2) const
+{
+  return x0 + (m_binLength * (y1-y0) / (y2-y0));
+}
 
 
 // ATTRIBUTE SETTERS AND GETTERS //////////////////////////////////////////////

@@ -76,8 +76,13 @@ public:
 private:
   virtual void DoRun ();
   virtual void DoTeardown ();
-  void FeedInput () const;
+  void FeedInput ();
   void CollectorOutputCallback (double sample, double count);
+  void CollectorOutput5thPercentileCallback (double percentile5th);
+  void CollectorOutput25thPercentileCallback (double percentile25th);
+  void CollectorOutput50thPercentileCallback (double percentile50th);
+  void CollectorOutput75thPercentileCallback (double percentile75th);
+  void CollectorOutput95thPercentileCallback (double percentile95th);
   void CollectorOutputCountCallback (uint32_t count);
   void CollectorOutputSumCallback (double sum);
   void CollectorOutputMinCallback (double min);
@@ -92,6 +97,7 @@ private:
   double m_maxValue;
   double m_binLength;
   std::string m_input;
+  uint32_t m_inputSize;
   std::string m_expectedOutput;
   std::list<double> m_expectedSample;
   std::list<double> m_expectedCount;
@@ -113,6 +119,7 @@ DistributionCollectorTestCase::DistributionCollectorTestCase (std::string name,
     m_maxValue (maxValue),
     m_binLength (binLength),
     m_input (input),
+    m_inputSize (0),
     m_expectedOutput (expectedOutput)
 {
   NS_LOG_FUNCTION (this << name
@@ -153,6 +160,31 @@ DistributionCollectorTestCase::DoRun ()
   ret = m_collector->TraceConnectWithoutContext (
     "Output",
     MakeCallback (&DistributionCollectorTestCase::CollectorOutputCallback,
+                  this));
+  NS_ASSERT (ret);
+  ret = m_collector->TraceConnectWithoutContext (
+    "Output5thPercentile",
+    MakeCallback (&DistributionCollectorTestCase::CollectorOutput5thPercentileCallback,
+                  this));
+  NS_ASSERT (ret);
+  ret = m_collector->TraceConnectWithoutContext (
+    "Output25thPercentile",
+    MakeCallback (&DistributionCollectorTestCase::CollectorOutput25thPercentileCallback,
+                  this));
+  NS_ASSERT (ret);
+  ret = m_collector->TraceConnectWithoutContext (
+    "Output50thPercentile",
+    MakeCallback (&DistributionCollectorTestCase::CollectorOutput50thPercentileCallback,
+                  this));
+  NS_ASSERT (ret);
+  ret = m_collector->TraceConnectWithoutContext (
+    "Output75thPercentile",
+    MakeCallback (&DistributionCollectorTestCase::CollectorOutput75thPercentileCallback,
+                  this));
+  NS_ASSERT (ret);
+  ret = m_collector->TraceConnectWithoutContext (
+    "Output95thPercentile",
+    MakeCallback (&DistributionCollectorTestCase::CollectorOutput95thPercentileCallback,
                   this));
   NS_ASSERT (ret);
   ret = m_collector->TraceConnectWithoutContext (
@@ -221,7 +253,7 @@ DistributionCollectorTestCase::DoTeardown ()
 
 
 void
-DistributionCollectorTestCase::FeedInput () const
+DistributionCollectorTestCase::FeedInput ()
 {
   NS_LOG_FUNCTION (this << GetName ());
 
@@ -232,6 +264,7 @@ DistributionCollectorTestCase::FeedInput () const
       iss >> sample;
       Simulator::ScheduleNow (&DistributionCollector::TraceSinkDouble,
                               m_collector, sample, sample);
+      m_inputSize++;
     }
 }
 
@@ -262,6 +295,42 @@ void
 DistributionCollectorTestCase::CollectorOutputCountCallback (uint32_t count)
 {
   NS_LOG_FUNCTION (this << GetName () << count);
+  NS_TEST_ASSERT_MSG_EQ (count, m_inputSize, "Inconsistent sample size");
+}
+
+
+void
+DistributionCollectorTestCase::CollectorOutput5thPercentileCallback (double percentile5th)
+{
+  NS_LOG_FUNCTION (this << GetName () << percentile5th);
+}
+
+
+void
+DistributionCollectorTestCase::CollectorOutput25thPercentileCallback (double percentile25th)
+{
+  NS_LOG_FUNCTION (this << GetName () << percentile25th);
+}
+
+
+void
+DistributionCollectorTestCase::CollectorOutput50thPercentileCallback (double percentile50th)
+{
+  NS_LOG_FUNCTION (this << GetName () << percentile50th);
+}
+
+
+void
+DistributionCollectorTestCase::CollectorOutput75thPercentileCallback (double percentile75th)
+{
+  NS_LOG_FUNCTION (this << GetName () << percentile75th);
+}
+
+
+void
+DistributionCollectorTestCase::CollectorOutput95thPercentileCallback (double percentile95th)
+{
+  NS_LOG_FUNCTION (this << GetName () << percentile95th);
 }
 
 
