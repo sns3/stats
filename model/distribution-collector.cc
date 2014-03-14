@@ -58,7 +58,6 @@ DistributionCollector::DistributionCollector ()
     m_maxValue (0.0),
     m_binLength (0.0),
     m_isInitialized (false),
-    m_numOfSamples (0),
     m_bins (0)
 {
   NS_LOG_FUNCTION (this << GetName ());
@@ -107,11 +106,43 @@ DistributionCollector::GetTypeId ()
                                     DistributionCollector::OUTPUT_TYPE_PROBABILITY, "PROBABILITY",
                                     DistributionCollector::OUTPUT_TYPE_CUMULATIVE,  "CUMULATIVE"))
     .AddTraceSource ("Output",
-                     "A bin identifier and the value corresponding to that bin.",
+                     "A bin identifier and the value corresponding to that bin. "
+                     "Emitted upon the instance's destruction.",
                      MakeTraceSourceAccessor (&DistributionCollector::m_output))
+    .AddTraceSource ("OutputCount",
+                     "The number of received samples. "
+                     "Emitted upon the instance's destruction.",
+                     MakeTraceSourceAccessor (&DistributionCollector::m_outputCount))
+    .AddTraceSource ("OutputSum",
+                     "The sum of the received samples. "
+                     "Emitted upon the instance's destruction.",
+                     MakeTraceSourceAccessor (&DistributionCollector::m_outputSum))
+    .AddTraceSource ("OutputMin",
+                     "The minimum value from the received samples. "
+                     "Emitted upon the instance's destruction.",
+                     MakeTraceSourceAccessor (&DistributionCollector::m_outputMin))
+    .AddTraceSource ("OutputMax",
+                     "The maximum value from the received samples. "
+                     "Emitted upon the instance's destruction.",
+                     MakeTraceSourceAccessor (&DistributionCollector::m_outputMax))
+    .AddTraceSource ("OutputMean",
+                     "The mean of the received samples. "
+                     "Emitted upon the instance's destruction.",
+                     MakeTraceSourceAccessor (&DistributionCollector::m_outputMean))
+    .AddTraceSource ("OutputStddev",
+                     "The standard deviation of the received samples. "
+                     "Emitted upon the instance's destruction.",
+                     MakeTraceSourceAccessor (&DistributionCollector::m_outputStddev))
+    .AddTraceSource ("OutputVariance",
+                     "The variance of the received samples. "
+                     "Emitted upon the instance's destruction.",
+                     MakeTraceSourceAccessor (&DistributionCollector::m_outputVariance))
+    .AddTraceSource ("OutputSqrSum",
+                     "The sum of squares of the received samples. "
+                     "Emitted upon the instance's destruction.",
+                     MakeTraceSourceAccessor (&DistributionCollector::m_outputSqrSum))
   ;
   return tid;
-  /// \todo Add mean, variance, and percentile outputs.
 }
 
 
@@ -160,6 +191,8 @@ DistributionCollector::DoDispose ()
 
   if (IsEnabled ())
     {
+      // Compute output for `Output` trace source.
+
       switch (m_outputType)
         {
         case DistributionCollector::OUTPUT_TYPE_HISTOGRAM:
@@ -174,10 +207,11 @@ DistributionCollector::DoDispose ()
 
         case DistributionCollector::OUTPUT_TYPE_PROBABILITY:
           {
+            const uint32_t n = m_calculator.getCount ();
             double p = 0.0;
             for (uint32_t i = 0; i < m_bins->GetNumOfBins (); i++)
               {
-                p = static_cast<double> (m_bins->GetCountOfBin (i)) / m_numOfSamples;
+                p = static_cast<double> (m_bins->GetCountOfBin (i)) / n;
                 m_output (m_bins->GetCenterOfBin (i), p);
               }
             break;
@@ -185,11 +219,12 @@ DistributionCollector::DoDispose ()
 
         case DistributionCollector::OUTPUT_TYPE_CUMULATIVE:
           {
+            const uint32_t n = m_calculator.getCount ();
             double c = 0.0;
             double p = 0.0;
             for (uint32_t i = 0; i < m_bins->GetNumOfBins (); i++)
               {
-                p = static_cast<double> (m_bins->GetCountOfBin (i)) / m_numOfSamples;
+                p = static_cast<double> (m_bins->GetCountOfBin (i)) / n;
                 c += p;
                 m_output (m_bins->GetCenterOfBin (i), c);
               }
@@ -200,6 +235,17 @@ DistributionCollector::DoDispose ()
           break;
 
         } // end of `switch (m_outputType)`
+
+      // Other trace sources are taken from the online calculator.
+
+      m_outputCount (m_calculator.getCount ());
+      m_outputSum (m_calculator.getSum ());
+      m_outputMin (m_calculator.getMin ());
+      m_outputMax (m_calculator.getMax ());
+      m_outputMean (m_calculator.getMean ());
+      m_outputStddev (m_calculator.getStddev ());
+      m_outputVariance (m_calculator.getVariance ());
+      m_outputSqrSum (m_calculator.getSqrSum ());
 
     } // end of `if (IsEnabled ())`
 
@@ -289,7 +335,7 @@ DistributionCollector::TraceSinkDouble (double oldData, double newData)
   if (IsEnabled ())
     {
       m_bins->NewSample (newData);
-      m_numOfSamples++;
+      m_calculator.Update (newData);
     }
 }
 

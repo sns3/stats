@@ -24,6 +24,7 @@
 
 #include <ns3/data-collection-object.h>
 #include <ns3/traced-callback.h>
+#include <ns3/basic-data-calculators.h>
 #include <vector>
 
 namespace ns3 {
@@ -280,9 +281,20 @@ private:
   double        m_maxValue;        ///< `MaxValue` attribute.
   double        m_binLength;       ///< `BinLength` attribute.
   bool          m_isInitialized;   ///< True after InitializeBins().
-  uint32_t      m_numOfSamples;    ///< Number of input samples received so far.
+  double        m_sum;             ///< Sum of all input samples received so far.
 
   TracedCallback<double, double> m_output;  ///< `Output` trace source.
+  TracedCallback<uint32_t> m_outputCount;   ///< `OutputCount` trace source.
+  TracedCallback<double> m_outputSum;       ///< `OutputSum` trace source.
+  TracedCallback<double> m_outputMin;       ///< `OutputMinn` trace source.
+  TracedCallback<double> m_outputMax;       ///< `OutputMax` trace source.
+  TracedCallback<double> m_outputMean;      ///< `OutputMean` trace source.
+  TracedCallback<double> m_outputStddev;    ///< `OutputStddev` trace source.
+  TracedCallback<double> m_outputVariance;  ///< `OutputVariance` trace source.
+  TracedCallback<double> m_outputSqrSum;    ///< `OutputSqrSum` trace source.
+
+  /// Tools for online computing of most of the statistical information.
+  MinMaxAvgTotalCalculator<double> m_calculator;
 
   /**
    * \internal

@@ -43,20 +43,27 @@ namespace ns3 {
 
 /**
  * \ingroup stats
- * \brief
+ *
+ * Part of the `distribution-collector` test suite. Creates a instance of
+ * DistributionCollector using a specified configuration parameters, feed it
+ * with a given set of inputs, and then verify the instance's output with the
+ * given expected outputs as reference.
  */
 class DistributionCollectorTestCase : public TestCase
 {
 public:
   /**
    * \brief Construct a new test case.
-   * \param name the test case name, which will be printed on the report
-   * \param type
-   * \param minValue
-   * \param maxValue
-   * \param binLength
-   * \param input
-   * \param expectedOutput
+   * \param name the test case name, which will be printed on the report.
+   * \param type output that will be produced by the collector.
+   * \param minValue `MinValue` attribute for the collector.
+   * \param maxValue `MaxValue` attribute for the collector.
+   * \param binLength `BinLength` attribute for the collector.
+   * \param input a string of space-separated real numbers which will be fed
+   *              to the collector as input samples.
+   * \param expectedOutput a string of pairs of real numbers, with a space
+   *                       after every number; each pair represents a single
+   *                       output of the collector.
    */
   DistributionCollectorTestCase (std::string name,
                                  DistributionCollector::OutputType_t type,
@@ -70,7 +77,15 @@ private:
   virtual void DoRun ();
   virtual void DoTeardown ();
   void FeedInput () const;
-  void CollectorCallback (double sample, double count);
+  void CollectorOutputCallback (double sample, double count);
+  void CollectorOutputCountCallback (uint32_t count);
+  void CollectorOutputSumCallback (double sum);
+  void CollectorOutputMinCallback (double min);
+  void CollectorOutputMaxCallback (double max);
+  void CollectorOutputMeanCallback (double mean);
+  void CollectorOutputStddevCallback (double stddev);
+  void CollectorOutputVarianceCallback (double variance);
+  void CollectorOutputSqrSumCallback (double sqrSum);
 
   DistributionCollector::OutputType_t m_type;
   double m_minValue;
@@ -133,10 +148,52 @@ DistributionCollectorTestCase::DoRun ()
   m_collector->SetBinLength (m_binLength);
   m_collector->SetOutputType (m_type);
 
-  // Connect the collector's output to a callback of this class.
-  const bool ret = m_collector->TraceConnectWithoutContext (
-    "Output", MakeCallback (&DistributionCollectorTestCase::CollectorCallback,
-                            this));
+  // Connect the collector's outputs to a callback of this class.
+  bool ret = false;
+  ret = m_collector->TraceConnectWithoutContext (
+    "Output",
+    MakeCallback (&DistributionCollectorTestCase::CollectorOutputCallback,
+                  this));
+  NS_ASSERT (ret);
+  ret = m_collector->TraceConnectWithoutContext (
+    "OutputCount",
+    MakeCallback (&DistributionCollectorTestCase::CollectorOutputCountCallback,
+                  this));
+  NS_ASSERT (ret);
+  ret = m_collector->TraceConnectWithoutContext (
+    "OutputSum",
+    MakeCallback (&DistributionCollectorTestCase::CollectorOutputSumCallback,
+                  this));
+  NS_ASSERT (ret);
+  ret = m_collector->TraceConnectWithoutContext (
+    "OutputMin",
+    MakeCallback (&DistributionCollectorTestCase::CollectorOutputMinCallback,
+                  this));
+  NS_ASSERT (ret);
+  ret = m_collector->TraceConnectWithoutContext (
+    "OutputMax",
+    MakeCallback (&DistributionCollectorTestCase::CollectorOutputMaxCallback,
+                  this));
+  NS_ASSERT (ret);
+  ret = m_collector->TraceConnectWithoutContext (
+    "OutputMean",
+    MakeCallback (&DistributionCollectorTestCase::CollectorOutputMeanCallback,
+                  this));
+  NS_ASSERT (ret);
+  ret = m_collector->TraceConnectWithoutContext (
+    "OutputStddev",
+    MakeCallback (&DistributionCollectorTestCase::CollectorOutputStddevCallback,
+                  this));
+  NS_ASSERT (ret);
+  ret = m_collector->TraceConnectWithoutContext (
+    "OutputVariance",
+    MakeCallback (&DistributionCollectorTestCase::CollectorOutputVarianceCallback,
+                  this));
+  NS_ASSERT (ret);
+  ret = m_collector->TraceConnectWithoutContext (
+    "OutputSqrSum",
+    MakeCallback (&DistributionCollectorTestCase::CollectorOutputSqrSumCallback,
+                  this));
   NS_ASSERT (ret);
 
   // Push inputs into the collector after 1 ms of simulation time.
@@ -180,7 +237,7 @@ DistributionCollectorTestCase::FeedInput () const
 
 
 void
-DistributionCollectorTestCase::CollectorCallback (double sample, double count)
+DistributionCollectorTestCase::CollectorOutputCallback (double sample, double count)
 {
   NS_LOG_FUNCTION (this << GetName () << sample << count);
 
@@ -199,6 +256,63 @@ DistributionCollectorTestCase::CollectorCallback (double sample, double count)
       m_expectedCount.pop_front ();
     }
 }
+
+
+void
+DistributionCollectorTestCase::CollectorOutputCountCallback (uint32_t count)
+{
+  NS_LOG_FUNCTION (this << GetName () << count);
+}
+
+
+void
+DistributionCollectorTestCase::CollectorOutputSumCallback (double sum)
+{
+  NS_LOG_FUNCTION (this << GetName () << sum);
+}
+
+
+void
+DistributionCollectorTestCase::CollectorOutputMinCallback (double min)
+{
+  NS_LOG_FUNCTION (this << GetName () << min);
+}
+
+
+void
+DistributionCollectorTestCase::CollectorOutputMaxCallback (double max)
+{
+  NS_LOG_FUNCTION (this << GetName () << max);
+}
+
+
+void
+DistributionCollectorTestCase::CollectorOutputMeanCallback (double mean)
+{
+  NS_LOG_FUNCTION (this << GetName () << mean);
+}
+
+
+void
+DistributionCollectorTestCase::CollectorOutputStddevCallback (double stddev)
+{
+  NS_LOG_FUNCTION (this << GetName () << stddev);
+}
+
+
+void
+DistributionCollectorTestCase::CollectorOutputVarianceCallback (double variance)
+{
+  NS_LOG_FUNCTION (this << GetName () << variance);
+}
+
+
+void
+DistributionCollectorTestCase::CollectorOutputSqrSumCallback (double sqrSum)
+{
+  NS_LOG_FUNCTION (this << GetName () << sqrSum);
+}
+
 
 
 /**
