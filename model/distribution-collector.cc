@@ -236,61 +236,81 @@ DistributionCollector::DoDispose ()
         case DistributionCollector::OUTPUT_TYPE_PROBABILITY:
           {
             const uint32_t n = m_calculator.getCount ();
-            double p = 0.0;
-            for (uint32_t i = 0; i < m_bins->GetNumOfBins (); i++)
+
+            if (n == 0)
               {
-                p = static_cast<double> (m_bins->GetCountOfBin (i)) / n;
-                m_output (m_bins->GetCenterOfBin (i), p);
+                NS_LOG_WARN (this << " skipping output computation"
+                                  << " because of no input samples received");
               }
+            else
+              {
+                double p = 0.0;
+                for (uint32_t i = 0; i < m_bins->GetNumOfBins (); i++)
+                  {
+                    p = static_cast<double> (m_bins->GetCountOfBin (i)) / n;
+                    m_output (m_bins->GetCenterOfBin (i), p);
+                  }
+              }
+
             break;
           }
 
         case DistributionCollector::OUTPUT_TYPE_CUMULATIVE:
           {
             const uint32_t n = m_calculator.getCount ();
-            double p = 0.0;
-            double x0 = m_minValue;
-            double y0 = 0.0;
-            double x2 = 0.0; // will be computed in the loop below
-            double y2 = 0.0; // will be computed in the loop below
 
-            for (uint32_t i = 0; i < m_bins->GetNumOfBins (); i++)
+            if (n == 0)
               {
-                p = static_cast<double> (m_bins->GetCountOfBin (i)) / n;
-                y2 += p;
-                x2 = m_bins->GetCenterOfBin (i);
-                m_output (x2, y2);
+                NS_LOG_WARN (this << " skipping output computation"
+                                  << " because of no input samples received");
+              }
+            else
+              {
+                double p = 0.0;
+                double x0 = m_minValue;
+                double y0 = 0.0;
+                double x2 = 0.0; // will be computed in the loop below
+                double y2 = 0.0; // will be computed in the loop below
 
-                if ((y0 < 0.05) && (y2 >= 0.05))
+                for (uint32_t i = 0; i < m_bins->GetNumOfBins (); i++)
                   {
-                    m_output5thPercentile (GetInterpolatedX1 (x0, y0, 0.05, y2));
-                  }
+                    p = static_cast<double> (m_bins->GetCountOfBin (i)) / n;
+                    y2 += p;
+                    x2 = m_bins->GetCenterOfBin (i);
+                    m_output (x2, y2);
 
-                if ((y0 < 0.25) && (y2 >= 0.25))
-                  {
-                    m_output25thPercentile (GetInterpolatedX1 (x0, y0, 0.25, y2));
-                  }
+                    if ((y0 < 0.05) && (y2 >= 0.05))
+                      {
+                        m_output5thPercentile (GetInterpolatedX1 (x0, y0, 0.05, y2));
+                      }
 
-                if ((y0 < 0.50) && (y2 >= 0.50))
-                  {
-                    m_output50thPercentile (GetInterpolatedX1 (x0, y0, 0.50, y2));
-                  }
+                    if ((y0 < 0.25) && (y2 >= 0.25))
+                      {
+                        m_output25thPercentile (GetInterpolatedX1 (x0, y0, 0.25, y2));
+                      }
 
-                if ((y0 < 0.75) && (y2 >= 0.75))
-                  {
-                    m_output75thPercentile (GetInterpolatedX1 (x0, y0, 0.75, y2));
-                  }
+                    if ((y0 < 0.50) && (y2 >= 0.50))
+                      {
+                        m_output50thPercentile (GetInterpolatedX1 (x0, y0, 0.50, y2));
+                      }
 
-                if ((y0 < 0.95) && (y2 >= 0.95))
-                  {
-                    m_output95thPercentile (GetInterpolatedX1 (x0, y0, 0.95, y2));
-                  }
+                    if ((y0 < 0.75) && (y2 >= 0.75))
+                      {
+                        m_output75thPercentile (GetInterpolatedX1 (x0, y0, 0.75, y2));
+                      }
 
-                // Advance x0 and y0.
-                x0 = x2;
-                y0 = y2;
+                    if ((y0 < 0.95) && (y2 >= 0.95))
+                      {
+                        m_output95thPercentile (GetInterpolatedX1 (x0, y0, 0.95, y2));
+                      }
 
-              } // end of  `for (i = 0; i < m_bins->GetNumOfBins (); i++)`
+                    // Advance x0 and y0.
+                    x0 = x2;
+                    y0 = y2;
+
+                  } // end of  `for (i = 0; i < m_bins->GetNumOfBins (); i++)`
+
+              } // end of else of `if (n == 0)`
 
             break;
 

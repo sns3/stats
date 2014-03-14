@@ -31,8 +31,7 @@ namespace ns3 {
 
 
 /**
- * \brief Collector which sums all the input data and emits the sum as a single
- *        scalar output value.
+ * \brief Collector which compute the value distribution of the input samples.
  *
  * ### Input ###
  * This class provides 9 trace sinks for receiving inputs. Each trace sink
@@ -311,11 +310,11 @@ private:
    * \endcode
    *
    * We assume \f$x_0\f$ and \f$x_2\f$ are the center of two adjacent bins.
-   * Thus it follows that \f$x_2 - x_0\f$ equals to bin length \f$l\f$. The
+   * Thus, it follows that \f$x_2 - x_0\f$ equals to bin length \f$b\f$. The
    * formula for computing \f$x_1\f$ is therefore:
    *
    *    \f[
-   *    x_1 = x_0 + (\frac{y_1 - y_0}{y_2 - y_0} \times l)
+   *    x_1 = x_0 + (\frac{y_1 - y_0}{y_2 - y_0} \times b)
    *    \f]
    */
   double GetInterpolatedX1 (double x0, double y0, double y1, double y2) const;
