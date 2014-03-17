@@ -70,6 +70,12 @@ MultiFileAggregator::GetTypeId ()
                    BooleanValue (true),
                    MakeBooleanAccessor (&MultiFileAggregator::m_isMultiFileMode),
                    MakeBooleanChecker ())
+    .AddAttribute ("GeneralHeading",
+                   "Sets the heading string that will be printed on the first "
+                   "line of each file.",
+                   StringValue (""),
+                   MakeStringAccessor (&MultiFileAggregator::AddGeneralHeading),
+                   MakeStringChecker ())
   ;
 
   return tid;
@@ -97,13 +103,42 @@ MultiFileAggregator::~MultiFileAggregator ()
 {
   NS_LOG_FUNCTION (this);
 
-  // Close all the open file streams.
-  for (std::map<std::string, std::ofstream*>::iterator it = m_files.begin ();
-       it != m_files.end (); ++it)
+  // Flush all buffered data upon destruction.
+
+  for (std::map<std::string, std::ostringstream*>::iterator it = m_buffer.begin ();
+       it != m_buffer.end (); ++it)
     {
-      it->second->close ();
-      delete it->second;
-      it->second = 0;
+      std::string context = it->first;
+
+      // Remove any space and slash characters from the context.
+      for (size_t pos = context.find (" /");
+           pos != std::string::npos;
+           pos = context.find (" /", pos + 1, 1))
+        {
+          context[pos] = '_';
+        }
+
+      // Creating a file for output.
+      const std::string fileName = m_outputFileName + '-' + context + ".txt";
+      NS_LOG_LOGIC ("Creating a new file " << fileName);
+      std::ofstream ofs (fileName.c_str ());
+
+      if (!ofs || !(ofs.is_open ()))
+        {
+          NS_FATAL_ERROR ("Error creating file " << fileName << " for output");
+        }
+
+      // Find the context-specific heading for this context.
+      std::map<std::string, std::string>::iterator it2 = m_contextHeading.find (context);
+
+      if (it2 != m_contextHeading.end ())
+        {
+          ofs << it2->second << std::endl;
+        }
+
+      ofs << m_generalHeading << std::endl;    // print the general heading.
+      ofs << it->second->str () << std::endl;  // print the buffered data.
+      ofs.close ();                            // close the file.
     }
 }
 
@@ -130,20 +165,32 @@ MultiFileAggregator::SetFileType (enum FileType fileType)
 }
 
 void
-MultiFileAggregator::SetHeading (std::string context,
-                                 const std::string &heading)
+MultiFileAggregator::AddGeneralHeading (std::string heading)
 {
   NS_LOG_FUNCTION (this << heading);
-  std::ofstream * file = GetFileStream (context);
+  m_generalHeading += heading;
+}
 
-  // TODO Accommodate for single-file mode.
-  if (!m_hasHeadingBeenSet[context])
+void
+MultiFileAggregator::AddContextHeading (std::string context,
+                                        std::string heading)
+{
+  NS_LOG_FUNCTION (this << context << heading);
+
+  if (!m_isMultiFileMode)
     {
-      m_heading = heading;
-      m_hasHeadingBeenSet[context] = true;
+      context = "0";
+    }
 
-      // Print the heading to the file.
-      *file << m_heading << std::endl;
+  std::map<std::string, std::string>::iterator it = m_contextHeading.find (context);
+
+  if (it == m_contextHeading.end ())
+    {
+      m_contextHeading[context] = heading;
+    }
+  else
+    {
+      it->second += heading;
     }
 }
 
@@ -218,6 +265,30 @@ MultiFileAggregator::Set10dFormat (const std::string &format)
 }
 
 void
+MultiFileAggregator::WriteString (std::string context,
+                                  std::string v1)
+{
+  NS_LOG_FUNCTION (this << context << v1);
+
+  if (m_enabled)
+    {
+      std::ostringstream * buff = GetBufferStream (context);
+
+      if (m_isMultiFileMode)
+        {
+          // Write the value.
+          *buff << v1 << std::endl;
+        }
+      else
+        {
+          // Write the context and the value with the proper separator.
+          *buff << context << m_separator
+                << v1 << std::endl;
+        }
+    }
+}
+
+void
 MultiFileAggregator::Write1d (std::string context,
                               double v1)
 {
@@ -225,7 +296,7 @@ MultiFileAggregator::Write1d (std::string context,
 
   if (m_enabled)
     {
-      std::ofstream * file = GetFileStream (context);
+      std::ostringstream * buff = GetBufferStream (context);
 
       // Write the 1D data point to the file.
       if (m_fileType == FORMATTED)
@@ -247,17 +318,17 @@ MultiFileAggregator::Write1d (std::string context,
             }
 
           // Write the formatted value.
-          *file << buffer << std::endl;
+          *buff << buffer << std::endl;
         }
       else if (m_isMultiFileMode)
         {
           // Write the value.
-          *file << v1 << std::endl;
+          *buff << v1 << std::endl;
         }
       else
         {
           // Write the context and the value with the proper separator.
-          *file << context << m_separator
+          *buff << context << m_separator
                 << v1 << std::endl;
         }
     }
@@ -272,7 +343,7 @@ MultiFileAggregator::Write2d (std::string context,
 
   if (m_enabled)
     {
-      std::ofstream * file = GetFileStream (context);
+      std::ostringstream * buff = GetBufferStream (context);
 
       // Write the 2D data point to the file.
       if (m_fileType == FORMATTED)
@@ -295,18 +366,18 @@ MultiFileAggregator::Write2d (std::string context,
             }
 
           // Write the formatted values.
-          *file << buffer << std::endl;
+          *buff << buffer << std::endl;
         }
       else if (m_isMultiFileMode)
         {
           // Write the values with the proper separator.
-          *file << v1 << m_separator
+          *buff << v1 << m_separator
                 << v2 << std::endl;
         }
       else
         {
           // Write the context and the values with the proper separator.
-          *file << context << m_separator
+          *buff << context << m_separator
                 << v1 << m_separator
                 << v2 << std::endl;
         }
@@ -323,7 +394,7 @@ MultiFileAggregator::Write3d (std::string context,
 
   if (m_enabled)
     {
-      std::ofstream * file = GetFileStream (context);
+      std::ostringstream * buff = GetBufferStream (context);
 
       // Write the 3D data point to the file.
       if (m_fileType == FORMATTED)
@@ -347,19 +418,19 @@ MultiFileAggregator::Write3d (std::string context,
             }
 
           // Write the formatted values.
-          *file << buffer << std::endl;
+          *buff << buffer << std::endl;
         }
       else if (m_isMultiFileMode)
         {
           // Write the values with the proper separator.
-          *file << v1 << m_separator
+          *buff << v1 << m_separator
                 << v2 << m_separator
                 << v3 << std::endl;
         }
       else
         {
           // Write the context and the values with the proper separator.
-          *file << context << m_separator
+          *buff << context << m_separator
                 << v1 << m_separator
                 << v2 << m_separator
                 << v3 << std::endl;
@@ -378,7 +449,7 @@ MultiFileAggregator::Write4d (std::string context,
 
   if (m_enabled)
     {
-      std::ofstream * file = GetFileStream (context);
+      std::ostringstream * buff = GetBufferStream (context);
 
       // Write the 4D data point to the file.
       if (m_fileType == FORMATTED)
@@ -403,12 +474,12 @@ MultiFileAggregator::Write4d (std::string context,
             }
 
           // Write the formatted values.
-          *file << buffer << std::endl;
+          *buff << buffer << std::endl;
         }
       else if (m_isMultiFileMode)
         {
           // Write the values with the proper separator.
-          *file << v1 << m_separator
+          *buff << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
                 << v4 << std::endl;
@@ -416,7 +487,7 @@ MultiFileAggregator::Write4d (std::string context,
       else
         {
           // Write the context and the values with the proper separator.
-          *file << context << m_separator
+          *buff << context << m_separator
                 << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
@@ -437,7 +508,7 @@ MultiFileAggregator::Write5d (std::string context,
 
   if (m_enabled)
     {
-      std::ofstream * file = GetFileStream (context);
+      std::ostringstream * buff = GetBufferStream (context);
 
       // Write the 5D data point to the file.
       if (m_fileType == FORMATTED)
@@ -463,12 +534,12 @@ MultiFileAggregator::Write5d (std::string context,
             }
 
           // Write the formatted values.
-          *file << buffer << std::endl;
+          *buff << buffer << std::endl;
         }
       else if (m_isMultiFileMode)
         {
           // Write the values with the proper separator.
-          *file << v1 << m_separator
+          *buff << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
                 << v4 << m_separator
@@ -477,7 +548,7 @@ MultiFileAggregator::Write5d (std::string context,
       else
         {
           // Write the context and the values with the proper separator.
-          *file << context << m_separator
+          *buff << context << m_separator
                 << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
@@ -500,7 +571,7 @@ MultiFileAggregator::Write6d (std::string context,
 
   if (m_enabled)
     {
-      std::ofstream * file = GetFileStream (context);
+      std::ostringstream * buff = GetBufferStream (context);
 
       // Write the 6D data point to the file.
       if (m_fileType == FORMATTED)
@@ -527,12 +598,12 @@ MultiFileAggregator::Write6d (std::string context,
             }
 
           // Write the formatted values.
-          *file << buffer << std::endl;
+          *buff << buffer << std::endl;
         }
       else if (m_isMultiFileMode)
         {
           // Write the values with the proper separator.
-          *file << v1 << m_separator
+          *buff << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
                 << v4 << m_separator
@@ -542,7 +613,7 @@ MultiFileAggregator::Write6d (std::string context,
       else
         {
           // Write the context and the values with the proper separator.
-          *file << context << m_separator
+          *buff << context << m_separator
                 << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
@@ -567,7 +638,7 @@ MultiFileAggregator::Write7d (std::string context,
 
   if (m_enabled)
     {
-      std::ofstream * file = GetFileStream (context);
+      std::ostringstream * buff = GetBufferStream (context);
 
       // Write the 7D data point to the file.
       if (m_fileType == FORMATTED)
@@ -595,12 +666,12 @@ MultiFileAggregator::Write7d (std::string context,
             }
 
           // Write the formatted values.
-          *file << buffer << std::endl;
+          *buff << buffer << std::endl;
         }
       else if (m_isMultiFileMode)
         {
           // Write the values with the proper separator.
-          *file << v1 << m_separator
+          *buff << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
                 << v4 << m_separator
@@ -611,7 +682,7 @@ MultiFileAggregator::Write7d (std::string context,
       else
         {
           // Write the context and the values with the proper separator.
-          *file << context << m_separator
+          *buff << context << m_separator
                 << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
@@ -638,7 +709,7 @@ MultiFileAggregator::Write8d (std::string context,
 
   if (m_enabled)
     {
-      std::ofstream * file = GetFileStream (context);
+      std::ostringstream * buff = GetBufferStream (context);
 
       // Write the 8D data point to the file.
       if (m_fileType == FORMATTED)
@@ -667,12 +738,12 @@ MultiFileAggregator::Write8d (std::string context,
             }
 
           // Write the formatted values.
-          *file << buffer << std::endl;
+          *buff << buffer << std::endl;
         }
       else if (m_isMultiFileMode)
         {
           // Write the values with the proper separator.
-          *file << v1 << m_separator
+          *buff << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
                 << v4 << m_separator
@@ -684,7 +755,7 @@ MultiFileAggregator::Write8d (std::string context,
       else
         {
           // Write the context and the values with the proper separator.
-          *file << context << m_separator
+          *buff << context << m_separator
                 << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
@@ -713,7 +784,7 @@ MultiFileAggregator::Write9d (std::string context,
 
   if (m_enabled)
     {
-      std::ofstream * file = GetFileStream (context);
+      std::ostringstream * buff = GetBufferStream (context);
 
       // Write the 9D data point to the file.
       if (m_fileType == FORMATTED)
@@ -743,12 +814,12 @@ MultiFileAggregator::Write9d (std::string context,
             }
 
           // Write the formatted values.
-          *file << buffer << std::endl;
+          *buff << buffer << std::endl;
         }
       else if (m_isMultiFileMode)
         {
           // Write the values with the proper separator.
-          *file << v1 << m_separator
+          *buff << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
                 << v4 << m_separator
@@ -761,7 +832,7 @@ MultiFileAggregator::Write9d (std::string context,
       else
         {
           // Write the context and the values with the proper separator.
-          *file << context << m_separator
+          *buff << context << m_separator
                 << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
@@ -792,7 +863,7 @@ MultiFileAggregator::Write10d (std::string context,
 
   if (m_enabled)
     {
-      std::ofstream * file = GetFileStream (context);
+      std::ostringstream * buff = GetBufferStream (context);
 
       // Write the 10D data point to the file.
       if (m_fileType == FORMATTED)
@@ -823,12 +894,12 @@ MultiFileAggregator::Write10d (std::string context,
             }
 
           // Write the formatted values.
-          *file << buffer << std::endl;
+          *buff << buffer << std::endl;
         }
       else if (m_isMultiFileMode)
         {
           // Write the values with the proper separator.
-          *file << v1 << m_separator
+          *buff << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
                 << v4 << m_separator
@@ -842,7 +913,7 @@ MultiFileAggregator::Write10d (std::string context,
       else
         {
           // Write the context and the values with the proper separator.
-          *file << context << m_separator
+          *buff << context << m_separator
                 << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
@@ -857,63 +928,28 @@ MultiFileAggregator::Write10d (std::string context,
     }
 }
 
-std::ofstream *
-MultiFileAggregator::GetFileStream (std::string context)
+std::ostringstream *
+MultiFileAggregator::GetBufferStream (std::string context)
 {
   NS_LOG_FUNCTION (this << context);
 
-  if (m_isMultiFileMode)
+  if (!m_isMultiFileMode)
     {
-      std::map<std::string, std::ofstream*>::iterator it = m_files.find (context);
-
-      if (it == m_files.end ())
-        {
-          // This is a new context. Here we create a new file for it.
-
-          // Remove any space and slash characters from the context.
-          for (size_t pos = context.find (" /");
-               pos != std::string::npos;
-               pos = context.find (" /", pos + 1, 1))
-            {
-              context[pos] = '_';
-            }
-
-          const std::string fileName = m_outputFileName + '-' + context + ".txt";
-          NS_LOG_LOGIC ("Creating a new file " << fileName);
-          m_files[context] = new std::ofstream (fileName.c_str ());
-
-          if (!m_files[context] || !*m_files[context]
-                                || !(m_files[context]->is_open ()))
-            {
-              NS_FATAL_ERROR ("Error creating file " << fileName << " for output");
-            }
-
-          m_hasHeadingBeenSet[context] = false;
-          return m_files[context];
-        }
-      else
-        {
-          // This is an existing context with a file already open for it.
-          return it->second;
-        }
+      context = "0";
     }
-  else // !m_isMultiFileMode
+
+  std::map<std::string, std::ostringstream*>::iterator it = m_buffer.find (context);
+
+  if (it == m_buffer.end ())
     {
-      if (m_files.size () == 0)
-        {
-          // The file has not been created before. Here we create a new file.
-          NS_LOG_LOGIC ("Creating a new file " << m_outputFileName);
-          m_files["0"] = new std::ofstream (m_outputFileName.c_str ());
-
-          if (!m_files["0"] || !*m_files["0"] || !(m_files["0"]->is_open ()))
-            {
-              NS_FATAL_ERROR ("Error creating file " << m_outputFileName << " for output");
-            }
-
-          m_hasHeadingBeenSet["0"] = false;
-        }
-
-      return m_files["0"];
+      // This is a new context.
+      m_buffer[context] = new std::ostringstream ();
+      return m_buffer[context];
+    }
+  else
+    {
+      // This is an existing context with a file already open for it.
+      return it->second;
     }
 }
 

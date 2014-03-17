@@ -102,6 +102,32 @@ namespace ns3 {
  * - `Output95thPercentile`
  * Note that linear interpolation is used to calculate these percentile
  * information, and thus might have some errors.
+ *
+ * All the additional statistical and percentile trace sources mentioned above
+ * are also emitted in string format through the `OutputString` trace source.
+ * The resulting string also includes the parameters used to collect the samples
+ * (e.g., the `MinValue`, `MaxValue`, and `BinLength` attributes). Example
+ * output:
+ * \code
+ * % min_value: 0
+ * % max_value: 1
+ * % bin_length: 0.02
+ * % num_of_bins: 50
+ * % output_type: 'OUTPUT_TYPE_CUMULATIVE'
+ * % count: 9
+ * % sum: 4.40882
+ * % min: 0.258985
+ * % max: 1.29714
+ * % mean: 0.489869
+ * % stddev: 0.457671
+ * % variance: 0.209463
+ * % sqr_sum: 3.83545
+ * % percentile_5: 0.2315
+ * % percentile_25: 0.2375
+ * % percentile_50: 0.245
+ * % percentile_75: 0.265
+ * % percentile_95: 0.9855
+ * \endcode
  */
 class DistributionCollector : public DataCollectionObject
 {
@@ -325,9 +351,9 @@ private:
   double        m_maxValue;        ///< `MaxValue` attribute.
   double        m_binLength;       ///< `BinLength` attribute.
   bool          m_isInitialized;   ///< True after InitializeBins().
-  double        m_sum;             ///< Sum of all input samples received so far.
 
   TracedCallback<double, double> m_output;        ///< `Output` trace source.
+  TracedCallback<std::string> m_outputString;     ///< `OutputString` trace source.
 
   TracedCallback<double> m_output5thPercentile;   ///< `Output5thPercentile` trace source.
   TracedCallback<double> m_output25thPercentile;  ///< `Output25thPercentile` trace source.

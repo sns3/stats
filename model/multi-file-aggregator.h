@@ -28,6 +28,7 @@
 #ifndef MULTI_FILE_AGGREGATOR_H
 #define MULTI_FILE_AGGREGATOR_H
 
+#include <sstream>
 #include <fstream>
 #include <map>
 #include <string>
@@ -80,17 +81,25 @@ public:
   void SetFileType (enum FileType fileType);
 
   /**
+   * \param heading the heading string.
+   *
+   * \brief Adds a heading string that will be printed on the first
+   *        line of each output file, regardless of context.
+   *
+   * General heading will be printed after the context heading, if exists.
+   */
+  void AddGeneralHeading (std::string heading);
+
+  /**
    * \param context the specific context where the heading should apply.
    * \param heading the heading string.
    *
-   * \brief Sets the heading string that will be printed on the first
-   * line of the file.
+   * \brief Adds a context-specific heading string that will be printed on the
+   *        first line of the context's output file.
    *
-   * Note that the heading string will only be printed if it has been
-   * set by calling this function.
+   * Context heading will be printed before the general heading.
    */
-  void SetHeading (std::string context,
-                   const std::string &heading);
+  void AddContextHeading (std::string context, std::string heading);
 
   /**
    * \param format the 1D format string.
@@ -175,6 +184,15 @@ public:
   // Below are hooked to connectors exporting data
   // They are not overloaded since it confuses the compiler when made
   // into callbacks
+
+  /**
+   * \param context specifies the 1D dataset these values came from.
+   * \param v1 string value to be printed.
+   *
+   * \brief Writes 1 arbitrary string value to the file.
+   */
+  void WriteString (std::string context,
+                    std::string v1);
 
   /**
    * \param context specifies the 1D dataset these values came from.
@@ -358,24 +376,25 @@ public:
 
 private:
   /**
-   * \param context determines which file stream to get.
-   * \return pointer to the output file stream associated with the given
+   * \param context determines which buffer stream to get.
+   * \return pointer to the output buffer stream associated with the given
    *         context.
    *
-   * \brief Get a pointer to an output file stream which belongs to a specified
-   *        context string.
+   * \brief Get a pointer to an output buffer stream which belongs to a
+   *        specified context string.
    *
-   * A new file will be created if a file for the context has not been created
-   * yet. This file will be stored in #m_files map using the context as the key.
-   * If the current active mode is single-file, then "0" is used as the key.
+   * A new string buffer stream instance will be created if such instance for
+   * the context has not been created yet. The created stream will be stored in
+   * #m_buffer map using the context as the key. If the current active mode is
+   * single-file, then "0" is used as the key.
    */
-  std::ofstream * GetFileStream (std::string context);
+  std::ostringstream * GetBufferStream (std::string context);
 
   /// The file name.
   std::string m_outputFileName;
 
-  /// Map of (pointer to) output file streams, indexed by its context.
-  std::map<std::string, std::ofstream*> m_files;
+  /// Map of (pointer to) output buffer streams, indexed by its context.
+  std::map<std::string, std::ostringstream*> m_buffer;
 
   /// Determines the kind of file written by the aggregator.
   enum FileType m_fileType;
@@ -386,11 +405,11 @@ private:
   /// Printed between values in the file.
   std::string m_separator;
 
-  /// Indicates if the heading line for a file (indexed by context) has been set.
-  std::map<std::string, bool> m_hasHeadingBeenSet;
+  /// Context-specific heading string, indexed by context.
+  std::map<std::string, std::string> m_contextHeading;
 
-  /// Heading line for the outputfile.
-  std::string m_heading;
+  /// Cross-context heading string.
+  std::string m_generalHeading;
 
   std::string m_1dFormat;  //!< Format string for 1D C-style sprintf() function.
   std::string m_2dFormat;  //!< Format string for 2D C-style sprintf() function.

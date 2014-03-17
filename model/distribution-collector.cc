@@ -24,6 +24,7 @@
 #include <ns3/simulator.h>
 #include <ns3/enum.h>
 #include <ns3/double.h>
+#include <sstream>
 #include <limits>
 #include <cmath>
 
@@ -110,6 +111,10 @@ DistributionCollector::GetTypeId ()
                      "A bin identifier and the value corresponding to that bin. "
                      "Emitted upon the instance's destruction.",
                      MakeTraceSourceAccessor (&DistributionCollector::m_output))
+    .AddTraceSource ("OutputString",
+                     "Various setup and statistical information. "
+                     "Emitted upon the instance's destruction.",
+                     MakeTraceSourceAccessor (&DistributionCollector::m_outputString))
     // PERCENTILE TRACE SOURCES FOR CUMULATIVE OUTPUT TYPE ////////////////////
     .AddTraceSource ("Output5thPercentile",
                      "The 5th percentile of the received samples. "
@@ -219,6 +224,13 @@ DistributionCollector::DoDispose ()
 
   if (IsEnabled ())
     {
+      // Variables related to cumulative distribution.
+      double percentile5 = 0.0;
+      double percentile25 = 0.0;
+      double percentile50 = 0.0;
+      double percentile75 = 0.0;
+      double percentile95 = 0.0;
+
       // Compute output for `Output` trace source.
 
       switch (m_outputType)
@@ -281,27 +293,32 @@ DistributionCollector::DoDispose ()
 
                     if ((y0 < 0.05) && (y2 >= 0.05))
                       {
-                        m_output5thPercentile (GetInterpolatedX1 (x0, y0, 0.05, y2));
+                        percentile5 = GetInterpolatedX1 (x0, y0, 0.05, y2);
+                        m_output5thPercentile (percentile5);
                       }
 
                     if ((y0 < 0.25) && (y2 >= 0.25))
                       {
-                        m_output25thPercentile (GetInterpolatedX1 (x0, y0, 0.25, y2));
+                        percentile25 = GetInterpolatedX1 (x0, y0, 0.25, y2);
+                        m_output25thPercentile (percentile25);
                       }
 
                     if ((y0 < 0.50) && (y2 >= 0.50))
                       {
-                        m_output50thPercentile (GetInterpolatedX1 (x0, y0, 0.50, y2));
+                        percentile50 = GetInterpolatedX1 (x0, y0, 0.50, y2);
+                        m_output50thPercentile (percentile50);
                       }
 
                     if ((y0 < 0.75) && (y2 >= 0.75))
                       {
-                        m_output75thPercentile (GetInterpolatedX1 (x0, y0, 0.75, y2));
+                        percentile75 = GetInterpolatedX1 (x0, y0, 0.75, y2);
+                        m_output75thPercentile (percentile75);
                       }
 
                     if ((y0 < 0.95) && (y2 >= 0.95))
                       {
-                        m_output95thPercentile (GetInterpolatedX1 (x0, y0, 0.95, y2));
+                        percentile95 = GetInterpolatedX1 (x0, y0, 0.95, y2);
+                        m_output95thPercentile (percentile95);
                       }
 
                     // Advance x0 and y0.
@@ -331,6 +348,34 @@ DistributionCollector::DoDispose ()
       m_outputStddev (m_calculator.getStddev ());
       m_outputVariance (m_calculator.getVariance ());
       m_outputSqrSum (m_calculator.getSqrSum ());
+
+      // Compute output for `Output` trace source.
+
+      std::ostringstream oss;
+      oss << "% min_value: " << m_minValue << std::endl;
+      oss << "% max_value: " << m_maxValue << std::endl;
+      oss << "% bin_length: " << m_binLength << std::endl;
+      oss << "% num_of_bins: " << m_bins->GetNumOfBins () << std::endl;
+      oss << "% output_type: '" << GetOutputTypeName (m_outputType) << "'" << std::endl;
+      oss << "% count: " << m_calculator.getCount () << std::endl;
+      oss << "% sum: " << m_calculator.getSum () << std::endl;
+      oss << "% min: " << m_calculator.getMin () << std::endl;
+      oss << "% max: " << m_calculator.getMax () << std::endl;
+      oss << "% mean: " << m_calculator.getMean () << std::endl;
+      oss << "% stddev: " << m_calculator.getStddev () << std::endl;
+      oss << "% variance: " << m_calculator.getVariance () << std::endl;
+      oss << "% sqr_sum: " << m_calculator.getSqrSum () << std::endl;
+
+      if (m_outputType == DistributionCollector::OUTPUT_TYPE_CUMULATIVE)
+        {
+          oss << "% percentile_5: " << percentile5 << std::endl;
+          oss << "% percentile_25: " << percentile25 << std::endl;
+          oss << "% percentile_50: " << percentile50 << std::endl;
+          oss << "% percentile_75: " << percentile75 << std::endl;
+          oss << "% percentile_95: " << percentile95 << std::endl;
+        }
+
+      m_outputString (oss.str ());
 
     } // end of `if (IsEnabled ())`
 
