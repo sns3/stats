@@ -131,12 +131,17 @@ MultiFileAggregator::~MultiFileAggregator ()
       // Find the context-specific heading for this context.
       std::map<std::string, std::string>::iterator it2 = m_contextHeading.find (context);
 
-      if (it2 != m_contextHeading.end ())
+      if ((it2 != m_contextHeading.end ()) && !it2->second.empty ())
         {
           ofs << it2->second << std::endl;
         }
 
-      ofs << m_generalHeading << std::endl;    // print the general heading.
+      // Print the general heading.
+      if (!m_generalHeading.empty ())
+        {
+          ofs << m_generalHeading << std::endl;
+        }
+
       ofs << it->second->str () << std::endl;  // print the buffered data.
       ofs.close ();                            // close the file.
     }
