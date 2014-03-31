@@ -23,6 +23,7 @@
 #include <ns3/log.h>
 #include <ns3/simulator.h>
 #include <ns3/enum.h>
+#include <sstream>
 
 NS_LOG_COMPONENT_DEFINE ("IntervalRateCollector");
 
@@ -162,6 +163,10 @@ IntervalRateCollector::GetTypeId ()
     .AddTraceSource ("OutputWithoutTime",
                      "The accumulated sum during the recent interval.",
                      MakeTraceSourceAccessor (&IntervalRateCollector::m_outputWithoutTime))
+    .AddTraceSource ("OutputString",
+                     "Various setup and statistical information, "
+                     "fired when the collector instance is destroyed.",
+                     MakeTraceSourceAccessor (&IntervalRateCollector::m_outputString))
   ;
   return tid;
 }
@@ -209,6 +214,13 @@ IntervalRateCollector::DoDispose ()
         default:
           break;
         }
+
+      // Compute output for `OutputString` trace source.
+      std::ostringstream oss;
+      oss << "% output_type: '" << GetOutputTypeName (m_outputType) << "'" << std::endl;
+      oss << "% count: " << m_overallNumOfSamples << std::endl;
+      oss << "% sum: " << sum << std::endl;
+      m_outputString (oss.str ());
 
     } // end of `if (IsEnabled ())`
 
@@ -368,6 +380,8 @@ IntervalRateCollector::TraceSinkDouble (double oldData, double newData)
         {
           m_intervalSumDouble += newData;
           m_overallSumDouble += newData;
+          m_intervalNumOfSamples++;
+          m_overallNumOfSamples++;
         }
       else
         {
@@ -413,6 +427,8 @@ IntervalRateCollector::TraceSinkUinteger64 (uint64_t oldData, uint64_t newData)
         {
           m_intervalSumUinteger += newData;
           m_overallSumUinteger += newData;
+          m_intervalNumOfSamples++;
+          m_overallNumOfSamples++;
         }
       else
         {

@@ -74,6 +74,17 @@ namespace ns3 {
  * as the inputs. The time information is exported in unit of seconds by
  * default, or as specified otherwise by calling the SetTimeUnit() method or
  * setting the `TimeUnit` attribute.
+ *
+ * In addition, the class also exports the total number of input samples
+ * received during the simulation as the `OutputCount` trace source. The same
+ * information is also available from the `OutputString` trace source, which
+ * has an output similar to the following:
+ * \code
+ * % output_type: 'OUTPUT_TYPE_SUM'
+ * % count: 57
+ * % sum: 672.72
+ * \endcode
+ * These two trace sources are exported at the end of simulation.
  */
 class IntervalRateCollector : public DataCollectionObject
 {
@@ -297,6 +308,9 @@ private:
 
   /// `OutputWithoutTime` trace source.
   TracedCallback<double> m_outputWithoutTime;
+
+  /// `OutputString` trace source.
+  TracedCallback<std::string> m_outputString;
 
 }; // end of class IntervalRateCollector
 
