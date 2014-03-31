@@ -349,7 +349,7 @@ DistributionCollector::DoDispose ()
       m_outputVariance (m_calculator.getVariance ());
       m_outputSqrSum (m_calculator.getSqrSum ());
 
-      // Compute output for `Output` trace source.
+      // Compute output for `OutputString` trace source.
 
       std::ostringstream oss;
       oss << "% min_value: " << m_minValue << std::endl;

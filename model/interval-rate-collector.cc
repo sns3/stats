@@ -202,10 +202,8 @@ IntervalRateCollector::DoDispose ()
           break;
 
         case IntervalRateCollector::OUTPUT_TYPE_AVERAGE_PER_SAMPLE:
-          if (m_overallNumOfSamples > 0) // Silly way of avoiding division by zero.
-            {
-              m_outputOverall (sum / static_cast<double> (m_overallNumOfSamples));
-            }
+          // This may produce -nan if number of sample is zero.
+          m_outputOverall (sum / static_cast<double> (m_overallNumOfSamples));
           break;
 
         default:
@@ -331,13 +329,13 @@ IntervalRateCollector::NewInterval ()
           break;
 
         case IntervalRateCollector::OUTPUT_TYPE_AVERAGE_PER_SAMPLE:
-          if (m_intervalNumOfSamples > 0) // Silly way of avoiding division by zero.
-            {
-              const double ratio = sum / static_cast<double> (m_intervalNumOfSamples);
-              m_outputWithTime (time, ratio);
-              m_outputWithoutTime (ratio);
-            }
-          break;
+          {
+            // This may produce -nan if number of sample is zero.
+            const double ratio = sum / static_cast<double> (m_intervalNumOfSamples);
+            m_outputWithTime (time, ratio);
+            m_outputWithoutTime (ratio);
+            break;
+          }
 
         default:
           break;

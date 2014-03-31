@@ -163,11 +163,8 @@ ScalarCollector::DoDispose ()
           break;
 
         case ScalarCollector::OUTPUT_TYPE_AVERAGE_PER_SAMPLE:
-          if (m_hasReceivedSample)
-            {
-              NS_ASSERT (m_numOfSamples > 0);
-              output = sum / static_cast<double> (m_numOfSamples);
-            }
+          // This may produce -nan if number of sample is zero.
+          output = sum / static_cast<double> (m_numOfSamples);
           break;
 
         case ScalarCollector::OUTPUT_TYPE_AVERAGE_PER_SECOND:

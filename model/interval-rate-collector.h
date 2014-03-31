@@ -111,6 +111,7 @@ public:
     OUTPUT_TYPE_NUMBER_OF_SAMPLE,
     /**
      * The sum of the received inputs, divided by the number of input samples.
+     * Equals to `-nan` if there is no input sample received.
      */
     OUTPUT_TYPE_AVERAGE_PER_SAMPLE
   } OutputType_t;
