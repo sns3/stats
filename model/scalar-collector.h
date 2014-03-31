@@ -50,7 +50,8 @@ namespace ns3 {
  * This class sums all the received input values. The operation utilized to sum
  * those values is by default a simple addition operation. Additional operation,
  * such as averaging, may be specified by calling the the SetOutputType() method
- * or setting the `OutputType` attribute.
+ * or setting the `OutputType` attribute. For boolean data type, a `true` value
+ * is regarded as 1, while a `false` value is regarded as 0.
  *
  * ### Output ###
  * At the end of the instance's life (e.g., when the simulation ends), the
@@ -67,7 +68,8 @@ public:
   typedef enum
   {
     INPUT_DATA_TYPE_DOUBLE = 0,  ///< Accepts `double` data type as input.
-    INPUT_DATA_TYPE_UINTEGER     ///< Accepts unsigned integer data types as input.
+    INPUT_DATA_TYPE_UINTEGER,    ///< Accepts unsigned integer data types as input.
+    INPUT_DATA_TYPE_BOOLEAN      ///< Accepts boolean data type as input.
   } InputDataType_t;
 
   /**
@@ -208,6 +210,18 @@ public:
    */
   void TraceSinkUinteger64 (uint64_t oldData, uint64_t newData);
 
+  /**
+   * \brief Trace sink for receiving data from `bool` valued trace sources.
+   * \param oldData the original value.
+   * \param newData the new value.
+   *
+   * This method serves as a trace sink to `bool` valued trace sources.
+   *
+   * This trace sink is only operating when the current input data type is set
+   * to `INPUT_DATA_TYPE_BOOLEAN`. This can be set by calling the
+   * SetInputDataType() method or setting the `InputDataType` attribute.
+   */
+  void TraceSinkBoolean (bool oldData, bool newData);
 
 protected:
   // Inherited from Object base class

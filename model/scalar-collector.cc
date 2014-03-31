@@ -41,6 +41,8 @@ ScalarCollector::GetInputDataTypeName (ScalarCollector::InputDataType_t inputDat
       return "INPUT_DATA_TYPE_DOUBLE";
     case ScalarCollector::INPUT_DATA_TYPE_UINTEGER:
       return "INPUT_DATA_TYPE_UINTEGER";
+    case ScalarCollector::INPUT_DATA_TYPE_BOOLEAN:
+      return "INPUT_DATA_TYPE_BOOLEAN";
     default:
       return "";
     }
@@ -94,6 +96,8 @@ ScalarCollector::GetTypeId ()
                    "The value INPUT_DATA_TYPE_UINTEGER will activate the "
                    "TraceSinkUinteger8(), TraceSinkUinteger16(), "
                    "TraceSinkUinteger32(), and TraceSinkUinteger64() methods. "
+                   "Finally, the value `INPUT_DATA_TYPE_BOOLEAN` will activate"
+                   "the TraceSinkBoolean() method. "
                    "The separation of input data type is useful for preserving "
                    "accuracy (e.g., Uinteger has better accuracy at handling "
                    "packet sizes, but has the risk of overflow). In spite of "
@@ -103,7 +107,8 @@ ScalarCollector::GetTypeId ()
                    MakeEnumAccessor (&ScalarCollector::SetInputDataType,
                                      &ScalarCollector::GetInputDataType),
                    MakeEnumChecker (ScalarCollector::INPUT_DATA_TYPE_DOUBLE,   "DOUBLE",
-                                    ScalarCollector::INPUT_DATA_TYPE_UINTEGER, "UINTEGER"))
+                                    ScalarCollector::INPUT_DATA_TYPE_UINTEGER, "UINTEGER",
+                                    ScalarCollector::INPUT_DATA_TYPE_BOOLEAN,  "BOOLEAN"))
     .AddAttribute ("OutputType",
                    "Determines the mechanism of processing the incoming samples.",
                    EnumValue (ScalarCollector::OUTPUT_TYPE_SUM),
@@ -137,6 +142,7 @@ ScalarCollector::DoDispose ()
           break;
 
         case ScalarCollector::INPUT_DATA_TYPE_UINTEGER:
+        case ScalarCollector::INPUT_DATA_TYPE_BOOLEAN:
           sum = static_cast<double> (m_sumUinteger);
           break;
 
@@ -157,9 +163,9 @@ ScalarCollector::DoDispose ()
           break;
 
         case ScalarCollector::OUTPUT_TYPE_AVERAGE_PER_SAMPLE:
-          if (m_numOfSamples > 0) // Silly way of avoiding division by zero.
+          if (m_hasReceivedSample)
             {
-              NS_ASSERT (m_hasReceivedSample);
+              NS_ASSERT (m_numOfSamples > 0);
               output = sum / static_cast<double> (m_numOfSamples);
             }
           break;
@@ -285,6 +291,39 @@ ScalarCollector::TraceSinkUinteger64 (uint64_t oldData, uint64_t newData)
       if (m_inputDataType == ScalarCollector::INPUT_DATA_TYPE_UINTEGER)
         {
           m_sumUinteger += newData;
+          m_numOfSamples++;
+          m_lastSample = Simulator::Now ();
+
+          if (!m_hasReceivedSample)
+            {
+              m_firstSample = Simulator::Now ();
+              m_hasReceivedSample = true;
+              NS_LOG_INFO (this << " first sample at " << m_firstSample.GetSeconds ());
+            }
+        }
+      else
+        {
+          NS_LOG_WARN (this << " ignoring the incoming sample " << newData
+                            << " because of unexpected data type");
+        }
+    }
+}
+
+
+void
+ScalarCollector::TraceSinkBoolean (bool oldData, bool newData)
+{
+  NS_LOG_FUNCTION (this << GetName () << newData);
+
+  if (IsEnabled ())
+    {
+      if (m_inputDataType == ScalarCollector::INPUT_DATA_TYPE_BOOLEAN)
+        {
+          if (newData)
+            {
+              m_sumUinteger++;
+            }
+
           m_numOfSamples++;
           m_lastSample = Simulator::Now ();
 

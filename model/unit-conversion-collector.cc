@@ -308,11 +308,11 @@ UnitConversionCollector::Convert (double original) const
       break;
 
     case UnitConversionCollector::FROM_BYTES_TO_KBIT:
-      return 8.0 * original / 1000;
+      return 8.0 * original * 1e-3;
       break;
 
     case UnitConversionCollector::FROM_BYTES_TO_MBIT:
-      return 8.0 * original / 1000000;
+      return 8.0 * original * 1e-6;
       break;
 
     case UnitConversionCollector::FROM_SECONDS_TO_MS:

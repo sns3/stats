@@ -41,6 +41,25 @@ IntervalRateCollector::GetInputDataTypeName (IntervalRateCollector::InputDataTyp
       return "INPUT_DATA_TYPE_DOUBLE";
     case IntervalRateCollector::INPUT_DATA_TYPE_UINTEGER:
       return "INPUT_DATA_TYPE_UINTEGER";
+    case IntervalRateCollector::INPUT_DATA_TYPE_BOOLEAN:
+      return "INPUT_DATA_TYPE_BOOLEAN";
+    default:
+      return "";
+    }
+}
+
+
+std::string // static
+IntervalRateCollector::GetOutputTypeName (IntervalRateCollector::OutputType_t outputType)
+{
+  switch (outputType)
+    {
+    case IntervalRateCollector::OUTPUT_TYPE_SUM:
+      return "OUTPUT_TYPE_SUM";
+    case IntervalRateCollector::OUTPUT_TYPE_NUMBER_OF_SAMPLE:
+      return "OUTPUT_TYPE_NUMBER_OF_SAMPLE";
+    case IntervalRateCollector::OUTPUT_TYPE_AVERAGE_PER_SAMPLE:
+      return "OUTPUT_TYPE_AVERAGE_PER_SAMPLE";
     default:
       return "";
     }
@@ -52,9 +71,12 @@ IntervalRateCollector::IntervalRateCollector ()
     m_overallSumDouble (0.0),
     m_intervalSumUinteger (0),
     m_overallSumUinteger (0),
+    m_intervalNumOfSamples (0),
+    m_overallNumOfSamples (0),
     m_nextReset (),
     m_intervalLength (Seconds (1.0)),
     m_inputDataType (IntervalRateCollector::INPUT_DATA_TYPE_DOUBLE),
+    m_outputType (IntervalRateCollector::OUTPUT_TYPE_SUM),
     m_timeUnit (Time::S)
 {
   NS_LOG_FUNCTION (this << GetName ());
@@ -91,6 +113,8 @@ IntervalRateCollector::GetTypeId ()
                    "The value `INPUT_DATA_TYPE_UINTEGER` will activate the "
                    "TraceSinkUinteger8(), TraceSinkUinteger16(), "
                    "TraceSinkUinteger32(), and TraceSinkUinteger64() methods. "
+                   "Finally, the value `INPUT_DATA_TYPE_BOOLEAN` will activate"
+                   "the TraceSinkBoolean() method. "
                    "The separation of input data type is useful for preserving "
                    "accuracy (e.g., unsigned integer has better accuracy "
                    "at handling packet sizes, but has the risk of overflow). "
@@ -100,7 +124,16 @@ IntervalRateCollector::GetTypeId ()
                    MakeEnumAccessor (&IntervalRateCollector::SetInputDataType,
                                      &IntervalRateCollector::GetInputDataType),
                    MakeEnumChecker (IntervalRateCollector::INPUT_DATA_TYPE_DOUBLE,   "DOUBLE",
-                                    IntervalRateCollector::INPUT_DATA_TYPE_UINTEGER, "UINTEGER"))
+                                    IntervalRateCollector::INPUT_DATA_TYPE_UINTEGER, "UINTEGER",
+                                    IntervalRateCollector::INPUT_DATA_TYPE_BOOLEAN,  "BOOLEAN"))
+     .AddAttribute ("OutputType",
+                    "Determines the mechanism of processing the incoming samples.",
+                    EnumValue (IntervalRateCollector::OUTPUT_TYPE_SUM),
+                    MakeEnumAccessor (&IntervalRateCollector::SetOutputType,
+                                      &IntervalRateCollector::GetOutputType),
+                    MakeEnumChecker (IntervalRateCollector::OUTPUT_TYPE_SUM,                "SUM",
+                                     IntervalRateCollector::OUTPUT_TYPE_NUMBER_OF_SAMPLE,   "NUMBER_OF_SAMPLE",
+                                     IntervalRateCollector::OUTPUT_TYPE_AVERAGE_PER_SAMPLE, "AVERAGE_PER_SAMPLE"))
     .AddAttribute ("TimeUnit",
                    "Determines the unit used for the time output (i.e., the "
                    "`OutputWithTime` trace source",
@@ -141,21 +174,47 @@ IntervalRateCollector::DoDispose ()
 
   if (IsEnabled ())
     {
+      double sum = 0.0;
+
       switch (m_inputDataType)
         {
         case IntervalRateCollector::INPUT_DATA_TYPE_DOUBLE:
-          m_outputOverall (m_overallSumDouble);
+          sum = m_overallSumDouble;
           break;
 
         case IntervalRateCollector::INPUT_DATA_TYPE_UINTEGER:
-          m_outputOverall (static_cast<double> (m_overallSumUinteger));
+        case IntervalRateCollector::INPUT_DATA_TYPE_BOOLEAN:
+          sum = static_cast<double> (m_overallSumUinteger);
           break;
 
         default:
           break;
         }
-    }
-}
+
+      switch (m_outputType)
+        {
+        case IntervalRateCollector::OUTPUT_TYPE_SUM:
+          m_outputOverall (sum);
+          break;
+
+        case IntervalRateCollector::OUTPUT_TYPE_NUMBER_OF_SAMPLE:
+          m_outputOverall (m_overallNumOfSamples);
+          break;
+
+        case IntervalRateCollector::OUTPUT_TYPE_AVERAGE_PER_SAMPLE:
+          if (m_overallNumOfSamples > 0) // Silly way of avoiding division by zero.
+            {
+              m_outputOverall (sum / static_cast<double> (m_overallNumOfSamples));
+            }
+          break;
+
+        default:
+          break;
+        }
+
+    } // end of `if (IsEnabled ())`
+
+} // end of `void DoDispose ();`
 
 
 void
@@ -185,6 +244,21 @@ IntervalRateCollector::InputDataType_t
 IntervalRateCollector::GetInputDataType () const
 {
   return m_inputDataType;
+}
+
+
+void
+IntervalRateCollector::SetOutputType (IntervalRateCollector::OutputType_t outputType)
+{
+  NS_LOG_FUNCTION (this << GetName () << GetOutputTypeName (outputType));
+  m_outputType = outputType;
+}
+
+
+IntervalRateCollector::OutputType_t
+IntervalRateCollector::GetOutputType () const
+{
+  return m_outputType;
 }
 
 
@@ -227,20 +301,43 @@ IntervalRateCollector::NewInterval ()
     {
       const double time = Simulator::Now ().ToDouble (m_timeUnit);
 
+      double sum = 0.0;
+
       switch (m_inputDataType)
         {
         case IntervalRateCollector::INPUT_DATA_TYPE_DOUBLE:
-          m_outputWithTime (time, m_intervalSumDouble);
-          m_outputWithoutTime (m_intervalSumDouble);
+          sum = m_intervalSumDouble;
           break;
 
         case IntervalRateCollector::INPUT_DATA_TYPE_UINTEGER:
-          {
-            const double sum = static_cast<double> (m_intervalSumUinteger);
-            m_outputWithTime (time, sum);
-            m_outputWithoutTime (sum);
-            break;
-          }
+        case IntervalRateCollector::INPUT_DATA_TYPE_BOOLEAN:
+          sum = static_cast<double> (m_intervalSumUinteger);
+          break;
+
+        default:
+          break;
+        }
+
+      switch (m_outputType)
+        {
+        case IntervalRateCollector::OUTPUT_TYPE_SUM:
+          m_outputWithTime (time, sum);
+          m_outputWithoutTime (sum);
+          break;
+
+        case IntervalRateCollector::OUTPUT_TYPE_NUMBER_OF_SAMPLE:
+          m_outputWithTime (time, m_intervalNumOfSamples);
+          m_outputWithoutTime (m_intervalNumOfSamples);
+          break;
+
+        case IntervalRateCollector::OUTPUT_TYPE_AVERAGE_PER_SAMPLE:
+          if (m_intervalNumOfSamples > 0) // Silly way of avoiding division by zero.
+            {
+              const double ratio = sum / static_cast<double> (m_intervalNumOfSamples);
+              m_outputWithTime (time, ratio);
+              m_outputWithoutTime (ratio);
+            }
+          break;
 
         default:
           break;
@@ -250,6 +347,7 @@ IntervalRateCollector::NewInterval ()
   // Reset the accumulated values.
   m_intervalSumDouble = 0.0;
   m_intervalSumUinteger = 0;
+  m_intervalNumOfSamples = 0;
 
   if (m_intervalLength > MilliSeconds (0))
     {
@@ -317,6 +415,33 @@ IntervalRateCollector::TraceSinkUinteger64 (uint64_t oldData, uint64_t newData)
         {
           m_intervalSumUinteger += newData;
           m_overallSumUinteger += newData;
+        }
+      else
+        {
+          NS_LOG_WARN (this << " ignoring the incoming sample " << newData
+                            << " because of unexpected data type");
+        }
+    }
+}
+
+
+void
+IntervalRateCollector::TraceSinkBoolean (bool oldData, bool newData)
+{
+  NS_LOG_FUNCTION (this << GetName () << newData);
+
+  if (IsEnabled ())
+    {
+      if (m_inputDataType == IntervalRateCollector::INPUT_DATA_TYPE_BOOLEAN)
+        {
+          if (newData)
+            {
+              m_intervalSumUinteger++;
+              m_overallSumUinteger++;
+            }
+
+          m_intervalNumOfSamples++;
+          m_overallNumOfSamples++;
         }
       else
         {

@@ -55,20 +55,25 @@ namespace ns3 {
  * SetIntervalLength() method or setting the `IntervalLength` attribute. The
  * instance accumulates the received input during the interval into a summed
  * value. Then at the end of each interval, the summed value is emitted as
- * output and reset back to zero.
+ * output and reset back to zero. For boolean data type, a `true` value is
+ * regarded as 1, while a `false` value is regarded as 0.
  *
  * ### Output ###
- * This class utilizes 3 trace sources to export the output:
- * - `OutputWithoutTime`: the summed value from an interval, emitted at the end
- *   of every interval.
- * - `OutputWithTime`: the interval's ending time and its summed value, emitted
- *   at the end of every interval.
- * - `OutputOverall`: the total sum from all intervals, emitted when the
- *   instance is destroyed.
- * The summed values are exported in `double` data type in the same unit as the
- * inputs. The time information is exported in unit of seconds by default, or
- * as specified otherwise by calling the SetTimeUnit() method or setting the
- * `TimeUnit` attribute.
+ * Samples received are *consolidated* using one of 3 available ways (e.g., sum,
+ * count, average). It can be selected by calling the SetOutputType() method or
+ * setting the `OutputType` attribute.
+ *
+ * After that, this class utilizes 3 trace sources to export the output:
+ * - `OutputWithoutTime`: the consolidated value from an interval, emitted at
+ *   the end of every interval.
+ * - `OutputWithTime`: the interval's ending time and its consolidated value,
+ *   emitted at the end of every interval.
+ * - `OutputOverall`: the consolidated value from all intervals, emitted when
+ *   the instance is destroyed.
+ * The consolidated values are exported in `double` data type in the same unit
+ * as the inputs. The time information is exported in unit of seconds by
+ * default, or as specified otherwise by calling the SetTimeUnit() method or
+ * setting the `TimeUnit` attribute.
  */
 class IntervalRateCollector : public DataCollectionObject
 {
@@ -80,7 +85,8 @@ public:
   typedef enum
   {
     INPUT_DATA_TYPE_DOUBLE = 0,  ///< Accepts `double` data type as input.
-    INPUT_DATA_TYPE_UINTEGER     ///< Accepts unsigned integer data types as input.
+    INPUT_DATA_TYPE_UINTEGER,    ///< Accepts unsigned integer data types as input.
+    INPUT_DATA_TYPE_BOOLEAN      ///< Accepts boolean data type as input.
   } InputDataType_t;
 
   /**
@@ -88,6 +94,32 @@ public:
    * \return representation of the input data type in string.
    */
   static std::string GetInputDataTypeName (InputDataType_t inputDataType);
+
+  /**
+   * \enum OutputType_t
+   * \brief Type of output supported by this class.
+   */
+  typedef enum
+  {
+    /**
+     * The sum of all the received inputs.
+     */
+    OUTPUT_TYPE_SUM = 0,
+    /**
+     * The number of received input samples.
+     */
+    OUTPUT_TYPE_NUMBER_OF_SAMPLE,
+    /**
+     * The sum of the received inputs, divided by the number of input samples.
+     */
+    OUTPUT_TYPE_AVERAGE_PER_SAMPLE
+  } OutputType_t;
+
+  /**
+   * \param outputType an arbitrary output type.
+   * \return representation of the output type in string.
+   */
+  static std::string GetOutputTypeName (OutputType_t outputType);
 
   /// Creates a new collector instance.
   IntervalRateCollector ();
@@ -118,6 +150,16 @@ public:
    * \return the data type accepted as input.
    */
   InputDataType_t GetInputDataType () const;
+
+  /**
+   * \param outputType the processing mechanism used by this instance.
+   */
+  void SetOutputType (OutputType_t outputType);
+
+  /**
+   * \return the processing mechanism used by this instance.
+   */
+  OutputType_t GetOutputType () const;
 
   /**
    * \param unit the unit used for the time output.
@@ -202,6 +244,19 @@ public:
    */
   void TraceSinkUinteger64 (uint64_t oldData, uint64_t newData);
 
+  /**
+   * \brief Trace sink for receiving data from `bool` valued trace sources.
+   * \param oldData the original value.
+   * \param newData the new value.
+   *
+   * This method serves as a trace sink to `bool` valued trace sources.
+   *
+   * This trace sink is only operating when the current input data type is set
+   * to `INPUT_DATA_TYPE_BOOLEAN`. This can be set by calling the
+   * SetInputDataType() method or setting the `InputDataType` attribute.
+   */
+  void TraceSinkBoolean (bool oldData, bool newData);
+
 protected:
   // Inherited from Object base class
   virtual void DoDispose ();
@@ -217,6 +272,8 @@ private:
   double           m_overallSumDouble;
   uint64_t         m_intervalSumUinteger;
   uint64_t         m_overallSumUinteger;
+  uint32_t         m_intervalNumOfSamples;
+  uint32_t         m_overallNumOfSamples;
   EventId          m_nextReset;
 
   /// `IntervalLength` attribute.
@@ -224,6 +281,9 @@ private:
 
   /// `InputDataType` attribute.
   InputDataType_t  m_inputDataType;
+
+  /// `OutputType` attribute.
+  OutputType_t     m_outputType;
 
   /// `TimeUnit` attribute.
   Time::Unit       m_timeUnit;
