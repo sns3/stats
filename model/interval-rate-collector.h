@@ -274,18 +274,39 @@ protected:
   virtual void DoDispose ();
 
 private:
-  ///
+  /**
+   * \internal
+   * Start the first interval.
+   */
   void FirstInterval ();
 
-  ///
+  /**
+   * \internal
+   * End the current interval, emit outputs related to this interval through
+   * trace sources, reset the accumulated values, and finally starts the next
+   * interval.
+   */
   void NewInterval ();
 
+  /// Sum of all `DOUBLE` inputs received during the current interval.
   double           m_intervalSumDouble;
+
+  /// Sum of all `DOUBLE` inputs received from all the intervals so far.
   double           m_overallSumDouble;
+
+  /// Sum of all `UINTEGER` and `BOOLEAN` inputs received during the current interval.
   uint64_t         m_intervalSumUinteger;
+
+  /// Sum of all `UINTEGER` and `BOOLEAN` inputs received from all the intervals so far.
   uint64_t         m_overallSumUinteger;
+
+  /// Number of inputs received during the current interval.
   uint32_t         m_intervalNumOfSamples;
+
+  /// Number of inputs received from all the intervals so far.
   uint32_t         m_overallNumOfSamples;
+
+  /// The end time of the current interval and the start time of the next interval.
   EventId          m_nextReset;
 
   /// `IntervalLength` attribute.

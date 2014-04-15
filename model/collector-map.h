@@ -38,6 +38,37 @@ namespace ns3 {
  * \ingroup aggregator
  * \brief Keep track and manipulate a set of statistics collectors within the
  *        data collection framework.
+ *
+ * The map contains a set of collectors of the same type. Each of them is
+ * uniquely identified by a non-negative integer called an *identifier*.
+ *
+ * The constructor creates an empty map. The following example demonstrates
+ * adding two collectors into a new map.
+ * \code
+ *   // Create a new map with zero collector.
+ *   CollectorMap c;
+ *
+ *   // set the type of collectors to be created.
+ *   c.SetType ("ns3::ScalarCollector");
+ *
+ *   // Set the attributes of collectors to be created.
+ *   c.SetAttribute ("Name",
+ *                   StringValue ("collector-1"));
+ *   c.SetAttribute ("InputDataType",
+ *                   EnumValue (ScalarCollector::INPUT_DATA_TYPE_DOUBLE));
+ *   c.SetAttribute ("OutputType",
+ *                   EnumValue (ScalarCollector::OUTPUT_TYPE_SUM));
+ *
+ *   // Create a collector with identifier `1`.
+ *   c.Create (1);
+ *
+ *   // Set the attribute of collectors to be created.
+ *   c.SetAttribute ("Name",
+ *                   StringValue ("collector-3"));
+ *
+ *   // Create a collector with identifier `3`.
+ *   c.Create (3);
+ * \endcode
  */
 class CollectorMap
 {
@@ -49,7 +80,7 @@ public:
    * \param type the type of collectors to be created.
    *
    * \warning Will raise an error if the TypeId referred by the `type` argument
-   *          is not a child of DataCollectionObject.
+   *          does not refer to a class derived from DataCollectionObject class.
    */
   void SetType (std::string type);
 
