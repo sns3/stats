@@ -119,7 +119,15 @@ MultiFileAggregator::~MultiFileAggregator ()
         }
 
       // Creating a file for output.
-      const std::string fileName = m_outputFileName + '-' + context + ".txt";
+      std::string fileName;
+      if (m_isMultiFileMode)
+        {
+          fileName = m_outputFileName + '-' + context + ".txt";
+        }
+      else
+        {
+          fileName = m_outputFileName + ".txt";
+        }
       NS_LOG_LOGIC ("Creating a new file " << fileName);
       std::ofstream ofs (fileName.c_str ());
 
