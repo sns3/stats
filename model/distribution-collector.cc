@@ -461,7 +461,7 @@ DistributionCollector::GetOutputType () const
 // TRACE SINKS ////////////////////////////////////////////////////////////////
 
 void
-DistributionCollector::TraceSinkDouble (double oldData, double newData)
+DistributionCollector::TraceSinkDouble1 (double newData)
 {
   NS_LOG_FUNCTION (this << GetName () << newData);
 
@@ -479,9 +479,17 @@ DistributionCollector::TraceSinkDouble (double oldData, double newData)
 
 
 void
+DistributionCollector::TraceSinkDouble (double oldData, double newData)
+{
+  TraceSinkDouble1 (newData);
+  // Note: old data is discarded.
+}
+
+
+void
 DistributionCollector::TraceSinkInteger8 (int8_t oldData, int8_t newData)
 {
-  TraceSinkDouble (0, static_cast<double> (newData));
+  TraceSinkDouble1 (static_cast<double> (newData));
   // Note: old data is discarded.
 }
 
@@ -489,7 +497,7 @@ DistributionCollector::TraceSinkInteger8 (int8_t oldData, int8_t newData)
 void
 DistributionCollector::TraceSinkInteger16 (int16_t oldData, int16_t newData)
 {
-  TraceSinkDouble (0, static_cast<double> (newData));
+  TraceSinkDouble1 (static_cast<double> (newData));
   // Note: old data is discarded.
 }
 
@@ -497,7 +505,7 @@ DistributionCollector::TraceSinkInteger16 (int16_t oldData, int16_t newData)
 void
 DistributionCollector::TraceSinkInteger32 (int32_t oldData, int32_t newData)
 {
-  TraceSinkDouble (0, static_cast<double> (newData));
+  TraceSinkDouble1 (static_cast<double> (newData));
   // Note: old data is discarded.
 }
 
@@ -505,7 +513,7 @@ DistributionCollector::TraceSinkInteger32 (int32_t oldData, int32_t newData)
 void
 DistributionCollector::TraceSinkInteger64 (int64_t oldData, int64_t newData)
 {
-  TraceSinkDouble (0, static_cast<double> (newData));
+  TraceSinkDouble1 (static_cast<double> (newData));
   // Note: old data is discarded.
 }
 
@@ -513,7 +521,7 @@ DistributionCollector::TraceSinkInteger64 (int64_t oldData, int64_t newData)
 void
 DistributionCollector::TraceSinkUinteger8 (uint8_t oldData, uint8_t newData)
 {
-  TraceSinkDouble (0, static_cast<double> (newData));
+  TraceSinkDouble1 (static_cast<double> (newData));
   // Note: old data is discarded.
 }
 
@@ -521,7 +529,7 @@ DistributionCollector::TraceSinkUinteger8 (uint8_t oldData, uint8_t newData)
 void
 DistributionCollector::TraceSinkUinteger16 (uint16_t oldData, uint16_t newData)
 {
-  TraceSinkDouble (0, static_cast<double> (newData));
+  TraceSinkDouble1 (static_cast<double> (newData));
   // Note: old data is discarded.
 }
 
@@ -529,7 +537,7 @@ DistributionCollector::TraceSinkUinteger16 (uint16_t oldData, uint16_t newData)
 void
 DistributionCollector::TraceSinkUinteger32 (uint32_t oldData, uint32_t newData)
 {
-  TraceSinkDouble (0, static_cast<double> (newData));
+  TraceSinkDouble1 (static_cast<double> (newData));
   // Note: old data is discarded.
 }
 
@@ -537,7 +545,7 @@ DistributionCollector::TraceSinkUinteger32 (uint32_t oldData, uint32_t newData)
 void
 DistributionCollector::TraceSinkUinteger64 (uint64_t oldData, uint64_t newData)
 {
-  TraceSinkDouble (0, static_cast<double> (newData));
+  TraceSinkDouble1 (static_cast<double> (newData));
   // Note: old data is discarded.
 }
 

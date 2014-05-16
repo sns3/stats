@@ -216,6 +216,14 @@ public:
 
   /**
    * \brief Trace sink for receiving data from `double` valued trace sources.
+   * \param newData the new value.
+   *
+   * This method serves as a trace sink to `double` valued trace sources.
+   */
+  void TraceSinkDouble1 (double newData);
+
+  /**
+   * \brief Trace sink for receiving data from `double` valued trace sources.
    * \param oldData the original value.
    * \param newData the new value.
    *
