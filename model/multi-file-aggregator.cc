@@ -65,10 +65,15 @@ MultiFileAggregator::GetTypeId ()
                                     MultiFileAggregator::TAB_SEPARATED,   "TAB_SEPARATED"))
     .AddAttribute ("MultiFileMode",
                    "If true, write each context to a separate output file. "
-                   "Otherwise, write all contexts to a single file "
-                   "and include the context string in front of every line.",
+                   "Otherwise, write all contexts to a single file.",
                    BooleanValue (true),
                    MakeBooleanAccessor (&MultiFileAggregator::m_isMultiFileMode),
+                   MakeBooleanChecker ())
+    .AddAttribute ("EnableContextPrinting",
+                   "If true, include the context string in front of every "
+                   "output line. Useful when MultiFileMode is disabled.",
+                   BooleanValue (false),
+                   MakeBooleanAccessor (&MultiFileAggregator::m_isContextPrinted),
                    MakeBooleanChecker ())
     .AddAttribute ("GeneralHeading",
                    "Sets the heading string that will be printed on the first "
@@ -85,6 +90,7 @@ MultiFileAggregator::MultiFileAggregator ()
   : m_outputFileName   ("untitled.txt"),
     m_fileType         (MultiFileAggregator::SPACE_SEPARATED),
     m_isMultiFileMode  (true),
+    m_isContextPrinted (false),
     m_1dFormat         ("%e"),
     m_2dFormat         ("%e %e"),
     m_3dFormat         ("%e %e %e"),
@@ -287,16 +293,16 @@ MultiFileAggregator::WriteString (std::string context,
     {
       std::ostringstream * buff = GetBufferStream (context);
 
-      if (m_isMultiFileMode)
-        {
-          // Write the value.
-          *buff << v1 << std::endl;
-        }
-      else
+      if (m_isContextPrinted)
         {
           // Write the context and the value with the proper separator.
           *buff << context << m_separator
                 << v1 << std::endl;
+        }
+      else
+        {
+          // Write the value.
+          *buff << v1 << std::endl;
         }
     }
 }
@@ -333,16 +339,16 @@ MultiFileAggregator::Write1d (std::string context,
           // Write the formatted value.
           *buff << buffer << std::endl;
         }
-      else if (m_isMultiFileMode)
-        {
-          // Write the value.
-          *buff << v1 << std::endl;
-        }
-      else
+      else if (m_isContextPrinted)
         {
           // Write the context and the value with the proper separator.
           *buff << context << m_separator
                 << v1 << std::endl;
+        }
+      else
+        {
+          // Write the value.
+          *buff << v1 << std::endl;
         }
     }
 }
@@ -381,17 +387,17 @@ MultiFileAggregator::Write2d (std::string context,
           // Write the formatted values.
           *buff << buffer << std::endl;
         }
-      else if (m_isMultiFileMode)
-        {
-          // Write the values with the proper separator.
-          *buff << v1 << m_separator
-                << v2 << std::endl;
-        }
-      else
+      else if (m_isContextPrinted)
         {
           // Write the context and the values with the proper separator.
           *buff << context << m_separator
                 << v1 << m_separator
+                << v2 << std::endl;
+        }
+      else
+        {
+          // Write the values with the proper separator.
+          *buff << v1 << m_separator
                 << v2 << std::endl;
         }
     }
@@ -433,18 +439,18 @@ MultiFileAggregator::Write3d (std::string context,
           // Write the formatted values.
           *buff << buffer << std::endl;
         }
-      else if (m_isMultiFileMode)
+      else if (m_isContextPrinted)
         {
-          // Write the values with the proper separator.
-          *buff << v1 << m_separator
+          // Write the context and the values with the proper separator.
+          *buff << context << m_separator
+                << v1 << m_separator
                 << v2 << m_separator
                 << v3 << std::endl;
         }
       else
         {
-          // Write the context and the values with the proper separator.
-          *buff << context << m_separator
-                << v1 << m_separator
+          // Write the values with the proper separator.
+          *buff << v1 << m_separator
                 << v2 << m_separator
                 << v3 << std::endl;
         }
@@ -489,19 +495,19 @@ MultiFileAggregator::Write4d (std::string context,
           // Write the formatted values.
           *buff << buffer << std::endl;
         }
-      else if (m_isMultiFileMode)
+      else if (m_isContextPrinted)
         {
-          // Write the values with the proper separator.
-          *buff << v1 << m_separator
+          // Write the context and the values with the proper separator.
+          *buff << context << m_separator
+                << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
                 << v4 << std::endl;
         }
       else
         {
-          // Write the context and the values with the proper separator.
-          *buff << context << m_separator
-                << v1 << m_separator
+          // Write the values with the proper separator.
+          *buff << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
                 << v4 << std::endl;
@@ -549,10 +555,11 @@ MultiFileAggregator::Write5d (std::string context,
           // Write the formatted values.
           *buff << buffer << std::endl;
         }
-      else if (m_isMultiFileMode)
+      else if (m_isContextPrinted)
         {
-          // Write the values with the proper separator.
-          *buff << v1 << m_separator
+          // Write the context and the values with the proper separator.
+          *buff << context << m_separator
+                << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
                 << v4 << m_separator
@@ -560,9 +567,8 @@ MultiFileAggregator::Write5d (std::string context,
         }
       else
         {
-          // Write the context and the values with the proper separator.
-          *buff << context << m_separator
-                << v1 << m_separator
+          // Write the values with the proper separator.
+          *buff << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
                 << v4 << m_separator
@@ -613,10 +619,11 @@ MultiFileAggregator::Write6d (std::string context,
           // Write the formatted values.
           *buff << buffer << std::endl;
         }
-      else if (m_isMultiFileMode)
+      else if (m_isContextPrinted)
         {
-          // Write the values with the proper separator.
-          *buff << v1 << m_separator
+          // Write the context and the values with the proper separator.
+          *buff << context << m_separator
+                << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
                 << v4 << m_separator
@@ -625,9 +632,8 @@ MultiFileAggregator::Write6d (std::string context,
         }
       else
         {
-          // Write the context and the values with the proper separator.
-          *buff << context << m_separator
-                << v1 << m_separator
+          // Write the values with the proper separator.
+          *buff << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
                 << v4 << m_separator
@@ -681,10 +687,11 @@ MultiFileAggregator::Write7d (std::string context,
           // Write the formatted values.
           *buff << buffer << std::endl;
         }
-      else if (m_isMultiFileMode)
+      else if (m_isContextPrinted)
         {
-          // Write the values with the proper separator.
-          *buff << v1 << m_separator
+          // Write the context and the values with the proper separator.
+          *buff << context << m_separator
+                << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
                 << v4 << m_separator
@@ -694,9 +701,8 @@ MultiFileAggregator::Write7d (std::string context,
         }
       else
         {
-          // Write the context and the values with the proper separator.
-          *buff << context << m_separator
-                << v1 << m_separator
+          // Write the values with the proper separator.
+          *buff << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
                 << v4 << m_separator
@@ -753,10 +759,11 @@ MultiFileAggregator::Write8d (std::string context,
           // Write the formatted values.
           *buff << buffer << std::endl;
         }
-      else if (m_isMultiFileMode)
+      else if (m_isContextPrinted)
         {
-          // Write the values with the proper separator.
-          *buff << v1 << m_separator
+          // Write the context and the values with the proper separator.
+          *buff << context << m_separator
+                << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
                 << v4 << m_separator
@@ -767,9 +774,8 @@ MultiFileAggregator::Write8d (std::string context,
         }
       else
         {
-          // Write the context and the values with the proper separator.
-          *buff << context << m_separator
-                << v1 << m_separator
+          // Write the values with the proper separator.
+          *buff << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
                 << v4 << m_separator
@@ -829,10 +835,11 @@ MultiFileAggregator::Write9d (std::string context,
           // Write the formatted values.
           *buff << buffer << std::endl;
         }
-      else if (m_isMultiFileMode)
+      else if (m_isContextPrinted)
         {
-          // Write the values with the proper separator.
-          *buff << v1 << m_separator
+          // Write the context and the values with the proper separator.
+          *buff << context << m_separator
+                << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
                 << v4 << m_separator
@@ -844,9 +851,8 @@ MultiFileAggregator::Write9d (std::string context,
         }
       else
         {
-          // Write the context and the values with the proper separator.
-          *buff << context << m_separator
-                << v1 << m_separator
+          // Write the values with the proper separator.
+          *buff << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
                 << v4 << m_separator
@@ -909,10 +915,11 @@ MultiFileAggregator::Write10d (std::string context,
           // Write the formatted values.
           *buff << buffer << std::endl;
         }
-      else if (m_isMultiFileMode)
+      else if (m_isContextPrinted)
         {
-          // Write the values with the proper separator.
-          *buff << v1 << m_separator
+          // Write the context and the values with the proper separator.
+          *buff << context << m_separator
+                << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
                 << v4 << m_separator
@@ -925,9 +932,8 @@ MultiFileAggregator::Write10d (std::string context,
         }
       else
         {
-          // Write the context and the values with the proper separator.
-          *buff << context << m_separator
-                << v1 << m_separator
+          // Write the values with the proper separator.
+          *buff << v1 << m_separator
                 << v2 << m_separator
                 << v3 << m_separator
                 << v4 << m_separator

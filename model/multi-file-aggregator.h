@@ -402,6 +402,9 @@ private:
   /// If true, write each context to a separate output file.
   bool m_isMultiFileMode;
 
+  /// If true, write the context string in front of every output line.
+  bool m_isContextPrinted;
+
   /// Printed between values in the file.
   std::string m_separator;
 
