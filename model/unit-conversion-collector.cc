@@ -58,9 +58,9 @@ UnitConversionCollector::GetConversionTypeName (UnitConversionCollector::Convers
 
 
 UnitConversionCollector::UnitConversionCollector ()
-  : m_conversionType (UnitConversionCollector::TRANSPARENT),
-    m_timeUnit (Time::S),
-    m_isFirstSample (true)
+  : m_isFirstSample (true),
+    m_conversionType (UnitConversionCollector::TRANSPARENT),
+    m_timeUnit (Time::S)
 {
   NS_LOG_FUNCTION (this << GetName ());
 }
@@ -281,10 +281,6 @@ UnitConversionCollector::TraceSinkUinteger64 (uint64_t oldData, uint64_t newData
 {
   if (m_isFirstSample)
     {
-      /*
-       * Then oldData is probably uninitialized here, which makes Valgrind
-       * unhappy. So we force initialize it to zero here.
-       */
       oldData = 0;
       m_isFirstSample = false;
     }
@@ -321,13 +317,13 @@ UnitConversionCollector::Convert (double original) const
 
     case UnitConversionCollector::FROM_LINEAR_TO_DB:
       NS_ASSERT_MSG (original > 0.0,
-                     "Error converting negative value " << original << " to decibel unit");
+                     "Error converting non-positive value " << original << " to decibel unit");
       return 10.0 * std::log10 (original);
       break;
 
     case UnitConversionCollector::FROM_LINEAR_TO_DBM:
       NS_ASSERT_MSG (original > 0.0,
-                     "Error converting negative value " << original << " to decibel unit");
+                     "Error converting non-positive value " << original << " to decibel unit");
       return 10.0 * std::log10 (1000.0 * original);
       break;
 

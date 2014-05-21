@@ -54,7 +54,7 @@ class DistributionCollectorTestCase : public TestCase
 public:
   /**
    * \brief Construct a new test case.
-   * \param name the test case name, which will be printed on the report.
+   * \param name the test case name, which will be printed on the test report.
    * \param type output that will be produced by the collector.
    * \param minValue `MinValue` attribute for the collector.
    * \param maxValue `MaxValue` attribute for the collector.
@@ -74,15 +74,31 @@ public:
                                  std::string expectedOutput);
 
 private:
+  // inherited from TestCase base class
   virtual void DoRun ();
   virtual void DoTeardown ();
+
+  /// Scheduled to run at +0.001s, pushing all input samples to #m_collector.
   void FeedInput ();
+
+  /**
+   * \brief Compare the order and values of the output emitted by the `Output`
+   *        trace source of #m_collector with the output expected by this test
+   *        case (i.e., #m_expectedSample and #m_expectedCount).
+   */
   void CollectorOutputCallback (double sample, double count);
+
+  /*
+   * The following are trace sink functions for the other outputs of
+   * #m_collector. Most of them are currently doing nothing, except for
+   * CollectorOutputCountCallback().
+   */
   void CollectorOutput5thPercentileCallback (double percentile5th);
   void CollectorOutput25thPercentileCallback (double percentile25th);
   void CollectorOutput50thPercentileCallback (double percentile50th);
   void CollectorOutput75thPercentileCallback (double percentile75th);
   void CollectorOutput95thPercentileCallback (double percentile95th);
+  /// Verify the count reported by #m_collector with the number of input samples.
   void CollectorOutputCountCallback (uint32_t count);
   void CollectorOutputSumCallback (double sum);
   void CollectorOutputMinCallback (double min);
@@ -92,27 +108,33 @@ private:
   void CollectorOutputVarianceCallback (double variance);
   void CollectorOutputSqrSumCallback (double sqrSum);
 
+  /// `OutputType` attribute for #m_collector.
   DistributionCollector::OutputType_t m_type;
-  double m_minValue;
-  double m_maxValue;
-  double m_binLength;
+  double m_minValue;   /// `MinValue` attribute for #m_collector.
+  double m_maxValue;   /// `MaxValue` attribute for #m_collector.
+  double m_binLength;  /// `BinLength` attribute for #m_collector.
+
+  /// Input samples for the collector as space-separated numbers.
   std::string m_input;
-  uint32_t m_inputSize;
-  std::string m_expectedOutput;
-  std::list<double> m_expectedSample;
-  std::list<double> m_expectedCount;
-  Ptr<DistributionCollector> m_collector;
+  uint32_t m_inputSize;  /// Number of samples found in #m_input.
+
+  std::string m_expectedOutput;        /// The expected output.
+  std::list<double> m_expectedSample;  /// The expected output: the sample part.
+  std::list<double> m_expectedCount;   /// The expected output: the count part.
+
+  Ptr<DistributionCollector> m_collector;  /// The subject of the test.
 
 }; // end of `class DistributionCollectorTestCase`
 
 
-DistributionCollectorTestCase::DistributionCollectorTestCase (std::string name,
-                                                              DistributionCollector::OutputType_t type,
-                                                              double minValue,
-                                                              double maxValue,
-                                                              double binLength,
-                                                              std::string input,
-                                                              std::string expectedOutput)
+DistributionCollectorTestCase::DistributionCollectorTestCase (
+    std::string name,
+    DistributionCollector::OutputType_t type,
+    double minValue,
+    double maxValue,
+    double binLength,
+    std::string input,
+    std::string expectedOutput)
   : TestCase (name),
     m_type (type),
     m_minValue (minValue),

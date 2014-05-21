@@ -42,6 +42,9 @@ namespace ns3 {
  * The map contains a set of collectors of the same type. Each of them is
  * uniquely identified by a non-negative integer called an *identifier*.
  *
+ * The class provides several methods for connecting the collectors with
+ * probes, aggregators, and other collectors.
+ *
  * The constructor creates an empty map. The following example demonstrates
  * adding two collectors into a new map.
  * \code
@@ -62,7 +65,7 @@ namespace ns3 {
  *   // Create a collector with identifier `1`.
  *   c.Create (1);
  *
- *   // Set the attribute of collectors to be created.
+ *   // Change the attribute of collectors to be created.
  *   c.SetAttribute ("Name",
  *                   StringValue ("collector-3"));
  *
@@ -96,16 +99,18 @@ public:
   void SetAttribute (std::string n, const AttributeValue &v);
 
   /**
-   * \brief Create a collector and append it to this map.
+   * \brief Create a single collector and append it to this map.
+   * \param identifier the identifier to be associated with the new collector.
    *
    * The collector will be created based on the type information previously set
-   * using SetType() and then configured using attributes value previously
+   * using SetType() and then configured using attribute values previously
    * declared using SetAttribute().
    *
-   * If a collector with the same identifier has already existed in the map, it
-   * will be replaced by the newly created collector.
-   *
-   * \param identifier the identifier to be associated with the new collector.
+   * \warning If a collector with the same identifier has already existed in
+   *          the map, it will be replaced by the newly created collector.
+   *          Because of this, the destructor of the previous collector might
+   *          be triggered. In most cases, this will trigger the previous
+   *          collector to prematurely emit outputs.
    */
   void Create (uint32_t identifier);
 
@@ -130,6 +135,7 @@ public:
 
   /**
    * \brief Get an iterator which refers to the first collector in the map.
+   * \return an iterator which refers to the first collector in the map.
    *
    * Collectors can be retrieved from the map in two ways.  First, directly
    * using the identifier of the container, and second, using an iterator.
@@ -144,13 +150,12 @@ public:
    *       i->second->method ();  // some collector method
    *     }
    * \endcode
-   *
-   * \return an iterator which refers to the first collector in the map.
    */
   Iterator Begin () const;
 
   /**
    * \brief Get an iterator which indicates past-the-last collector in the map.
+   * \return an iterator which indicates an ending condition for a loop.
    *
    * Collectors can be retrieved from the map in two ways.  First, directly
    * using the identifier of the container, and second, using an iterator.
@@ -165,22 +170,19 @@ public:
    *       i->second->method ();  // some collector method
    *     }
    * \endcode
-   *
-   * \return an iterator which indicates an ending condition for a loop.
    */
   Iterator End () const;
 
   /**
    * \brief Get the collector stored in this map.
+   * \param identifier the identifier of the requested collector.
+   * \return a pointer to the requested collector, or zero if the requested
+   *         collector is not found.
    *
    * Collectors can be retrieved from the map in two ways.  First, directly
    * using the identifier of the container, and second, using an iterator.
    * This method is used in the direct method and is used to retrieve the
    * collector by its identifier.
-   *
-   * \param identifier the identifier of the requested collector.
-   * \return a pointer to the requested collector, or zero if the requested
-   *         collector is not found.
    */
   Ptr<DataCollectionObject> Get (uint32_t identifier) const;
 
@@ -193,15 +195,16 @@ public:
    * \param collectorTraceSink a pointer to a function of the collector which
    *                           acts as a trace sink.
    * \return true if a connection is successfully made, or false otherwise
-   *         (e.g., invalid probe trace source name).
+   *         (e.g., because of invalid probe trace source name).
    *
    * \warning May cause undefined behaviour if the collector with the given
    *          identifier is not found within the map.
    *
+   * Upon connection, the probe's output will become the input of the collector.
+   *
    * The collector's trace sink function must be an accessible (e.g., public)
-   * class method which accepts two input arguments of same type and returns
-   * nothing. For example, it is specified as
-   * `&IntervalRateCollector::TraceSinkDouble`.
+   * class method which accepts two input arguments of the same type. For
+   * example: `&IntervalRateCollector::TraceSinkDouble`.
    */
   template<typename R, typename C, typename P>
   bool ConnectWithProbe (Ptr<Probe>   probe,
@@ -221,12 +224,11 @@ public:
    *         (e.g., invalid probe trace source name).
    *
    * The collector's trace sink function must be an accessible (e.g., public)
-   * class method which accepts two input arguments of same type and returns
-   * nothing. For example, it is specified as
-   * `&IntervalRateCollector::TraceSinkDouble`.
+   * class method which accepts two input arguments of the same type. For
+   * example: `&IntervalRateCollector::TraceSinkDouble`.
    *
-   * \todo Remember the collector which a probe is currently connected to, so
-   *       that disconnecting can be done without mentioning the identifier.
+   * \todo To remember the collector which a probe is currently connected to,
+   *       so that disconnecting can be done without mentioning the identifier.
    */
   template<typename R, typename C, typename P>
   bool DisconnectWithProbe (Ptr<Probe>   probe,
@@ -250,9 +252,8 @@ public:
    * in the target map (downstream map).
    *
    * The collector's trace sink function must be an accessible (e.g., public)
-   * class method which accepts two input arguments of same type and returns
-   * nothing. For example, it is specified as
-   * `&IntervalRateCollector::TraceSinkDouble`.
+   * class method which accepts two input arguments of the same type. For
+   * example: `&IntervalRateCollector::TraceSinkDouble`.
    *
    * \warning May cause undefined behaviour if the target CollectorMap has
    *          different number of collectors or different set of identifiers.
@@ -270,12 +271,14 @@ public:
    * \param aggregatorTraceSink a pointer to a function of the aggregator which
    *                            which acts as a trace sink.
    *
+   * Upon connection, the collectors' output will become the input of the
+   * aggregator.
+   *
    * The aggregator's trace sink function must be an accessible (e.g., public)
-   * class method which accepts two input arguments of same type and returns
-   * nothing. The collector's name will be passed to the first argument. Then
-   * the value produced by the trace source will be passed to the second
-   * argument. The trace sink function can be specified as, for example,
-   * `&MultiFileAggregator::Write1d`.
+   * class method which accepts two input arguments. The collector's name will
+   * be passed to the first argument. Then the value produced by the trace
+   * source will be passed to the second argument. The trace sink function can
+   * be specified as, for example, `&MultiFileAggregator::Write1d`.
    */
   template<typename R, typename C, typename P1, typename V1>
   bool ConnectToAggregator (std::string traceSourceName,
@@ -290,11 +293,14 @@ public:
    * \param aggregatorTraceSink a pointer to a function of the aggregator which
    *                            which acts as a trace sink.
    *
+   * Upon connection, the collectors' output will become the input of the
+   * aggregator.
+   *
    * The aggregator's trace sink function must be an accessible (e.g., public)
-   * class method which accepts three input arguments of same type and returns
-   * nothing. The collector's name will be passed to the first argument. Then
-   * two values produced by the trace source will be passed to the second and
-   * third argument. The trace sink function can be specified as, for example,
+   * class method which accepts three input arguments. The collector's name
+   * will be passed to the first argument. Then two values produced by the
+   * collector's trace source will be passed to the second and third argument.
+   * The trace sink function can be specified as, for example,
    * `&MultiFileAggregator::Write2d`.
    */
   template<typename R, typename C, typename P1, typename V1, typename V2>

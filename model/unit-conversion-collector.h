@@ -258,6 +258,7 @@ protected:
   virtual void DoDispose ();
 
   /**
+   * \internal
    * \param original the new sample data received by trace sink.
    * \return the sample data converted by the selected unit conversion
    *         procedure.
@@ -268,12 +269,6 @@ protected:
   virtual double Convert (double original) const;
 
 private:
-  /// `ConversionType` attribute.
-  ConversionType_t m_conversionType;
-
-  /// `TimeUnit` attribute.
-  Time::Unit m_timeUnit;
-
   /**
    * \brief Indicate that the next sample would be the first sample received.
    *
@@ -284,14 +279,12 @@ private:
    */
   bool m_isFirstSample;
 
-  /// `Output` trace source.
-  TracedCallback<double, double> m_output;
+  ConversionType_t m_conversionType;  ///< `ConversionType` attribute.
+  Time::Unit m_timeUnit;              ///< `TimeUnit` attribute.
 
-  /// `OutputValue` trace source.
-  TracedCallback<double> m_outputValue;
-
-  /// `OutputTimeValue` trace source.
-  TracedCallback<double, double> m_outputTimeValue;
+  TracedCallback<double, double> m_output;  ///< `Output` trace source.
+  TracedCallback<double> m_outputValue;     ///< `OutputValue` trace source.
+  TracedCallback<double, double> m_outputTimeValue; ///< `OutputTimeValue` trace source.
 
 }; // end of class UnitConversionCollector
 

@@ -289,49 +289,35 @@ private:
   void NewInterval ();
 
   /// Sum of all `DOUBLE` inputs received during the current interval.
-  double           m_intervalSumDouble;
+  double    m_intervalSumDouble;
 
   /// Sum of all `DOUBLE` inputs received from all the intervals so far.
-  double           m_overallSumDouble;
+  double    m_overallSumDouble;
 
   /// Sum of all `UINTEGER` and `BOOLEAN` inputs received during the current interval.
-  uint64_t         m_intervalSumUinteger;
+  uint64_t  m_intervalSumUinteger;
 
   /// Sum of all `UINTEGER` and `BOOLEAN` inputs received from all the intervals so far.
-  uint64_t         m_overallSumUinteger;
+  uint64_t  m_overallSumUinteger;
 
   /// Number of inputs received during the current interval.
-  uint32_t         m_intervalNumOfSamples;
+  uint32_t  m_intervalNumOfSamples;
 
   /// Number of inputs received from all the intervals so far.
-  uint32_t         m_overallNumOfSamples;
+  uint32_t  m_overallNumOfSamples;
 
   /// The end time of the current interval and the start time of the next interval.
-  EventId          m_nextReset;
+  EventId   m_nextReset;
 
-  /// `IntervalLength` attribute.
-  Time             m_intervalLength;
+  Time             m_intervalLength;  ///< `IntervalLength` attribute.
+  InputDataType_t  m_inputDataType;   ///< `InputDataType` attribute.
+  OutputType_t     m_outputType;      ///< `OutputType` attribute.
+  Time::Unit       m_timeUnit;        ///< `TimeUnit` attribute.
 
-  /// `InputDataType` attribute.
-  InputDataType_t  m_inputDataType;
-
-  /// `OutputType` attribute.
-  OutputType_t     m_outputType;
-
-  /// `TimeUnit` attribute.
-  Time::Unit       m_timeUnit;
-
-  /// `OutputOverall` trace source.
-  TracedCallback<double> m_outputOverall;
-
-  /// `OutputWithTime` trace source.
-  TracedCallback<double, double> m_outputWithTime;
-
-  /// `OutputWithoutTime` trace source.
-  TracedCallback<double> m_outputWithoutTime;
-
-  /// `OutputString` trace source.
-  TracedCallback<std::string> m_outputString;
+  TracedCallback<double> m_outputOverall;          ///< `OutputOverall` trace source.
+  TracedCallback<double, double> m_outputWithTime; ///< `OutputWithTime` trace source.
+  TracedCallback<double> m_outputWithoutTime;      ///< `OutputWithoutTime` trace source.
+  TracedCallback<std::string> m_outputString;      ///< `OutputString` trace source.
 
 }; // end of class IntervalRateCollector
 

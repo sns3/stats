@@ -160,7 +160,7 @@ public:
    *
    * This method serves as a trace sink to `uint8_t` valued trace sources.
    * The data will be converted to `uint64_t` and then simply passed to the
-   * TraceSinkuint64_t() method.
+   * TraceSinkUinteger64() method.
    *
    * This trace sink is only operating when the current input data type is set
    * to `INPUT_DATA_TYPE_UINTEGER`. This can be set by calling the
@@ -175,7 +175,7 @@ public:
    *
    * This method serves as a trace sink to `uint16_t` valued trace sources.
    * The data will be converted to `uint64_t` and then simply passed to the
-   * TraceSinkuint64_t() method.
+   * TraceSinkUinteger64() method.
    *
    * This trace sink is only operating when the current input data type is set
    * to `INPUT_DATA_TYPE_UINTEGER`. This can be set by calling the
@@ -190,7 +190,7 @@ public:
    *
    * This method serves as a trace sink to `uint32_t` valued trace sources.
    * The data will be converted to `uint64_t` and then simply passed to the
-   * TraceSinkuint64_t() method.
+   * TraceSinkUinteger64() method.
    *
    * This trace sink is only operating when the current input data type is set
    * to `INPUT_DATA_TYPE_UINTEGER`. This can be set by calling the
@@ -229,21 +229,27 @@ protected:
   virtual void DoDispose ();
 
 private:
+  /// Sum of all `DOUBLE` input samples received.
   double    m_sumDouble;
+
+  /// Sum of all `UINTEGER` and `BOOLEAN` input samples received.
   uint64_t  m_sumUinteger;
+
+  /// Number of input samples that have been received.
   uint32_t  m_numOfSamples;
+
+  /// The time when the first input sample is received.
   Time      m_firstSample;
+
+  /// The time when the last input sample is received.
   Time      m_lastSample;
+
+  /// True if an input sample has been received.
   bool      m_hasReceivedSample;
 
-  /// `InputDataType` attribute.
-  InputDataType_t m_inputDataType;
-
-  /// `OutputType` attribute.
-  OutputType_t m_outputType;
-
-  /// `Output` trace source.
-  TracedCallback<double> m_output;
+  InputDataType_t m_inputDataType;  ///< `InputDataType` attribute.
+  OutputType_t m_outputType;        ///< `OutputType` attribute.
+  TracedCallback<double> m_output;  ///< `Output` trace source.
 
 }; // end of class ScalarCollector
 

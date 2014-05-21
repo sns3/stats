@@ -38,9 +38,44 @@ namespace ns3 {
 
 /**
  * \ingroup aggregator
+ * \brief This aggregator sends values it receives to one or more files.
  *
- * This aggregator sends values it receives to a file.
- **/
+ * ### Input ###
+ * This class provides 10 methods for receiving input values in `double`. Each
+ * of these methods is a function with a signature similar to the following:
+ * \code
+ *   void WritePd (std::string context, double v1, double v2, ... double vP);
+ * \endcode
+ * where `P` is a number between 1 and 10. In addition, the class provides the
+ * method WriteString() which accepts a string input. These input methods
+ * usually act as trace sinks of output from collectors' trace sources.
+ *
+ * ### Output ###
+ * Each invocation to the input methods described above will produce a single
+ * line of output. The `double` input arguments will be printed using the
+ * formatting type selected using SetFileType() method or `FileType` attribute.
+ * The `string` argument, on the other hand, will be printed as it is.
+ *
+ * The first argument of each of the above mentioned input methods is a short
+ * string indicating the context of the input sample. When the `MultiFileMode`
+ * attribute is enabled (the default), this aggregator will create an
+ * individual file for each unique context value, and then send each input
+ * sample to the corresponding file.
+ *
+ * When the `EnableContextPrinting` attribute is enabled (disabled by default),
+ * each output line will begin with the context string and then a space. This
+ * style is useful to determine the context of different data when all the
+ * contexts are mixed together in one file, i.e., when `MultiFileMode` is
+ * disabled.
+ *
+ * The name of every file created begins with the value of the `OutputFileName`
+ * attribute, and then followed by the context string. Finally, a ".txt"
+ * extension is added at the end.
+ *
+ * \note All outputs are stored internally in string buffers. Upon destruction,
+ *       e.g., at the end of simulation, the whole buffer content is written to
+ *       the destination files.
+ */
 class MultiFileAggregator : public DataCollectionObject
 {
 public:
@@ -86,6 +121,8 @@ public:
    * \brief Adds a heading string that will be printed on the first
    *        line of each output file, regardless of context.
    *
+   * Subsequent calls will append the previous heading string.
+   *
    * General heading will be printed after the context heading, if exists.
    */
   void AddGeneralHeading (std::string heading);
@@ -96,6 +133,8 @@ public:
    *
    * \brief Adds a context-specific heading string that will be printed on the
    *        first line of the context's output file.
+   *
+   * Subsequent calls will append the previous heading string.
    *
    * Context heading will be printed before the general heading.
    */

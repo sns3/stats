@@ -222,7 +222,7 @@ DistributionCollector::DoDispose ()
 {
   NS_LOG_FUNCTION (this << GetName ());
 
-  if (IsEnabled ())
+  if (m_isInitialized && IsEnabled ())
     {
       // Variables related to cumulative distribution.
       double percentile5 = 0.0;
@@ -463,7 +463,7 @@ DistributionCollector::GetOutputType () const
 void
 DistributionCollector::TraceSinkDouble1 (double newData)
 {
-  NS_LOG_FUNCTION (this << GetName () << newData);
+  //NS_LOG_FUNCTION (this << GetName () << newData);
 
   if (!m_isInitialized)
     {

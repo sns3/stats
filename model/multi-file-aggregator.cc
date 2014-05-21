@@ -967,7 +967,7 @@ MultiFileAggregator::GetBufferStream (std::string context)
     }
   else
     {
-      // This is an existing context with a file already open for it.
+      // This is an existing context with a buffer already open for it.
       return it->second;
     }
 }

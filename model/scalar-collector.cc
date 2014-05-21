@@ -228,7 +228,7 @@ ScalarCollector::GetOutputType () const
 void
 ScalarCollector::TraceSinkDouble (double oldData, double newData)
 {
-  NS_LOG_FUNCTION (this << GetName () << newData);
+  //NS_LOG_FUNCTION (this << GetName () << newData);
 
   if (IsEnabled ())
     {
@@ -281,7 +281,7 @@ ScalarCollector::TraceSinkUinteger32 (uint32_t oldData, uint32_t newData)
 void
 ScalarCollector::TraceSinkUinteger64 (uint64_t oldData, uint64_t newData)
 {
-  NS_LOG_FUNCTION (this << GetName () << newData);
+  //NS_LOG_FUNCTION (this << GetName () << newData);
 
   if (IsEnabled ())
     {
@@ -310,7 +310,7 @@ ScalarCollector::TraceSinkUinteger64 (uint64_t oldData, uint64_t newData)
 void
 ScalarCollector::TraceSinkBoolean (bool oldData, bool newData)
 {
-  NS_LOG_FUNCTION (this << GetName () << newData);
+  //NS_LOG_FUNCTION (this << GetName () << newData);
 
   if (IsEnabled ())
     {
