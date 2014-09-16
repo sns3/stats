@@ -24,6 +24,8 @@
 #include <ns3/simulator.h>
 #include <ns3/enum.h>
 #include <ns3/double.h>
+#include <ns3/uinteger.h>
+#include <ns3/pointer.h>
 #include <sstream>
 #include <limits>
 #include <cmath>
@@ -55,9 +57,6 @@ DistributionCollector::GetOutputTypeName (DistributionCollector::OutputType_t ou
 
 DistributionCollector::DistributionCollector ()
   : m_outputType (DistributionCollector::OUTPUT_TYPE_HISTOGRAM),
-    m_minValue (0.0),
-    m_maxValue (0.0),
-    m_binLength (0.0),
     m_isInitialized (false),
     m_bins (0)
 {
@@ -74,30 +73,18 @@ DistributionCollector::GetTypeId ()
   static TypeId tid = TypeId ("ns3::DistributionCollector")
     .SetParent<DataCollectionObject> ()
     .AddConstructor<DistributionCollector> ()
-    .AddAttribute ("MinValue",
-                   "The smallest sample value accepted by this collector. "
-                   "Input samples less than this value will be filed as the "
-                   "first bin.",
-                   DoubleValue (std::numeric_limits<double>::max ()),
-                   MakeDoubleAccessor (&DistributionCollector::SetMinValue,
-                                       &DistributionCollector::GetMinValue),
-                   MakeDoubleChecker<double> ())
-    .AddAttribute ("MaxValue",
-                   "The largest sample value accepted by this collector. "
-                   "Input samples less than this value will be filed as the "
-                   "last bin.",
-                   DoubleValue (-std::numeric_limits<double>::max ()),
-                   MakeDoubleAccessor (&DistributionCollector::SetMaxValue,
-                                       &DistributionCollector::GetMaxValue),
-                   MakeDoubleChecker<double> ())
-    .AddAttribute ("BinLength",
-                   "The length of each bin category, which has also a counter "
-                   "to keep track of the number of times samples have occurred "
-                   "within the bin's range.",
-                   DoubleValue (-1.0),
-                   MakeDoubleAccessor (&DistributionCollector::SetBinLength,
-                                       &DistributionCollector::GetBinLength),
-                   MakeDoubleChecker<double> ())
+    .AddAttribute ("Bins",
+                   "The bins instance which stores and categorizes samples.",
+                   PointerValue (),
+                   MakePointerAccessor (&DistributionCollector::m_bins),
+                   MakePointerChecker<AdaptiveBins> ())
+    .AddAttribute ("NumOfBins",
+                   "Determine the resolution of the categorization of samples; "
+                   "higher values consume more memory but produce smoother "
+                   "results.",
+                   UintegerValue (500),
+                   MakeUintegerAccessor (&DistributionCollector::SetNumOfBins),
+                   MakeUintegerChecker<uint32_t> (1))
     .AddAttribute ("OutputType",
                    "Determines the mechanism of processing the incoming samples.",
                    EnumValue (DistributionCollector::OUTPUT_TYPE_HISTOGRAM),
@@ -184,34 +171,9 @@ DistributionCollector::InitializeBins ()
 {
   NS_LOG_FUNCTION (this << GetName ());
 
-  if (m_minValue >= m_maxValue)
+  if (!m_isInitialized)
     {
-      NS_FATAL_ERROR ("MinValue (" << m_minValue << ") must be less than MaxValue (" << m_maxValue << ").");
-    }
-  else if (m_binLength <= 0)
-    {
-      NS_FATAL_ERROR ("BinLength (" << m_binLength << ") must be greater than zero.");
-    }
-  else
-    {
-      const double range = m_maxValue - m_minValue;
-      NS_ASSERT (range > 0);
-
-      if (range < m_binLength)
-        {
-          NS_LOG_WARN (this << "Only one bin is created; this statistics would look funny.");
-        }
-
-      m_bins = new Bins (m_minValue, m_maxValue, m_binLength);
-
-      /*
-       * Update this class' attributes in case there is some changes, e.g.,
-       * when the MaxValue is extended because the last bin is too short.
-       */
-      m_minValue = m_bins->GetMinValue ();
-      m_maxValue = m_bins->GetMaxValue ();
-      m_binLength = m_bins->GetBinLength ();
-
+      m_bins = CreateObject<AdaptiveBins> (m_numOfBins);
       m_isInitialized = true;
     }
 }
@@ -222,8 +184,17 @@ DistributionCollector::DoDispose ()
 {
   NS_LOG_FUNCTION (this << GetName ());
 
-  if (m_isInitialized && IsEnabled ())
+  if (IsEnabled () && m_isInitialized && m_bins->GetNumOfSamples () > 1)
     {
+      if (!m_bins->IsSettled ())
+        {
+          /*
+           * Not enough samples received to automatically invoke SettleBins().
+           * So we force its invocation here at the end of data collection.
+           */
+          m_bins->SettleBins ();
+        }
+
       // Variables related to cumulative distribution.
       double percentile5 = 0.0;
       double percentile25 = 0.0;
@@ -279,7 +250,7 @@ DistributionCollector::DoDispose ()
             else
               {
                 double p = 0.0;
-                double x0 = m_minValue;
+                double x0 = m_bins->GetMinValue ();
                 double y0 = 0.0;
                 double x2 = 0.0; // will be computed in the loop below
                 double y2 = 0.0; // will be computed in the loop below
@@ -352,9 +323,9 @@ DistributionCollector::DoDispose ()
       // Compute output for `OutputString` trace source.
 
       std::ostringstream oss;
-      oss << "% min_value: " << m_minValue << std::endl;
-      oss << "% max_value: " << m_maxValue << std::endl;
-      oss << "% bin_length: " << m_binLength << std::endl;
+      oss << "% min_value: " << m_bins->GetMinValue () << std::endl;
+      oss << "% max_value: " << m_bins->GetMaxValue () << std::endl;
+      oss << "% bin_length: " << m_bins->GetBinLength () << std::endl;
       oss << "% num_of_bins: " << m_bins->GetNumOfBins () << std::endl;
       oss << "% output_type: '" << GetOutputTypeName (m_outputType) << "'" << std::endl;
       oss << "% count: " << m_calculator.getCount () << std::endl;
@@ -379,12 +350,6 @@ DistributionCollector::DoDispose ()
 
     } // end of `if (IsEnabled ())`
 
-  if (m_isInitialized)
-    {
-      delete m_bins;
-      m_bins = 0;
-    }
-
 } // end of `void DoDispose ()`
 
 
@@ -392,54 +357,24 @@ double
 DistributionCollector::GetInterpolatedX1 (double x0, double y0,
                                           double y1, double y2) const
 {
-  return x0 + (m_binLength * (y1-y0) / (y2-y0));
+  return x0 + (m_bins->GetBinLength () * (y1-y0) / (y2-y0));
 }
 
 
 // ATTRIBUTE SETTERS AND GETTERS //////////////////////////////////////////////
 
 void
-DistributionCollector::SetMinValue (double minValue)
+DistributionCollector::SetNumOfBins (uint32_t numOfBins)
 {
-  NS_LOG_FUNCTION (this << GetName () << minValue);
-  m_minValue = minValue;
+  NS_LOG_FUNCTION (this << GetName () << numOfBins);
+  m_numOfBins = numOfBins;
 }
 
 
-double
-DistributionCollector::GetMinValue () const
+uint32_t
+DistributionCollector::GetNumOfBins () const
 {
-  return m_minValue;
-}
-
-
-void
-DistributionCollector::SetMaxValue (double maxValue)
-{
-  NS_LOG_FUNCTION (this << GetName () << maxValue);
-  m_maxValue = maxValue;
-}
-
-
-double
-DistributionCollector::GetMaxValue () const
-{
-  return m_maxValue;
-}
-
-
-void
-DistributionCollector::SetBinLength (double binLength)
-{
-  NS_LOG_FUNCTION (this << GetName () << binLength);
-  m_binLength = binLength;
-}
-
-
-double
-DistributionCollector::GetBinLength () const
-{
-  return m_binLength;
+  return m_numOfBins;
 }
 
 
@@ -550,110 +485,249 @@ DistributionCollector::TraceSinkUinteger64 (uint64_t oldData, uint64_t newData)
 }
 
 
-// BINS CLASS METHOD DEFINITION ///////////////////////////////////////////////
+// ADAPTIVEBINS CLASS METHOD DEFINITION ///////////////////////////////////////
 
-DistributionCollector::Bins::Bins (double minValue,
-                                   double maxValue,
-                                   double binLength)
-  : m_minValue (minValue),
-    m_maxValue (maxValue),
-    m_binLength (binLength)
+AdaptiveBins::AdaptiveBins (uint32_t numOfBins)
+  : m_lowerOffset (0.0),
+    m_upperOffset (0.0),
+    m_numOfSettlingSamples (0),
+    m_smallestSettlingSamples (std::numeric_limits<double>::max ()),
+    m_largestSettlingSamples (-std::numeric_limits<double>::max ()),
+    m_numOfSamples (0),
+    m_binsMinValue (0.0),
+    m_binsMaxValue (0.0),
+    m_binLength (0.0),
+    m_numOfBins (numOfBins),
+    m_isSettled (false)
 {
-  NS_ASSERT (m_minValue < m_maxValue);
-  NS_ASSERT (m_binLength > 0.0);
+  NS_LOG_FUNCTION (this);
+}
 
-  const double initialRange = m_maxValue - m_minValue;
-  //NS_ASSERT (initialRange > 0.0);
-  NS_LOG_DEBUG (this << " InitialRange=" << initialRange);
 
-  m_numOfBins = static_cast<uint32_t> (std::floor (initialRange / m_binLength));
-  NS_LOG_DEBUG (this << " NumOfBins=" << m_numOfBins);
+TypeId // static
+AdaptiveBins::GetTypeId ()
+{
+  static TypeId tid = TypeId ("ns3::AdaptiveBins")
+    .SetParent<Object> ()
+    .AddAttribute ("LowerOffset",
+                   "Proportion of the original range to be added to the lower "
+                   "bound of the predicted range.",
+                   DoubleValue (0.05), // i.e., five percents
+                   MakeDoubleAccessor (&AdaptiveBins::m_lowerOffset),
+                   MakeDoubleChecker<double> (0.0))
+    .AddAttribute ("UpperOffset",
+                   "Proportion of the original range to be added to the upper "
+                   "bound of the predicted range.",
+                   DoubleValue (0.05), // i.e., five percents
+                   MakeDoubleAccessor (&AdaptiveBins::m_upperOffset),
+                   MakeDoubleChecker<double> (0.0))
+    .AddAttribute ("SettlingSamples",
+                   "The number of samples to receive and store before the "
+                   "bins' structure is fixed. A value of zero is considered "
+                   "as infinite number of settling samples, i.e., the highest "
+                   "possible accuracy in predicting bins' structure, but may "
+                   "consume more memory.",
+                   UintegerValue (1000),
+                   MakeUintegerAccessor (&AdaptiveBins::m_numOfSettlingSamples),
+                   MakeUintegerChecker<uint32_t> ())
+  ;
+  return tid;
+}
 
-  double newRange = static_cast<double> (m_numOfBins) * m_binLength;
-  if (newRange < initialRange)
+
+uint32_t
+AdaptiveBins::GetNumOfSamples () const
+{
+  return m_numOfSamples;
+}
+
+
+void
+AdaptiveBins::SettleBins ()
+{
+  NS_LOG_FUNCTION (this);
+  NS_ASSERT_MSG (!m_isSettled, "This function has been run before.");
+  NS_ASSERT_MSG (m_numOfSamples > 1,
+                 "More samples are needed before this function is available.");
+
+  // Compute the overall coverage of the bins.
+  NS_LOG_DEBUG (this << " settling samples:"
+                     << " smallest=" << m_smallestSettlingSamples
+                     << " largest=" << m_largestSettlingSamples);
+  double originalRange = m_largestSettlingSamples - m_smallestSettlingSamples;
+
+  if (originalRange > 0.0)
     {
-      // Extend by 1 more bin.
-      newRange += m_binLength;
-      m_numOfBins++;
+      m_binsMinValue = m_smallestSettlingSamples - (m_lowerOffset * originalRange);
+      m_binsMaxValue = m_largestSettlingSamples + (m_upperOffset * originalRange);
     }
-  NS_ASSERT (newRange >= initialRange);
-  NS_LOG_DEBUG (this << " NewRange=" << newRange);
+  else
+    {
+      NS_ASSERT (m_smallestSettlingSamples == m_largestSettlingSamples);
+      /*
+       * All of the received samples are of equal value. It's impossible to
+       * define a proper range from these samples, so we fallback to a
+       * "default" (but ugly) bin length of 1 and disregarding the offsets.
+       * We configure the range so that the sample values are categorized to
+       * the center of the range.
+       */
+      NS_LOG_WARN (this << " unable to predict the sample distribution"
+                        << " because each of the received samples"
+                        << " (" << m_numOfSamples << " samples)"
+                        << " holds the value " << m_smallestSettlingSamples);
+      const double halfRange = static_cast<double> (m_numOfBins) / 2.0;
+      m_binsMinValue = m_smallestSettlingSamples - halfRange;
+      m_binsMaxValue = m_smallestSettlingSamples + halfRange;
+    }
 
-  // Extend the maximum value.
-  m_maxValue = m_minValue + newRange;
-  //NS_ASSERT (m_maxValue > m_minValue);
-  NS_LOG_DEBUG (this << " new MaxValue=" << m_maxValue);
+  SettleBins (m_binsMinValue, m_binsMaxValue);
+}
 
+
+void
+AdaptiveBins::SettleBins (double minValue, double maxValue)
+{
+  NS_LOG_FUNCTION (this << minValue << maxValue);
+  NS_ASSERT_MSG (!m_isSettled, "This function has been run before.");
+  NS_ASSERT (minValue < maxValue);
+
+  // Divide into bins, initialized to zero.
+  m_binLength = (maxValue - minValue) / m_numOfBins;
+  NS_LOG_DEBUG (this << " bin length=" << m_binLength);
   m_bins.resize (m_numOfBins, 0);
+  m_isSettled = true;
+
+  // Copy all the settling samples into the bins.
+  for (std::list<double>::const_iterator it = m_settlingSamples.begin ();
+       it != m_settlingSamples.end (); ++it)
+    {
+      NewSample (*it);
+    }
+
+  // Clear the settling samples.
+  m_settlingSamples.clear ();
+}
+
+
+bool
+AdaptiveBins::IsSettled () const
+{
+  return m_isSettled;
 }
 
 
 double
-DistributionCollector::Bins::GetMinValue () const
+AdaptiveBins::GetMinValue () const
 {
-  return m_minValue;
+  NS_ASSERT_MSG (m_isSettled,
+                 "More samples are needed before this function is available.");
+  return m_binsMinValue;
 }
 
 
 double
-DistributionCollector::Bins::GetMaxValue () const
+AdaptiveBins::GetMaxValue () const
 {
-  return m_maxValue;
+  NS_ASSERT_MSG (m_isSettled,
+                 "More samples are needed before this function is available.");
+  return m_binsMaxValue;
 }
 
 
 double
-DistributionCollector::Bins::GetBinLength () const
+AdaptiveBins::GetBinLength () const
 {
+  NS_ASSERT_MSG (m_isSettled,
+                 "More samples are needed before this function is available.");
   return m_binLength;
 }
 
 
 uint32_t
-DistributionCollector::Bins::GetNumOfBins () const
+AdaptiveBins::GetNumOfBins () const
 {
   return m_numOfBins;
 }
 
+
 void
-DistributionCollector::Bins::NewSample (double newSample)
+AdaptiveBins::NewSample (double newSample)
 {
-  const uint32_t binIndex = DetermineBin (newSample);
-  NS_ASSERT_MSG (binIndex < m_numOfBins, "Out of bound bin index " << binIndex);
-  m_bins[binIndex] += 1;
+  NS_LOG_FUNCTION (this << newSample);
+
+  if (m_isSettled)
+    {
+      const uint32_t binIndex = DetermineBin (newSample);
+      NS_ASSERT_MSG (binIndex < m_numOfBins,
+                     "Out of bound bin index " << binIndex);
+      m_bins[binIndex] += 1;
+    }
+  else
+    {
+      // Store the sample as one of the settling samples.
+      m_settlingSamples.push_back (newSample);
+      m_numOfSamples++;
+
+      if (m_smallestSettlingSamples > newSample)
+        {
+          m_smallestSettlingSamples = newSample;
+        }
+
+      if (m_largestSettlingSamples < newSample)
+        {
+          m_largestSettlingSamples = newSample;
+        }
+
+      if ((m_numOfSamples >= m_numOfSettlingSamples)
+          && (m_numOfSettlingSamples > 1))
+        {
+          // We have received enough samples. Let's construct the bins.
+          NS_LOG_LOGIC (this << " automatically settling the bins.");
+          SettleBins ();
+        }
+    }
 }
 
 
 uint32_t
-DistributionCollector::Bins::GetCountOfBin (uint32_t binIndex) const
+AdaptiveBins::GetCountOfBin (uint32_t binIndex) const
 {
-  NS_ASSERT (binIndex < m_numOfBins);
+  NS_ASSERT_MSG (m_isSettled,
+                 "More samples are needed before this function is available.");
+  NS_ASSERT_MSG (binIndex < m_numOfBins,
+                 "Out of bound bin index " << binIndex);
   return m_bins[binIndex];
 }
 
 
 double
-DistributionCollector::Bins::GetCenterOfBin (uint32_t binIndex) const
+AdaptiveBins::GetCenterOfBin (uint32_t binIndex) const
 {
-  NS_ASSERT (binIndex < m_numOfBins);
-  const double binStart = m_minValue + (static_cast<double> (binIndex) * m_binLength);
-  NS_ASSERT (binStart < m_maxValue);
+  NS_ASSERT_MSG (m_isSettled,
+                 "More samples are needed before this function is available.");
+  NS_ASSERT_MSG (binIndex < m_numOfBins,
+                 "Out of bound bin index " << binIndex);
+  const double binStart = m_binsMinValue + (binIndex * m_binLength);
+  NS_ASSERT (binStart < m_binsMaxValue);
   const double binCenter = binStart + (m_binLength / 2.0);
-  NS_ASSERT (binCenter < m_maxValue);
+  NS_ASSERT (binCenter < m_binsMaxValue);
   return binCenter;
 }
 
 
 uint32_t
-DistributionCollector::Bins::DetermineBin (double sample) const
+AdaptiveBins::DetermineBin (double sample) const
 {
-  if (sample < m_minValue)
+  NS_ASSERT_MSG (m_isSettled,
+                 "More samples are needed before this function is available.");
+
+  if (sample < m_binsMinValue)
     {
       return 0;  // Sample less than the minimum value goes to the first bin.
     }
-  else if (sample < m_maxValue)
+  else if (sample < m_binsMaxValue)
     {
-      const double binIndex = std::floor ((sample - m_minValue) / m_binLength);
+      const double binIndex = std::floor ((sample - m_binsMinValue) / m_binLength);
       return static_cast<uint32_t> (binIndex);
     }
   else
@@ -662,6 +736,13 @@ DistributionCollector::Bins::DetermineBin (double sample) const
       // Sample equal or greater than the maximum value goes to the last bin.
       return m_numOfBins - 1;
     }
+}
+
+
+void
+AdaptiveBins::DoDispose ()
+{
+  NS_LOG_FUNCTION (this);
 }
 
 

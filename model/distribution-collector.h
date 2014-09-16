@@ -32,6 +32,136 @@ namespace ns3 {
 
 /**
  * \ingroup aggregator
+ * \brief Bins which categorize and count samples, with the ability to predict
+ *        its structure based on the received samples.
+ *
+ * After receiving a number of samples (the `NumOfSettlingSamples` attribute,
+ * which is 1000 samples by default), the class will automatically analyze the
+ * samples' distribution and create a fixed set of equal-length bins. For
+ * example, the lowest value of the received samples determines the lower bound
+ * of the bins. The `LowerOffset` attribute may be set to extend the lower
+ * bound by a certain percentage to anticipate any "unexpected" outliers. The
+ * `UpperOffset` attribute has the same function for the upper bound.
+ */
+class AdaptiveBins : public Object
+{
+public:
+  /**
+   * \brief Create an empty set of bins which will adapt its structure.
+   * \param numOfBins a positive number indicating the number of bins.
+   */
+  AdaptiveBins (uint32_t numOfBins);
+
+  // inherited from ObjectBase base class
+  static TypeId GetTypeId ();
+
+  /**
+   * \return the number of samples received so far.
+   */
+  uint32_t GetNumOfSamples () const;
+
+  /**
+   * \brief Instruct the class to construct the bins, based on the samples
+   *        received so far.
+   *
+   * Bins' structure will be automatically derived from the distribution of the
+   * samples received and the offset attributes.
+   *
+   * \warning Must have not been settled before and must have received at least
+   *          one sample.
+   */
+  void SettleBins ();
+
+  /**
+   * \brief Instruct the class to construct the bins using the given parameters.
+   * \param minValue the lower bound of the first bin
+   * \param maxValue the upper bound of the last bin
+   *
+   * \warning Must have not been settled before.
+   */
+  void SettleBins (double minValue, double maxValue);
+
+  /**
+   * \return true if the bins' structure have been fixed.
+   */
+  bool IsSettled () const;
+
+  /**
+   * \return the lower bound of the first bin.
+   * \warning Requires IsSettled() to be true.
+   */
+  double GetMinValue () const;
+
+  /**
+   * \return the upper bound of the last bin.
+   * \warning Requires IsSettled() to be true.
+   */
+  double GetMaxValue () const;
+
+  /**
+   * \return the length of each bin.
+   * \warning Requires IsSettled() to be true.
+   */
+  double GetBinLength () const;
+
+  /**
+   * \return the number of bins maintained in this instance.
+   */
+  uint32_t GetNumOfBins () const;
+
+  /**
+   * \brief Receive the given sample, thereby increasing the counter of the bin
+   *        associated with the given sample by 1.
+   * \param newSample a new sample to be received
+   */
+  void NewSample (double newSample);
+
+  /**
+   * \return the current value of the counter of a certain bin.
+   * \warning Requires IsSettled() to be true.
+   */
+  uint32_t GetCountOfBin (uint32_t binIndex) const;
+
+  /**
+   * \return the sum of lower bound and upper bound divided by two.
+   * \warning Requires IsSettled() to be true.
+   */
+  double GetCenterOfBin (uint32_t binIndex) const;
+
+  /**
+   * \param sample a new sample.
+   * \return the bin index where the given sample should belong to.
+   * \warning Requires IsSettled() to be true.
+   */
+  uint32_t DetermineBin (double sample) const;
+
+protected:
+  // Inherited from Object base class
+  virtual void DoDispose ();
+
+private:
+  double    m_lowerOffset;           ///< `LowerOffset` attribute.
+  double    m_upperOffset;           ///< `UpperOffset` attribute.
+  uint32_t  m_numOfSettlingSamples;  ///< `NumOfSettlingSamples` attribute.
+
+  std::list<double> m_settlingSamples;  ///< Temporary storage.
+  double m_smallestSettlingSamples;  ///< Smallest value in the storage.
+  double m_largestSettlingSamples;   ///< Largest value in the storage.
+  uint32_t m_numOfSamples;  ///< Number of samples received so far.
+
+  std::vector<uint32_t> m_bins;  ///< Internal bins representation.
+  double m_binsMinValue;  ///< The lower bound of the first bin.
+  double m_binsMaxValue;  ///< The upper bound of the last bin.
+  double m_binLength;     ///< The length of each bin.
+  uint32_t m_numOfBins;   ///< The number of bins.
+
+  bool m_isSettled;  ///< True after SettleBins().
+
+}; // end of class AdaptiveBins
+
+
+/**
+ * \ingroup aggregator
  * \brief Collector which computes the value distribution of the input samples.
  *
  * ### Input ###
@@ -53,27 +183,17 @@ namespace ns3 {
  * the simulation, the bins would represent the distribution information of all
  * the received samples.
  *
- * The setup of the bins can be configured through the `MinValue`, `MaxValue`,
- * and `BinLength` attributes. The corresponding methods SetMinValue(),
- * SetMaxValue(), and SetBinLength() can also be used for the same purpose.
- * If the last bin ends up shorter than the rest, then its range is simply
- * extended beyond the `MaxValue` to match the length of the other bins.
+ * The setup of the bins can be configured through the `NumOfBins` attribute.
+ * The corresponding method SetNumOfBins() can also be used for the same
+ * purpose.
  *
- * \warning There is no valid default value for these attributes, so they must
- *          be set before the simulation begins, or else the class will raise
- *          an error.
- *
- * Input values which do not fit into the range of all the bins are handled as
- * follows.
- * - Input values which are less than `MinValue` are categorized into the first
- *   bin.
- * - Input values which are equal or greater than `MaxValue` are categorized
- *   into the last bin.
- *
- * \see DistributionCollector::Bins
- *
- * \todo To allow alternative configuration using `NumberOfBins` attribute
- *       instead of `BinLength` alternative.
+ * The class will compute a prediction of range of the bins based on the first
+ * 1000 samples received (see ns3::AdaptiveBins). Any subsequent samples which
+ * do not fit into the predicted range are handled as follows.
+ * - Input values which are less than lower bound of the first bin are
+ *   categorized into the first bin.
+ * - Input values which are equal or greater than upper bound of the last bin
+ *   are categorized into the last bin.
  *
  * ### Output ###
  * At the end of the instance's life (e.g., when the simulation ends), the
@@ -108,9 +228,8 @@ namespace ns3 {
  *
  * All the additional statistical and percentile trace sources mentioned above
  * are also emitted in string format through the `OutputString` trace source.
- * The resulting string also includes the parameters used to collect the samples
- * (e.g., the `MinValue`, `MaxValue`, and `BinLength` attributes). Example
- * `OutputString` output:
+ * The resulting string also includes the parameters used to collect the
+ * samples. Example `OutputString` output:
  * \code
  * % min_value: 0
  * % max_value: 1
@@ -173,38 +292,25 @@ public:
   // inherited from ObjectBase base class
   static TypeId GetTypeId ();
 
+  /**
+   * \brief Create internal bins for categorization purpose.
+   *
+   * Automatically invoked at the beginning of simulation, but can be safely
+   * executed manually too.
+   */
+  void InitializeBins ();
+
   // ATTRIBUTE SETTERS AND GETTERS ////////////////////////////////////////////
 
   /**
-   * \param minValue the smallest value accepted by this collector.
+   * \param numOfBins a positive number indicating the resolution.
    */
-  void SetMinValue (double minValue);
+  void SetNumOfBins (uint32_t numOfBins);
 
   /**
-   * \return the smallest value accepted by this collector.
+   * \return the resolution.
    */
-  double GetMinValue () const;
-
-  /**
-   * \param maxValue the largest value accepted by this collector.
-   */
-  void SetMaxValue (double maxValue);
-
-  /**
-   * \return the largest value accepted by this collector.
-   */
-  double GetMaxValue () const;
-
-  /**
-   * \param binLength a positive number indicating the length of each bin
-   *                  category.
-   */
-  void SetBinLength (double binLength);
-
-  /**
-   * \return the length of each bin category.
-   */
-  double GetBinLength () const;
+  uint32_t GetNumOfBins () const;
 
   /**
    * \param outputType the processing mechanism used by this instance.
@@ -330,14 +436,6 @@ protected:
 private:
   /**
    * \internal
-   * Automatically invoked at the beginning of simulation. Responsible for
-   * creating the required set of bins based on the given `MinValue`,
-   * `MaxValue`, and `BinLength` parameters.
-   */
-  void InitializeBins ();
-
-  /**
-   * \internal
    * \code
    *   Y
    *   ^        + (x2, y2)
@@ -361,9 +459,7 @@ private:
   double GetInterpolatedX1 (double x0, double y0, double y1, double y2) const;
 
   OutputType_t  m_outputType;      ///< `OutputType` attribute.
-  double        m_minValue;        ///< `MinValue` attribute.
-  double        m_maxValue;        ///< `MaxValue` attribute.
-  double        m_binLength;       ///< `BinLength` attribute.
+  uint32_t      m_numOfBins;       ///< `NumOfBins` attribute.
   bool          m_isInitialized;   ///< True after InitializeBins().
 
   TracedCallback<double, double> m_output;        ///< `Output` trace source.
@@ -387,73 +483,8 @@ private:
   /// Tools for online computing of most of the statistical information.
   MinMaxAvgTotalCalculator<double> m_calculator;
 
-  /**
-   * \brief A set of bins utilized by DistributionCollector.
-   *
-   * Example bins illustration for `min` = 0.0, `max` = 5.0, `binLength` = 1.0:
-   * \code
-   *             0.0     1.0     2.0     3.0     4.0     5.0
-   *              +-------+-------+-------+-------+-------+
-   *              |       |       |       |       |       |
-   *              +-------+-------+-------+-------+-------+
-   * Bin index:       0       1       2       3       4
-   * Bin center:     0.5     1.5     2.5     3.5     4.5
-   * \endcode
-   *
-   * Example bins illustration for `min` = 0.0, `max` = 7.0, `binLength` = 2.0,
-   * where `max` gets extended to 8.0 to ensure all bins are of equal length:
-   * \code
-   *             0.0           2.0           4.0           6.0           8.0
-   *              +-------------+-------------+-------------+-------------+
-   *              |             |             |             |             |
-   *              +-------------+-------------+-------------+-------------+
-   * Bin index:          0             1             2             3
-   * Bin center:        1.0           3.0           5.0           7.0
-   * \endcode
-   */
-  class Bins
-  {
-  public:
-    /**
-     * \brief Create a set of empty bins.
-     * \param minValue the lower bound of the first bin.
-     * \param maxValue the upper bound of the last bin.
-     * \param binLength a positive number indicating the length of each bin.
-     *
-     * May extend the upper bound of the last bin to enforce same length to all
-     * bins.
-     */
-    Bins (double minValue, double maxValue, double binLength);
-    /// \return the lower bound of the first bin.
-    double GetMinValue () const;
-    /// \return the upper bound of the last bin.
-    double GetMaxValue () const;
-    /// \return the length of each bin.
-    double GetBinLength () const;
-    /// \return the number of bins maintained in this instance.
-    uint32_t GetNumOfBins () const;
-    /// Increase the counter of the bin associated with the given sample by 1.
-    void NewSample (double newSample);
-    /// \return the current value of the counter of a certain bin.
-    uint32_t GetCountOfBin (uint32_t binIndex) const;
-    /// \return the sum of lower bound and upper bound divided by two.
-    double GetCenterOfBin (uint32_t binIndex) const;
-    /**
-     * \param sample a new sample.
-     * \return the bin index where the given sample should belong to.
-     */
-    uint32_t DetermineBin (double sample) const;
-  private:
-    double                 m_minValue;   ///< The lower bound of the first bin.
-    double                 m_maxValue;   ///< The upper bound of the last bin.
-    double                 m_binLength;  ///< The length of each bin.
-    uint32_t               m_numOfBins;  ///< The number of bins.
-    std::vector<uint32_t>  m_bins;       ///< Internal bins representation.
-
-  }; // end of class Bins
-
   /// The bin categories.
-  Bins *m_bins;
+  Ptr<AdaptiveBins> m_bins;
 
 }; // end of class DistributionCollector
 
