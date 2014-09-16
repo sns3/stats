@@ -31,6 +31,7 @@
 #include <sstream>
 #include <fstream>
 #include <map>
+#include <set>
 #include <string>
 #include "ns3/data-collection-object.h"
 
@@ -139,6 +140,16 @@ public:
    * Context heading will be printed before the general heading.
    */
   void AddContextHeading (std::string context, std::string heading);
+
+  /**
+   * \brief Adds a visible warning to the output file name.
+   * \param context the specific context where the warning should apply.
+   *
+   * When enabled, the output file name of the given context will be modified
+   * to attract the attention of the user. It may be used to clearly indicate
+   * that the output file contains, for example, unreliable content.
+   */
+  void EnableContextWarning (std::string context);
 
   /**
    * \param format the 1D format string.
@@ -443,6 +454,9 @@ private:
 
   /// If true, write the context string in front of every output line.
   bool m_isContextPrinted;
+
+  /// List of contexts which have warning flag enabled.
+  std::set<std::string> m_contextWarningEnabled;
 
   /// Printed between values in the file.
   std::string m_separator;

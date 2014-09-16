@@ -275,6 +275,27 @@ public:
    * aggregator.
    *
    * The aggregator's trace sink function must be an accessible (e.g., public)
+   * class method which accepts one input argument. The collector's name will
+   * be passed as the argument. The trace sink function can be specified as,
+   * for example, `&MultiFileAggregator::EnableContextWarning`.
+   */
+  template<typename R, typename C, typename P1>
+  bool ConnectToAggregator (std::string traceSourceName,
+                            Ptr<DataCollectionObject> aggregator,
+                            R (C::*aggregatorTraceSink) (P1)) const;
+
+  /**
+   * \brief Connect each collector in the map to an aggregator.
+   * \param traceSourceName the name of the trace source of the collectors in
+   *                        this map to be connected with the aggregator.
+   * \param aggregator a pointer to the aggregator.
+   * \param aggregatorTraceSink a pointer to a function of the aggregator which
+   *                            which acts as a trace sink.
+   *
+   * Upon connection, the collectors' output will become the input of the
+   * aggregator.
+   *
+   * The aggregator's trace sink function must be an accessible (e.g., public)
    * class method which accepts two input arguments. The collector's name will
    * be passed to the first argument. Then the value produced by the trace
    * source will be passed to the second argument. The trace sink function can
@@ -381,6 +402,32 @@ CollectorMap::ConnectToCollector (std::string traceSourceName,
                                        << " is incompatible with the specified trace sink");
       if (!source->TraceConnectWithoutContext (traceSourceName,
                                                MakeCallback (traceSink, c)))
+        {
+          return false;
+        }
+    }
+
+  return true;
+}
+
+
+template<typename R, typename C, typename P1>
+bool
+CollectorMap::ConnectToAggregator (std::string traceSourceName,
+                                   Ptr<DataCollectionObject> aggregator,
+                                   R (C::*aggregatorTraceSink) (P1)) const
+{
+  for (CollectorMap::Iterator it = m_map.begin (); it != m_map.end (); ++it)
+    {
+      Ptr<DataCollectionObject> collector = it->second;
+      NS_ASSERT (collector != 0);
+      const std::string context = collector->GetName ();
+      Ptr<C> c = aggregator->GetObject<C> ();
+      NS_ASSERT_MSG (c != 0,
+                     "Aggregator type " << aggregator->GetInstanceTypeId ().GetName ()
+                                        << " is incompatible with the specified trace sink");
+      if (!collector->TraceConnect (traceSourceName, context,
+                                    MakeCallback (aggregatorTraceSink, c)))
         {
           return false;
         }

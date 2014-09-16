@@ -26,6 +26,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string>
 
 #include "multi-file-aggregator.h"
@@ -125,21 +126,23 @@ MultiFileAggregator::~MultiFileAggregator ()
         }
 
       // Creating a file for output.
-      std::string fileName;
+      std::ostringstream fileName;
+      fileName << m_outputFileName;
       if (m_isMultiFileMode)
         {
-          fileName = m_outputFileName + '-' + context + ".txt";
+          fileName << '-' + context;
         }
-      else
+      if (m_contextWarningEnabled.count (context) > 0)
         {
-          fileName = m_outputFileName + ".txt";
+          fileName << "-HUOM";
         }
-      NS_LOG_LOGIC ("Creating a new file " << fileName);
-      std::ofstream ofs (fileName.c_str ());
+      fileName << ".txt";
+      NS_LOG_LOGIC ("Creating a new file " << fileName.str ());
+      std::ofstream ofs (fileName.str ().c_str ());
 
       if (!ofs || !(ofs.is_open ()))
         {
-          NS_FATAL_ERROR ("Error creating file " << fileName << " for output");
+          NS_FATAL_ERROR ("Error creating file " << fileName.str () << " for output");
         }
 
       // Find the context-specific heading for this context.
@@ -211,6 +214,13 @@ MultiFileAggregator::AddContextHeading (std::string context,
     {
       it->second += heading;
     }
+}
+
+void
+MultiFileAggregator::EnableContextWarning (std::string context)
+{
+  NS_LOG_FUNCTION (this);
+  m_contextWarningEnabled.insert (context);
 }
 
 void

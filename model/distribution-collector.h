@@ -23,6 +23,7 @@
 #define DISTRIBUTION_COLLECTOR_H
 
 #include <ns3/data-collection-object.h>
+#include <ns3/callback.h>
 #include <ns3/traced-callback.h>
 #include <ns3/basic-data-calculators.h>
 #include <vector>
@@ -132,8 +133,28 @@ public:
    * \param sample a new sample.
    * \return the bin index where the given sample should belong to.
    * \warning Requires IsSettled() to be true.
+   * \note Any calls with sample that fall outside the set of bins will
+   *       increase the number of out of bounds.
    */
-  uint32_t DetermineBin (double sample) const;
+  uint32_t DetermineBin (double sample);
+
+  /**
+   * \param callback a simple function that will be invoked when inaccuracy
+   *                 problem is encountered.
+   *
+   * The problem provoking the callback is described in the following. When the
+   * first samples received (i.e., the settling samples) are all having the
+   * same value, there is not enough information to predict the proper bin
+   * structure. As a consequence, the class is forced to guess the bin
+   * structure. It simply assume a bin length of 1 and put the known values at
+   * the center.
+   */
+  void SetInaccuracyCallback (Callback<void, double> callback);
+
+  /**
+   * \return the number of samples determined to fall outside the bins.
+   */
+  uint32_t GetNumOfOutOfBounds () const;
 
 protected:
   // Inherited from Object base class
@@ -149,6 +170,9 @@ private:
   double m_largestSettlingSamples;   ///< Largest value in the storage.
   uint32_t m_numOfSamples;  ///< Number of samples received so far.
 
+  /// Number of samples which are determined to fall down outside the bins.
+  uint32_t m_numOfOutOfBounds;
+
   std::vector<uint32_t> m_bins;  ///< Internal bins representation.
   double m_binsMinValue;  ///< The lower bound of the first bin.
   double m_binsMaxValue;  ///< The upper bound of the last bin.
@@ -156,6 +180,9 @@ private:
   uint32_t m_numOfBins;   ///< The number of bins.
 
   bool m_isSettled;  ///< True after SettleBins().
+
+  /// Pointer to function which is invoked upon encountering inaccuracy problem.
+  Callback<void, double> m_notifyInaccuracy;
 
 }; // end of class AdaptiveBins
 
@@ -458,9 +485,17 @@ private:
    */
   double GetInterpolatedX1 (double x0, double y0, double y1, double y2) const;
 
-  OutputType_t  m_outputType;      ///< `OutputType` attribute.
-  uint32_t      m_numOfBins;       ///< `NumOfBins` attribute.
-  bool          m_isInitialized;   ///< True after InitializeBins().
+  /**
+   * \brief Receive notification of inaccuracy from the underlying bins.
+   * \param commonValue the value which is shared by all the samples received
+   *                    by the bins.
+   */
+  void InaccuracyCallback (double commonValue);
+
+  OutputType_t  m_outputType;       ///< `OutputType` attribute.
+  uint32_t      m_numOfBins;        ///< `NumOfBins` attribute.
+  double        m_outOfBoundLimit;  ///< `OutOfBoundLimit` attribute.
+  bool          m_isInitialized;    ///< True after InitializeBins().
 
   TracedCallback<double, double> m_output;        ///< `Output` trace source.
   TracedCallback<std::string> m_outputString;     ///< `OutputString` trace source.
@@ -479,6 +514,8 @@ private:
   TracedCallback<double> m_outputStddev;    ///< `OutputStddev` trace source.
   TracedCallback<double> m_outputVariance;  ///< `OutputVariance` trace source.
   TracedCallback<double> m_outputSqrSum;    ///< `OutputSqrSum` trace source.
+
+  TracedCallback<> m_warning;  ///< `Warning` trace source.
 
   /// Tools for online computing of most of the statistical information.
   MinMaxAvgTotalCalculator<double> m_calculator;

@@ -93,6 +93,12 @@ DistributionCollector::GetTypeId ()
                    MakeEnumChecker (DistributionCollector::OUTPUT_TYPE_HISTOGRAM,   "HISTOGRAM",
                                     DistributionCollector::OUTPUT_TYPE_PROBABILITY, "PROBABILITY",
                                     DistributionCollector::OUTPUT_TYPE_CUMULATIVE,  "CUMULATIVE"))
+    .AddAttribute ("OutOfBoundLimit",
+                   "Warning is issued when this amount of samples (relative "
+                   "to the total number of samples) lie outside the bins.",
+                   DoubleValue (0.10),
+                   MakeDoubleAccessor (&DistributionCollector::m_outOfBoundLimit),
+                   MakeDoubleChecker<double> (0.0, 1.0))
     // MAIN TRACE SOURCE //////////////////////////////////////////////////////
     .AddTraceSource ("Output",
                      "A bin identifier and the value corresponding to that bin. "
@@ -161,6 +167,12 @@ DistributionCollector::GetTypeId ()
                      "The sum of squares of the received samples. "
                      "Emitted upon the instance's destruction.",
                      MakeTraceSourceAccessor (&DistributionCollector::m_outputSqrSum))
+    // WARNING TRACE SOURCE ///////////////////////////////////////////////////
+    .AddTraceSource ("Warning",
+                     "Emitted upon encountering a problem with the data "
+                     "collection, e.g., lack of variability in the received "
+                     "samples, or too many samples fall outside the bins.",
+                     MakeTraceSourceAccessor (&DistributionCollector::m_warning))
   ;
   return tid;
 }
@@ -174,6 +186,8 @@ DistributionCollector::InitializeBins ()
   if (!m_isInitialized)
     {
       m_bins = CreateObject<AdaptiveBins> (m_numOfBins);
+      m_bins->SetInaccuracyCallback (MakeCallback (&DistributionCollector::InaccuracyCallback,
+                                                   this));
       m_isInitialized = true;
     }
 }
@@ -186,7 +200,21 @@ DistributionCollector::DoDispose ()
 
   if (IsEnabled () && m_isInitialized && m_bins->GetNumOfSamples () > 1)
     {
-      if (!m_bins->IsSettled ())
+      if (m_bins->IsSettled ())
+        {
+          const double outOfBoundsRatio = m_bins->GetNumOfOutOfBounds ()
+            / static_cast<double> (m_bins->GetNumOfSamples ());
+          if (outOfBoundsRatio > m_outOfBoundLimit)
+            {
+              NS_LOG_WARN (this << " Collector " << GetName ()
+                                << " has assigned too many samples"
+                                << " (" << m_bins->GetNumOfOutOfBounds ()
+                                << " out of " << m_bins->GetNumOfSamples () << ")"
+                                << " outside the collector coverage.");
+              m_warning ();
+            }
+        }
+      else
         {
           /*
            * Not enough samples received to automatically invoke SettleBins().
@@ -361,6 +389,19 @@ DistributionCollector::GetInterpolatedX1 (double x0, double y0,
 }
 
 
+void
+DistributionCollector::InaccuracyCallback (double commonValue)
+{
+  NS_LOG_FUNCTION (this << commonValue);
+  NS_LOG_WARN (this << " Collector " << GetName ()
+                    << " is unable to predict the sample distribution"
+                    << " because each of the received samples"
+                    << " (" << m_bins->GetNumOfSamples () << " samples)"
+                    << " holds the value " << commonValue);
+  m_warning (); // propagate accordingly
+}
+
+
 // ATTRIBUTE SETTERS AND GETTERS //////////////////////////////////////////////
 
 void
@@ -494,11 +535,13 @@ AdaptiveBins::AdaptiveBins (uint32_t numOfBins)
     m_smallestSettlingSamples (std::numeric_limits<double>::max ()),
     m_largestSettlingSamples (-std::numeric_limits<double>::max ()),
     m_numOfSamples (0),
+    m_numOfOutOfBounds (0),
     m_binsMinValue (0.0),
     m_binsMaxValue (0.0),
     m_binLength (0.0),
     m_numOfBins (numOfBins),
-    m_isSettled (false)
+    m_isSettled (false),
+    m_notifyInaccuracy (0)
 {
   NS_LOG_FUNCTION (this);
 }
@@ -571,13 +614,14 @@ AdaptiveBins::SettleBins ()
        * We configure the range so that the sample values are categorized to
        * the center of the range.
        */
-      NS_LOG_WARN (this << " unable to predict the sample distribution"
-                        << " because each of the received samples"
-                        << " (" << m_numOfSamples << " samples)"
-                        << " holds the value " << m_smallestSettlingSamples);
       const double halfRange = static_cast<double> (m_numOfBins) / 2.0;
       m_binsMinValue = m_smallestSettlingSamples - halfRange;
       m_binsMaxValue = m_smallestSettlingSamples + halfRange;
+
+      if (!m_notifyInaccuracy.IsNull ())
+        {
+          m_notifyInaccuracy (m_smallestSettlingSamples);
+        }
     }
 
   SettleBins (m_binsMinValue, m_binsMaxValue);
@@ -653,7 +697,7 @@ AdaptiveBins::GetNumOfBins () const
 void
 AdaptiveBins::NewSample (double newSample)
 {
-  NS_LOG_FUNCTION (this << newSample);
+  //NS_LOG_FUNCTION (this << newSample);
 
   if (m_isSettled)
     {
@@ -716,13 +760,14 @@ AdaptiveBins::GetCenterOfBin (uint32_t binIndex) const
 
 
 uint32_t
-AdaptiveBins::DetermineBin (double sample) const
+AdaptiveBins::DetermineBin (double sample)
 {
   NS_ASSERT_MSG (m_isSettled,
                  "More samples are needed before this function is available.");
 
   if (sample < m_binsMinValue)
     {
+      m_numOfOutOfBounds++;
       return 0;  // Sample less than the minimum value goes to the first bin.
     }
   else if (sample < m_binsMaxValue)
@@ -734,8 +779,23 @@ AdaptiveBins::DetermineBin (double sample) const
     {
       //NS_ASSERT (sample >= m_maxValue);
       // Sample equal or greater than the maximum value goes to the last bin.
+      m_numOfOutOfBounds++;
       return m_numOfBins - 1;
     }
+}
+
+
+void
+AdaptiveBins::SetInaccuracyCallback (Callback<void, double> callback)
+{
+  m_notifyInaccuracy = callback;
+}
+
+
+uint32_t
+AdaptiveBins::GetNumOfOutOfBounds () const
+{
+  return m_numOfOutOfBounds;
 }
 
 
