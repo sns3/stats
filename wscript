@@ -40,6 +40,7 @@ def build(bld):
         'model/scatter-collector.cc',
         'model/unit-conversion-collector.cc',
         'model/multi-file-aggregator.cc',
+        'model/magister-gnuplot-aggregator.cc',
         ]
 
     module_test = bld.create_ns3_module_test_library('stats')
@@ -82,6 +83,7 @@ def build(bld):
         'model/scatter-collector.h',
         'model/unit-conversion-collector.h',
         'model/multi-file-aggregator.h',
+        'model/magister-gnuplot-aggregator.h',
         ]
 
     if bld.env['SQLITE_STATS']:
