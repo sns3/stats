@@ -134,7 +134,7 @@ MultiFileAggregator::~MultiFileAggregator ()
         }
       if (m_contextWarningEnabled.count (context) > 0)
         {
-          fileName << "-HUOM";
+          fileName << "-ATTN";
         }
       fileName << ".txt";
       NS_LOG_LOGIC ("Creating a new file " << fileName.str ());
