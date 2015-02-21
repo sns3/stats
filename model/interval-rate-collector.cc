@@ -23,6 +23,7 @@
 #include <ns3/log.h>
 #include <ns3/simulator.h>
 #include <ns3/enum.h>
+#include <ns3/magister-stats.h>
 #include <sstream>
 
 NS_LOG_COMPONENT_DEFINE ("IntervalRateCollector");
@@ -155,18 +156,22 @@ IntervalRateCollector::GetTypeId ()
     .AddTraceSource ("OutputOverall",
                      "The accumulated sum, "
                      "fired when the collector instance is destroyed.",
-                     MakeTraceSourceAccessor (&IntervalRateCollector::m_outputOverall))
+                     MakeTraceSourceAccessor (&IntervalRateCollector::m_outputOverall),
+                     "ns3::CollectorOutputCallback")
     .AddTraceSource ("OutputWithTime",
                      "The recent interval's ending time "
                      "and the accumulated sum during the interval.",
-                     MakeTraceSourceAccessor (&IntervalRateCollector::m_outputWithTime))
+                     MakeTraceSourceAccessor (&IntervalRateCollector::m_outputWithTime),
+                     "ns3::CollectorTimedOutputCallback")
     .AddTraceSource ("OutputWithoutTime",
                      "The accumulated sum during the recent interval.",
-                     MakeTraceSourceAccessor (&IntervalRateCollector::m_outputWithoutTime))
+                     MakeTraceSourceAccessor (&IntervalRateCollector::m_outputWithoutTime),
+                     "ns3::CollectorOutputCallback")
     .AddTraceSource ("OutputString",
                      "Various setup and statistical information, "
                      "fired when the collector instance is destroyed.",
-                     MakeTraceSourceAccessor (&IntervalRateCollector::m_outputString))
+                     MakeTraceSourceAccessor (&IntervalRateCollector::m_outputString),
+                     "ns3::CollectorInformationCallback")
   ;
   return tid;
 }

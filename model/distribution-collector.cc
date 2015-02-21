@@ -26,6 +26,7 @@
 #include <ns3/double.h>
 #include <ns3/uinteger.h>
 #include <ns3/pointer.h>
+#include <ns3/magister-stats.h>
 #include <sstream>
 #include <limits>
 #include <cmath>
@@ -103,76 +104,92 @@ DistributionCollector::GetTypeId ()
     .AddTraceSource ("Output",
                      "A bin identifier and the value corresponding to that bin. "
                      "Emitted upon the instance's destruction.",
-                     MakeTraceSourceAccessor (&DistributionCollector::m_output))
+                     MakeTraceSourceAccessor (&DistributionCollector::m_output),
+                     "ns3::DistributionCollector::OutputCallback")
     .AddTraceSource ("OutputString",
                      "Various setup and statistical information. "
                      "Emitted upon the instance's destruction.",
-                     MakeTraceSourceAccessor (&DistributionCollector::m_outputString))
+                     MakeTraceSourceAccessor (&DistributionCollector::m_outputString),
+                     "ns3::CollectorInformationCallback")
     // PERCENTILE TRACE SOURCES FOR CUMULATIVE OUTPUT TYPE ////////////////////
     .AddTraceSource ("Output5thPercentile",
                      "The 5th percentile of the received samples. "
                      "Only available for cumulative output type. "
                      "Emitted upon the instance's destruction.",
-                     MakeTraceSourceAccessor (&DistributionCollector::m_output5thPercentile))
+                     MakeTraceSourceAccessor (&DistributionCollector::m_output5thPercentile),
+                     "ns3::DistributionCollector::Output5thPercentileCallback")
     .AddTraceSource ("Output25thPercentile",
                      "The 25th percentile (first quartile) of the received samples. "
                      "Only available for cumulative output type. "
                      "Emitted upon the instance's destruction.",
-                     MakeTraceSourceAccessor (&DistributionCollector::m_output25thPercentile))
+                     MakeTraceSourceAccessor (&DistributionCollector::m_output25thPercentile),
+                     "ns3::DistributionCollector::Output25thPercentileCallback")
     .AddTraceSource ("Output50thPercentile",
                      "The 50th percentile (median) of the received samples. "
                      "Only available for cumulative output type. "
                      "Emitted upon the instance's destruction.",
-                     MakeTraceSourceAccessor (&DistributionCollector::m_output50thPercentile))
+                     MakeTraceSourceAccessor (&DistributionCollector::m_output50thPercentile),
+                     "ns3::DistributionCollector::Output50thPercentileCallback")
     .AddTraceSource ("Output75thPercentile",
                      "The 75th percentile (third quartile) of the received samples. "
                      "Only available for cumulative output type. "
                      "Emitted upon the instance's destruction.",
-                     MakeTraceSourceAccessor (&DistributionCollector::m_output75thPercentile))
+                     MakeTraceSourceAccessor (&DistributionCollector::m_output75thPercentile),
+                     "ns3::DistributionCollector::Output75thPercentileCallback")
     .AddTraceSource ("Output95thPercentile",
                      "The 95th percentile of the received samples. "
                      "Only available for cumulative output type. "
                      "Emitted upon the instance's destruction.",
-                     MakeTraceSourceAccessor (&DistributionCollector::m_output95thPercentile))
+                     MakeTraceSourceAccessor (&DistributionCollector::m_output95thPercentile),
+                     "ns3::DistributionCollector::Output95thPercentileCallback")
     // OTHER BASIC STATISTICAL INFORMATION TRACE SOURCES //////////////////////
     .AddTraceSource ("OutputCount",
                      "The number of received samples. "
                      "Emitted upon the instance's destruction.",
-                     MakeTraceSourceAccessor (&DistributionCollector::m_outputCount))
+                     MakeTraceSourceAccessor (&DistributionCollector::m_outputCount),
+                     "ns3::DistributionCollector::OutputCountCallback")
     .AddTraceSource ("OutputSum",
                      "The sum of the received samples. "
                      "Emitted upon the instance's destruction.",
-                     MakeTraceSourceAccessor (&DistributionCollector::m_outputSum))
+                     MakeTraceSourceAccessor (&DistributionCollector::m_outputSum),
+                     "ns3::DistributionCollector::OutputSumCallback")
     .AddTraceSource ("OutputMin",
                      "The minimum value from the received samples. "
                      "Emitted upon the instance's destruction.",
-                     MakeTraceSourceAccessor (&DistributionCollector::m_outputMin))
+                     MakeTraceSourceAccessor (&DistributionCollector::m_outputMin),
+                     "ns3::DistributionCollector::OutputMinCallback")
     .AddTraceSource ("OutputMax",
                      "The maximum value from the received samples. "
                      "Emitted upon the instance's destruction.",
-                     MakeTraceSourceAccessor (&DistributionCollector::m_outputMax))
+                     MakeTraceSourceAccessor (&DistributionCollector::m_outputMax),
+                     "ns3::DistributionCollector::OutputMaxCallback")
     .AddTraceSource ("OutputMean",
                      "The mean of the received samples. "
                      "Emitted upon the instance's destruction.",
-                     MakeTraceSourceAccessor (&DistributionCollector::m_outputMean))
+                     MakeTraceSourceAccessor (&DistributionCollector::m_outputMean),
+                     "ns3::DistributionCollector::OutputMeanCallback")
     .AddTraceSource ("OutputStddev",
                      "The standard deviation of the received samples. "
                      "Emitted upon the instance's destruction.",
-                     MakeTraceSourceAccessor (&DistributionCollector::m_outputStddev))
+                     MakeTraceSourceAccessor (&DistributionCollector::m_outputStddev),
+                     "ns3::DistributionCollector::OutputStddevCallback")
     .AddTraceSource ("OutputVariance",
                      "The variance of the received samples. "
                      "Emitted upon the instance's destruction.",
-                     MakeTraceSourceAccessor (&DistributionCollector::m_outputVariance))
+                     MakeTraceSourceAccessor (&DistributionCollector::m_outputVariance),
+                     "ns3::DistributionCollector::OutputVarianceCallback")
     .AddTraceSource ("OutputSqrSum",
                      "The sum of squares of the received samples. "
                      "Emitted upon the instance's destruction.",
-                     MakeTraceSourceAccessor (&DistributionCollector::m_outputSqrSum))
+                     MakeTraceSourceAccessor (&DistributionCollector::m_outputSqrSum),
+                     "ns3::DistributionCollector::OutputSqrSumCallback")
     // WARNING TRACE SOURCE ///////////////////////////////////////////////////
     .AddTraceSource ("Warning",
                      "Emitted upon encountering a problem with the data "
                      "collection, e.g., lack of variability in the received "
                      "samples, or too many samples fall outside the bins.",
-                     MakeTraceSourceAccessor (&DistributionCollector::m_warning))
+                     MakeTraceSourceAccessor (&DistributionCollector::m_warning),
+                     "ns3::DistributionCollector::WarningCallback")
   ;
   return tid;
 }

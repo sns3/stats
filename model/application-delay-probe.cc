@@ -48,10 +48,12 @@ ApplicationDelayProbe::GetTypeId ()
     .AddConstructor<ApplicationDelayProbe> ()
     .AddTraceSource ( "Output",
                       "The delay plus its socket address that serve as the output for this probe",
-                      MakeTraceSourceAccessor (&ApplicationDelayProbe::m_output))
+                      MakeTraceSourceAccessor (&ApplicationDelayProbe::m_output),
+                      "ns3::ApplicationDelayProbe::PacketDelayAddressCallback")
     .AddTraceSource ( "OutputSeconds",
                       "The delay of the traced packet",
-                      MakeTraceSourceAccessor (&ApplicationDelayProbe::m_outputSeconds))
+                      MakeTraceSourceAccessor (&ApplicationDelayProbe::m_outputSeconds),
+                      "ns3::ApplicationDelayProbe::PacketDelayCallback")
   ;
   return tid;
 }

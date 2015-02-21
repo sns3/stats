@@ -94,6 +94,26 @@ public:
    */
   virtual void ConnectByPath (std::string path);
 
+  /**
+   * \brief Callback signature for packet delay and address.
+   *
+   * \param delay the packet delay
+   * \param address the socket address for the packet
+   *
+   * \todo Optimize by using const-reference of Time.
+   */
+  typedef void (* PacketDelayAddressCallback)
+    (Time delay, const Address &address);
+  
+  /**
+   * \brief Callback signature for changes in packet delay.
+   *
+   * \param oldDelay the previous packet delay in seconds
+   * \param newDelay the actual packet delay in seconds
+   */
+  typedef void (* PacketDelayCallback)
+    (double oldDelay, double newDelay);
+
 private:
   /**
    * \brief Method to connect to an underlying ns3::TraceSource with

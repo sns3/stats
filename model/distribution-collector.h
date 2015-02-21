@@ -456,6 +456,88 @@ public:
    */
   void TraceSinkUinteger64 (uint64_t oldData, uint64_t newData);
 
+  /**
+   * Callback signature for `Output` trace source.
+   * \param centerOfBin the center value of a distribution bin, identifying the
+   *                    bin.
+   * \param value the value which corresponds to the bin; the type of the value
+   *              is determined by the `OutputType` attribute of the collector.
+   */
+  typedef void (* OutputCallback) (double centerOfBin, double value);
+  /**
+   * Callback signature for `Output5thPercentile` trace source.
+   * \param value the 5th percentile of samples received by the collector.
+   */
+  typedef void (* Output5thPercentileCallback) (double value);
+  /**
+   * Callback signature for `Output25thPercentile` trace source.
+   * \param value the 25th percentile (i.e., first quartile) of samples
+   *              received by the collector.
+   */
+  typedef void (* Output25thPercentileCallback) (double value);
+  /**
+   * Callback signature for `Output50thPercentile` trace source.
+   * \param value the 50th percentile (i.e., median) of samples received by
+   *              the collector.
+   */
+  typedef void (* Output50thPercentileCallback) (double value);
+  /**
+   * Callback signature for `Output75thPercentile` trace source.
+   * \param value the 75th percentile (i.e., third quartile) of samples
+   *              received by the collector.
+   */
+  typedef void (* Output75thPercentileCallback) (double value);
+  /**
+   * Callback signature for `Output95thPercentile` trace source.
+   * \param value the 95th percentile of samples received by the collector.
+   */
+  typedef void (* Output95thPercentileCallback) (double value);
+  /**
+   * Callback signature for `OutputCount` trace source.
+   * \param count the number of samples received by the collector.
+   */
+  typedef void (* OutputCountCallback) (double count);
+  /**
+   * Callback signature for `OutputSum` trace source.
+   * \param sum the sum of the samples received by the collector.
+   */
+  typedef void (* OutputSumCallback) (double sum);
+  /**
+   * Callback signature for `OutputMin` trace source.
+   * \param min the minimum value of the samples received by the collector.
+   */
+  typedef void (* OutputMinCallback) (double min);
+  /**
+   * Callback signature for `OutputMax` trace source.
+   * \param max the maximum value of the samples received by the collector.
+   */
+  typedef void (* OutputMaxCallback) (double max);
+  /**
+   * Callback signature for `OutputMean` trace source.
+   * \param mean the mean of the samples received by the collector.
+   */
+  typedef void (* OutputMeanCallback) (double mean);
+  /**
+   * Callback signature for `OutputStddev` trace source.
+   * \param stddev the standard deviation of the samples received by the
+   *               collector.
+   */
+  typedef void (* OutputStddevCallback) (double stddev);
+  /**
+   * Callback signature for `OutputVariance` trace source.
+   * \param variance the variance of the samples received by the collector.
+   */
+  typedef void (* OutputVarianceCallback) (double variance);
+  /**
+   * Callback signature for `OutputSqrSum` trace source.
+   * \param sqrSum the sum of squares of the samples received by the collector.
+   */
+  typedef void (* OutputSqrSumCallback) (double sqrSum);
+  /**
+   * Callback signature for `Warning` trace source.
+   */
+  typedef void (* WarningCallback) ();
+
 protected:
   // Inherited from Object base class
   virtual void DoDispose ();

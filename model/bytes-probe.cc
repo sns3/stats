@@ -29,6 +29,7 @@
 #include "ns3/log.h"
 #include "ns3/names.h"
 #include "ns3/config.h"
+#include "ns3/packet.h"
 #include "ns3/trace-source-accessor.h"
 
 NS_LOG_COMPONENT_DEFINE ("BytesProbe");
@@ -46,7 +47,8 @@ BytesProbe::GetTypeId ()
     .AddConstructor<BytesProbe> ()
     .AddTraceSource ( "Output",
                       "The uint32_t that serves as output for this probe",
-                      MakeTraceSourceAccessor (&BytesProbe::m_output))
+                      MakeTraceSourceAccessor (&BytesProbe::m_output),
+                      "ns3::Packet::PacketSizeTracedCallback")
   ;
   return tid;
 }

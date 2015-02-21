@@ -23,7 +23,8 @@
 #include <ns3/log.h>
 #include <ns3/simulator.h>
 #include <ns3/enum.h>
-
+#include <ns3/magister-stats.h>
+ 
 NS_LOG_COMPONENT_DEFINE ("ScalarCollector");
 
 
@@ -120,7 +121,8 @@ ScalarCollector::GetTypeId ()
                                     ScalarCollector::OUTPUT_TYPE_AVERAGE_PER_SECOND, "AVERAGE_PER_SECOND"))
     .AddTraceSource ("Output",
                      "Single scalar output, fired once the instance is destroyed.",
-                     MakeTraceSourceAccessor (&ScalarCollector::m_output))
+                     MakeTraceSourceAccessor (&ScalarCollector::m_output),
+                     "ns3::CollectorOutputCallback")
   ;
   return tid;
 }

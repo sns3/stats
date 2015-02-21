@@ -23,7 +23,8 @@
 #include <ns3/log.h>
 #include <ns3/simulator.h>
 #include <ns3/enum.h>
-
+#include <ns3/magister-stats.h>
+ 
 NS_LOG_COMPONENT_DEFINE ("UnitConversionCollector");
 
 
@@ -105,14 +106,18 @@ UnitConversionCollector::GetTypeId ()
     .AddTraceSource ("Output",
                      "The result traced value (old and new values) of the "
                      "conversion of an input sample.",
-                     MakeTraceSourceAccessor (&UnitConversionCollector::m_output))
+                     MakeTraceSourceAccessor (&UnitConversionCollector::m_output),
+                     "ns3::TracedValue::DoubleCallback")
     .AddTraceSource ("OutputValue",
                      "The result of the conversion of an input sample.",
-                     MakeTraceSourceAccessor (&UnitConversionCollector::m_outputValue))
+                     MakeTraceSourceAccessor (&UnitConversionCollector::m_outputValue),
+                     "ns3::CollectorOutputCallback")
     .AddTraceSource ("OutputTimeValue",
-                     "The current simulation time (in seconds) "
+                     "The current simulation time "
+                     "(using unit determined by `TimeUnit` attribute) "
                      "and the result of the conversion of an input sample.",
-                     MakeTraceSourceAccessor (&UnitConversionCollector::m_outputTimeValue))
+                     MakeTraceSourceAccessor (&UnitConversionCollector::m_outputTimeValue),
+                     "ns3::CollectorTimedOutputCallback")
   ;
   return tid;
 }
