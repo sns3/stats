@@ -128,14 +128,14 @@ IntervalRateCollector::GetTypeId ()
                    MakeEnumChecker (IntervalRateCollector::INPUT_DATA_TYPE_DOUBLE,   "DOUBLE",
                                     IntervalRateCollector::INPUT_DATA_TYPE_UINTEGER, "UINTEGER",
                                     IntervalRateCollector::INPUT_DATA_TYPE_BOOLEAN,  "BOOLEAN"))
-     .AddAttribute ("OutputType",
-                    "Determines the mechanism of processing the incoming samples.",
-                    EnumValue (IntervalRateCollector::OUTPUT_TYPE_SUM),
-                    MakeEnumAccessor (&IntervalRateCollector::SetOutputType,
-                                      &IntervalRateCollector::GetOutputType),
-                    MakeEnumChecker (IntervalRateCollector::OUTPUT_TYPE_SUM,                "SUM",
-                                     IntervalRateCollector::OUTPUT_TYPE_NUMBER_OF_SAMPLE,   "NUMBER_OF_SAMPLE",
-                                     IntervalRateCollector::OUTPUT_TYPE_AVERAGE_PER_SAMPLE, "AVERAGE_PER_SAMPLE"))
+    .AddAttribute ("OutputType",
+                   "Determines the mechanism of processing the incoming samples.",
+                   EnumValue (IntervalRateCollector::OUTPUT_TYPE_SUM),
+                   MakeEnumAccessor (&IntervalRateCollector::SetOutputType,
+                                     &IntervalRateCollector::GetOutputType),
+                   MakeEnumChecker (IntervalRateCollector::OUTPUT_TYPE_SUM,                "SUM",
+                                    IntervalRateCollector::OUTPUT_TYPE_NUMBER_OF_SAMPLE,   "NUMBER_OF_SAMPLE",
+                                    IntervalRateCollector::OUTPUT_TYPE_AVERAGE_PER_SAMPLE, "AVERAGE_PER_SAMPLE"))
     .AddAttribute ("TimeUnit",
                    "Determines the unit used for the time output (i.e., the "
                    "`OutputWithTime` trace source",

@@ -37,7 +37,7 @@ NS_LOG_COMPONENT_DEFINE ("BytesProbe");
 namespace ns3 {
 
 NS_OBJECT_ENSURE_REGISTERED (BytesProbe)
-  ;
+;
 
 TypeId
 BytesProbe::GetTypeId ()

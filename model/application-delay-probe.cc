@@ -38,7 +38,7 @@ NS_LOG_COMPONENT_DEFINE ("ApplicationDelayProbe");
 namespace ns3 {
 
 NS_OBJECT_ENSURE_REGISTERED (ApplicationDelayProbe)
-  ;
+;
 
 TypeId
 ApplicationDelayProbe::GetTypeId ()

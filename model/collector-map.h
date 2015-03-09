@@ -210,7 +210,7 @@ public:
   bool ConnectWithProbe (Ptr<Probe>   probe,
                          std::string  probeTraceSourceName,
                          uint32_t     collectorIdentifier,
-                         R (C::*collectorTraceSink) (P, P)) const;
+                         R (C::*collectorTraceSink)(P, P)) const;
 
   /**
    * \brief Disconnect a probe from one of the collectors inside the map.
@@ -234,7 +234,7 @@ public:
   bool DisconnectWithProbe (Ptr<Probe>   probe,
                             std::string  probeTraceSourceName,
                             uint32_t     collectorIdentifier,
-                            R (C::*collectorTraceSink) (P, P)) const;
+                            R (C::*collectorTraceSink)(P, P)) const;
 
   /**
    * \brief Connect each collector in this map with a corresponding collector
@@ -260,8 +260,8 @@ public:
    */
   template<typename R, typename C, typename P>
   bool ConnectToCollector (std::string traceSourceName,
-                           CollectorMap &targetMap,
-                           R (C::*traceSink) (P, P));
+                           CollectorMap & targetMap,
+                           R (C::*traceSink)(P, P));
 
   /**
    * \brief Connect each collector in the map to an aggregator.
@@ -282,7 +282,7 @@ public:
   template<typename R, typename C, typename P1>
   bool ConnectToAggregator (std::string traceSourceName,
                             Ptr<DataCollectionObject> aggregator,
-                            R (C::*aggregatorTraceSink) (P1)) const;
+                            R (C::*aggregatorTraceSink)(P1)) const;
 
   /**
    * \brief Connect each collector in the map to an aggregator.
@@ -304,7 +304,7 @@ public:
   template<typename R, typename C, typename P1, typename V1>
   bool ConnectToAggregator (std::string traceSourceName,
                             Ptr<DataCollectionObject> aggregator,
-                            R (C::*aggregatorTraceSink) (P1, V1)) const;
+                            R (C::*aggregatorTraceSink)(P1, V1)) const;
 
   /**
    * \brief Connect each collector in the map to an aggregator.
@@ -327,7 +327,7 @@ public:
   template<typename R, typename C, typename P1, typename V1, typename V2>
   bool ConnectToAggregator (std::string traceSourceName,
                             Ptr<DataCollectionObject> aggregator,
-                            R (C::*aggregatorTraceSink) (P1, V1, V2)) const;
+                            R (C::*aggregatorTraceSink)(P1, V1, V2)) const;
 
 private:
   /// Utilized to automate creating instances of collectors.
@@ -346,7 +346,7 @@ bool
 CollectorMap::ConnectWithProbe (Ptr<Probe>   probe,
                                 std::string  probeTraceSourceName,
                                 uint32_t     collectorIdentifier,
-                                R (C::*collectorTraceSink) (P, P)) const
+                                R (C::*collectorTraceSink)(P, P)) const
 {
   Ptr<DataCollectionObject> collector = Get (collectorIdentifier);
   NS_ASSERT_MSG (collector != 0,
@@ -365,7 +365,7 @@ bool
 CollectorMap::DisconnectWithProbe (Ptr<Probe>   probe,
                                    std::string  probeTraceSourceName,
                                    uint32_t     collectorIdentifier,
-                                   R (C::*collectorTraceSink) (P, P)) const
+                                   R (C::*collectorTraceSink)(P, P)) const
 {
   Ptr<DataCollectionObject> collector = Get (collectorIdentifier);
   NS_ASSERT_MSG (collector != 0,
@@ -383,7 +383,7 @@ template<typename R, typename C, typename P>
 bool
 CollectorMap::ConnectToCollector (std::string traceSourceName,
                                   CollectorMap &targetMap,
-                                  R (C::*traceSink) (P, P))
+                                  R (C::*traceSink)(P, P))
 {
   NS_ASSERT_MSG (m_map.size () == targetMap.GetN (),
                  "Error connecting maps of different size");
@@ -415,7 +415,7 @@ template<typename R, typename C, typename P1>
 bool
 CollectorMap::ConnectToAggregator (std::string traceSourceName,
                                    Ptr<DataCollectionObject> aggregator,
-                                   R (C::*aggregatorTraceSink) (P1)) const
+                                   R (C::*aggregatorTraceSink)(P1)) const
 {
   for (CollectorMap::Iterator it = m_map.begin (); it != m_map.end (); ++it)
     {
@@ -441,7 +441,7 @@ template<typename R, typename C, typename P1, typename V1>
 bool
 CollectorMap::ConnectToAggregator (std::string traceSourceName,
                                    Ptr<DataCollectionObject> aggregator,
-                                   R (C::*aggregatorTraceSink) (P1, V1)) const
+                                   R (C::*aggregatorTraceSink)(P1, V1)) const
 {
   for (CollectorMap::Iterator it = m_map.begin (); it != m_map.end (); ++it)
     {
@@ -467,7 +467,7 @@ template<typename R, typename C, typename P1, typename V1, typename V2>
 bool
 CollectorMap::ConnectToAggregator (std::string traceSourceName,
                                    Ptr<DataCollectionObject> aggregator,
-                                   R (C::*aggregatorTraceSink) (P1, V1, V2)) const
+                                   R (C::*aggregatorTraceSink)(P1, V1, V2)) const
 {
   // The following code is exactly the same as the previous function's code.
   for (CollectorMap::Iterator it = m_map.begin (); it != m_map.end (); ++it)

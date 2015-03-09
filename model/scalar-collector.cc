@@ -24,7 +24,7 @@
 #include <ns3/simulator.h>
 #include <ns3/enum.h>
 #include <ns3/magister-stats.h>
- 
+
 NS_LOG_COMPONENT_DEFINE ("ScalarCollector");
 
 

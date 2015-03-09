@@ -38,10 +38,10 @@
 namespace ns3 {
 
 NS_LOG_COMPONENT_DEFINE ("MultiFileAggregator")
-  ;
+;
 
 NS_OBJECT_ENSURE_REGISTERED (MultiFileAggregator)
-  ;
+;
 
 TypeId
 MultiFileAggregator::GetTypeId ()

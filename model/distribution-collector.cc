@@ -402,7 +402,7 @@ double
 DistributionCollector::GetInterpolatedX1 (double x0, double y0,
                                           double y1, double y2) const
 {
-  return x0 + (m_bins->GetBinLength () * (y1-y0) / (y2-y0));
+  return x0 + (m_bins->GetBinLength () * (y1 - y0) / (y2 - y0));
 }
 
 

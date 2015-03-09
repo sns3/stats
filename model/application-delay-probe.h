@@ -102,16 +102,16 @@ public:
    *
    * \todo Optimize by using const-reference of Time.
    */
-  typedef void (* PacketDelayAddressCallback)
+  typedef void (*PacketDelayAddressCallback)
     (Time delay, const Address &address);
-  
+
   /**
    * \brief Callback signature for changes in packet delay.
    *
    * \param oldDelay the previous packet delay in seconds
    * \param newDelay the actual packet delay in seconds
    */
-  typedef void (* PacketDelayCallback)
+  typedef void (*PacketDelayCallback)
     (double oldDelay, double newDelay);
 
 private:

@@ -34,9 +34,9 @@
 namespace ns3 {
 
 NS_LOG_COMPONENT_DEFINE ("MagisterGnuplotAggregator")
-  ;
+;
 NS_OBJECT_ENSURE_REGISTERED (MagisterGnuplotAggregator)
-  ;
+;
 
 TypeId
 MagisterGnuplotAggregator::GetTypeId ()

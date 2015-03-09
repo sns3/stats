@@ -128,13 +128,13 @@ private:
 
 
 DistributionCollectorTestCase::DistributionCollectorTestCase (
-    std::string name,
-    DistributionCollector::OutputType_t type,
-    double minValue,
-    double maxValue,
-    uint32_t numOfBins,
-    std::string input,
-    std::string expectedOutput)
+  std::string name,
+  DistributionCollector::OutputType_t type,
+  double minValue,
+  double maxValue,
+  uint32_t numOfBins,
+  std::string input,
+  std::string expectedOutput)
   : TestCase (name),
     m_type (type),
     m_minValue (minValue),
@@ -184,74 +184,74 @@ DistributionCollectorTestCase::DoRun ()
   // Connect the collector's outputs to a callback of this class.
   bool ret = false;
   ret = m_collector->TraceConnectWithoutContext (
-    "Output",
-    MakeCallback (&DistributionCollectorTestCase::CollectorOutputCallback,
-                  this));
+      "Output",
+      MakeCallback (&DistributionCollectorTestCase::CollectorOutputCallback,
+                    this));
   NS_ASSERT (ret);
   ret = m_collector->TraceConnectWithoutContext (
-    "Output5thPercentile",
-    MakeCallback (&DistributionCollectorTestCase::CollectorOutput5thPercentileCallback,
-                  this));
+      "Output5thPercentile",
+      MakeCallback (&DistributionCollectorTestCase::CollectorOutput5thPercentileCallback,
+                    this));
   NS_ASSERT (ret);
   ret = m_collector->TraceConnectWithoutContext (
-    "Output25thPercentile",
-    MakeCallback (&DistributionCollectorTestCase::CollectorOutput25thPercentileCallback,
-                  this));
+      "Output25thPercentile",
+      MakeCallback (&DistributionCollectorTestCase::CollectorOutput25thPercentileCallback,
+                    this));
   NS_ASSERT (ret);
   ret = m_collector->TraceConnectWithoutContext (
-    "Output50thPercentile",
-    MakeCallback (&DistributionCollectorTestCase::CollectorOutput50thPercentileCallback,
-                  this));
+      "Output50thPercentile",
+      MakeCallback (&DistributionCollectorTestCase::CollectorOutput50thPercentileCallback,
+                    this));
   NS_ASSERT (ret);
   ret = m_collector->TraceConnectWithoutContext (
-    "Output75thPercentile",
-    MakeCallback (&DistributionCollectorTestCase::CollectorOutput75thPercentileCallback,
-                  this));
+      "Output75thPercentile",
+      MakeCallback (&DistributionCollectorTestCase::CollectorOutput75thPercentileCallback,
+                    this));
   NS_ASSERT (ret);
   ret = m_collector->TraceConnectWithoutContext (
-    "Output95thPercentile",
-    MakeCallback (&DistributionCollectorTestCase::CollectorOutput95thPercentileCallback,
-                  this));
+      "Output95thPercentile",
+      MakeCallback (&DistributionCollectorTestCase::CollectorOutput95thPercentileCallback,
+                    this));
   NS_ASSERT (ret);
   ret = m_collector->TraceConnectWithoutContext (
-    "OutputCount",
-    MakeCallback (&DistributionCollectorTestCase::CollectorOutputCountCallback,
-                  this));
+      "OutputCount",
+      MakeCallback (&DistributionCollectorTestCase::CollectorOutputCountCallback,
+                    this));
   NS_ASSERT (ret);
   ret = m_collector->TraceConnectWithoutContext (
-    "OutputSum",
-    MakeCallback (&DistributionCollectorTestCase::CollectorOutputSumCallback,
-                  this));
+      "OutputSum",
+      MakeCallback (&DistributionCollectorTestCase::CollectorOutputSumCallback,
+                    this));
   NS_ASSERT (ret);
   ret = m_collector->TraceConnectWithoutContext (
-    "OutputMin",
-    MakeCallback (&DistributionCollectorTestCase::CollectorOutputMinCallback,
-                  this));
+      "OutputMin",
+      MakeCallback (&DistributionCollectorTestCase::CollectorOutputMinCallback,
+                    this));
   NS_ASSERT (ret);
   ret = m_collector->TraceConnectWithoutContext (
-    "OutputMax",
-    MakeCallback (&DistributionCollectorTestCase::CollectorOutputMaxCallback,
-                  this));
+      "OutputMax",
+      MakeCallback (&DistributionCollectorTestCase::CollectorOutputMaxCallback,
+                    this));
   NS_ASSERT (ret);
   ret = m_collector->TraceConnectWithoutContext (
-    "OutputMean",
-    MakeCallback (&DistributionCollectorTestCase::CollectorOutputMeanCallback,
-                  this));
+      "OutputMean",
+      MakeCallback (&DistributionCollectorTestCase::CollectorOutputMeanCallback,
+                    this));
   NS_ASSERT (ret);
   ret = m_collector->TraceConnectWithoutContext (
-    "OutputStddev",
-    MakeCallback (&DistributionCollectorTestCase::CollectorOutputStddevCallback,
-                  this));
+      "OutputStddev",
+      MakeCallback (&DistributionCollectorTestCase::CollectorOutputStddevCallback,
+                    this));
   NS_ASSERT (ret);
   ret = m_collector->TraceConnectWithoutContext (
-    "OutputVariance",
-    MakeCallback (&DistributionCollectorTestCase::CollectorOutputVarianceCallback,
-                  this));
+      "OutputVariance",
+      MakeCallback (&DistributionCollectorTestCase::CollectorOutputVarianceCallback,
+                    this));
   NS_ASSERT (ret);
   ret = m_collector->TraceConnectWithoutContext (
-    "OutputSqrSum",
-    MakeCallback (&DistributionCollectorTestCase::CollectorOutputSqrSumCallback,
-                  this));
+      "OutputSqrSum",
+      MakeCallback (&DistributionCollectorTestCase::CollectorOutputSqrSumCallback,
+                    this));
   NS_ASSERT (ret);
 
   // Push inputs into the collector after 1 ms of simulation time.
