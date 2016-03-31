@@ -137,7 +137,7 @@ MultiFileAggregator::~MultiFileAggregator ()
           fileName << "-ATTN";
         }
       fileName << ".txt";
-      NS_LOG_LOGIC ("Creating a new file " << fileName.str ());
+      NS_LOG_INFO ("Creating a new file " << fileName.str ());
       std::ofstream ofs (fileName.str ().c_str ());
 
       if (!ofs || !(ofs.is_open ()))

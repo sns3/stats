@@ -743,7 +743,7 @@ AdaptiveBins::NewSample (double newSample)
           && (m_numOfSettlingSamples > 1))
         {
           // We have received enough samples. Let's construct the bins.
-          NS_LOG_LOGIC (this << " automatically settling the bins.");
+          NS_LOG_INFO (this << " automatically settling the bins.");
           SettleBins ();
         }
     }
