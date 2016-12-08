@@ -162,6 +162,7 @@ MultiFileAggregator::~MultiFileAggregator ()
       ofs << it->second->str () << std::endl;  // print the buffered data.
       ofs.close ();                            // close the file.
     }
+  for (auto it : m_buffer) delete it.second;
 }
 
 void
