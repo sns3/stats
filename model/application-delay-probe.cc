@@ -97,7 +97,7 @@ ApplicationDelayProbe::ConnectByObject (std::string traceSource, Ptr<Object> obj
 {
   NS_LOG_FUNCTION (this << traceSource << obj);
   NS_LOG_DEBUG ("Name of probe (if any) in names database: " << Names::FindPath (obj));
-  bool connected = obj->TraceConnectWithoutContext (traceSource, MakeCallback (&ns3::ApplicationDelayProbe::TraceSink, this));
+  bool connected = obj->TraceConnectWithoutContext (traceSource, MakeCallback (&ApplicationDelayProbe::TraceSink, this));
   return connected;
 }
 
@@ -106,11 +106,11 @@ ApplicationDelayProbe::ConnectByPath (std::string path)
 {
   NS_LOG_FUNCTION (this << path);
   NS_LOG_DEBUG ("Name of probe to search for in config database: " << path);
-  Config::ConnectWithoutContext (path, MakeCallback (&ns3::ApplicationDelayProbe::TraceSink, this));
+  Config::ConnectWithoutContext (path, MakeCallback (&ApplicationDelayProbe::TraceSink, this));
 }
 
 void
-ApplicationDelayProbe::TraceSink (Time delay, const Address& address)
+ApplicationDelayProbe::TraceSink (const Time& delay, const Address& address)
 {
   NS_LOG_FUNCTION (this << delay.GetSeconds () << address);
   if (IsEnabled ())

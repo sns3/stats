@@ -99,11 +99,9 @@ public:
    *
    * \param delay the packet delay
    * \param address the socket address for the packet
-   *
-   * \todo Optimize by using const-reference of Time.
    */
   typedef void (*PacketDelayAddressCallback)
-    (Time delay, const Address &address);
+    (const Time &delay, const Address &address);
 
   /**
    * \brief Callback signature for changes in packet delay.
@@ -123,7 +121,7 @@ private:
    * \param address the socket address for the traced packet
    *
    */
-  void TraceSink (Time delay, const Address& address);
+  void TraceSink (const Time &delay, const Address& address);
 
   /// Output trace, the packet delay and source address
   TracedCallback<Time, const Address&> m_output;
