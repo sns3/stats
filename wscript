@@ -12,6 +12,9 @@ def build(bld):
         'model/unit-conversion-collector.cc',
         'model/multi-file-aggregator.cc',
         'model/magister-gnuplot-aggregator.cc',
+        'helper/stats-delay-helper.cc',
+        'helper/stats-helper.cc',
+        'helper/stats-throughput-helper.cc',
         ]
 
     module_test = bld.create_ns3_module_test_library('magister-stats')
@@ -32,4 +35,10 @@ def build(bld):
         'model/unit-conversion-collector.h',
         'model/multi-file-aggregator.h',
         'model/magister-gnuplot-aggregator.h',
+        'helper/stats-delay-helper.h',
+        'helper/stats-helper.h',
+        'helper/stats-throughput-helper.h',
         ]
+
+    if (bld.env['ENABLE_EXAMPLES']):
+        bld.recurse('examples')
