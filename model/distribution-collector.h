@@ -1,6 +1,6 @@
 /* -*-  Mode: C++; c-file-style: "gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c) 2014 Magister Solutions
+ * Copyright (c) 2014, 2017 Magister Solutions
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Budiarto Herman <budiarto.herman@magister.fi>
- *
+ * Modified: Frans Laakso <frans.laakso@magister.fi>
  */
 
 #ifndef DISTRIBUTION_COLLECTOR_H
@@ -30,28 +30,24 @@
 
 namespace ns3 {
 
-
 /**
  * \ingroup aggregator
- * \brief Bins which categorize and count samples, with the ability to predict
- *        its structure based on the received samples.
- *
- * After receiving a number of samples (the `NumOfSettlingSamples` attribute,
- * which is 1000 samples by default), the class will automatically analyze the
- * samples' distribution and create a fixed set of equal-length bins. For
- * example, the lowest value of the received samples determines the lower bound
- * of the bins. The `LowerOffset` attribute may be set to extend the lower
- * bound by a certain percentage to anticipate any "unexpected" outliers. The
- * `UpperOffset` attribute has the same function for the upper bound.
+ * \brief Parent class for the bins.
  */
-class AdaptiveBins : public Object
+class DistributionBins : public Object
 {
 public:
+
+  /**
+   * @warning the default constructor should not be used
+   */
+  DistributionBins ();
+
   /**
    * \brief Create an empty set of bins which will adapt its structure.
    * \param numOfBins a positive number indicating the number of bins.
    */
-  AdaptiveBins (uint32_t numOfBins);
+  DistributionBins (uint32_t numOfBins);
 
   // inherited from ObjectBase base class
   static TypeId GetTypeId ();
@@ -62,16 +58,9 @@ public:
   uint32_t GetNumOfSamples () const;
 
   /**
-   * \brief Instruct the class to construct the bins, based on the samples
-   *        received so far.
-   *
-   * Bins' structure will be automatically derived from the distribution of the
-   * samples received and the offset attributes.
-   *
-   * \warning Must have not been settled before and must have received at least
-   *          one sample.
+   * \brief Instruct the class to construct the bins.
    */
-  void SettleBins ();
+  virtual void SettleBins () = 0;
 
   /**
    * \brief Instruct the class to construct the bins using the given parameters.
@@ -111,11 +100,39 @@ public:
   uint32_t GetNumOfBins () const;
 
   /**
-   * \brief Receive the given sample, thereby increasing the counter of the bin
-   *        associated with the given sample by 1.
-   * \param newSample a new sample to be received
+   * \param value the smallest settling value.
    */
-  void NewSample (double newSample);
+  void SetSmallestSettlingValue (double value);
+
+  /**
+   * \return the smallest settling value.
+   */
+  double GetSmallestSettlingValue () const;
+
+  /**
+   * \param value the largest settling value.
+   */
+  void SetLargestSettlingValue (double value);
+
+  /**
+   * \return the largest settling value.
+   */
+  double GetLargestSettlingValue () const;
+
+  /**
+   * \param value allow only positive values setting.
+   */
+  void SetAllowOnlyPositiveValues (bool value);
+
+  /**
+   * \return the allow only positive values setting.
+   */
+  bool GetAllowOnlyPositiveValues () const;
+
+  /**
+   * \brief Receive the given sample.
+   */
+  virtual void NewSample (double newSample) = 0;
 
   /**
    * \return the current value of the counter of a certain bin.
@@ -156,11 +173,11 @@ public:
    */
   uint32_t GetNumOfOutOfBounds () const;
 
-protected:
   // Inherited from Object base class
   virtual void DoDispose ();
 
-private:
+protected:
+
   double    m_lowerOffset;           ///< `LowerOffset` attribute.
   double    m_upperOffset;           ///< `UpperOffset` attribute.
   uint32_t  m_numOfSettlingSamples;  ///< `NumOfSettlingSamples` attribute.
@@ -179,12 +196,127 @@ private:
   double m_binLength;     ///< The length of each bin.
   uint32_t m_numOfBins;   ///< The number of bins.
 
-  bool m_isSettled;  ///< True after SettleBins().
+  bool m_isSettled;               ///< True after SettleBins().
+  bool m_allowOnlyPositiveValues; ///< Allow only positive values when settling the bins.
 
   /// Pointer to function which is invoked upon encountering inaccuracy problem.
   Callback<void, double> m_notifyInaccuracy;
 
+private:
+
+}; // end of class DistributionBins
+
+
+/**
+ * \ingroup aggregator
+ * \brief Bins which categorize and count samples, with the ability to predict
+ *        its structure based on the received samples.
+ *
+ * After receiving a number of samples (the `NumOfSettlingSamples` attribute,
+ * which is 1000 samples by default), the class will automatically analyze the
+ * samples' distribution and create a fixed set of equal-length bins. For
+ * example, the lowest value of the received samples determines the lower bound
+ * of the bins. The `LowerOffset` attribute may be set to extend the lower
+ * bound by a certain percentage to anticipate any "unexpected" outliers. The
+ * `UpperOffset` attribute has the same function for the upper bound.
+ */
+class AdaptiveBins : public DistributionBins
+{
+public:
+
+  using DistributionBins::SettleBins;
+
+  /**
+   * @warning the default constructor should not be used
+   */
+  AdaptiveBins ();
+
+  /**
+   * \brief Create an empty set of bins which will adapt its structure.
+   * \param numOfBins a positive number indicating the number of bins.
+   */
+  AdaptiveBins (uint32_t numOfBins);
+
+  // inherited from ObjectBase base class
+  static TypeId GetTypeId ();
+
+  // Inherited from Object base class
+  virtual void DoInitialize (void);
+  virtual void DoDispose (void);
+
+  /**
+   * \brief Instruct the class to construct the bins, based on the samples
+   *        received so far.
+   *
+   * Bins' structure will be automatically derived from the distribution of the
+   * samples received and the offset attributes.
+   *
+   * \warning Must have not been settled before and must have received at least
+   *          one sample.
+   */
+  virtual void SettleBins ();
+
+  /**
+   * \brief Receive the given sample, thereby increasing the counter of the bin
+   *        associated with the given sample by 1.
+   * \param newSample a new sample to be received
+   */
+  virtual void NewSample (double newSample);
+
+protected:
+
+private:
+
 }; // end of class AdaptiveBins
+
+
+/**
+ * \ingroup aggregator
+ * \brief Bins which categorize and count samples.
+ */
+class StaticBins : public DistributionBins
+{
+public:
+
+  using DistributionBins::SettleBins;
+
+  /**
+   * @warning the default constructor should not be used
+   */
+  StaticBins ();
+
+  /**
+   * \brief Create an empty set of bins.
+   * \param numOfBins a positive number indicating the number of bins.
+   */
+  StaticBins (uint32_t numOfBins);
+
+  // inherited from ObjectBase base class
+  static TypeId GetTypeId ();
+
+  // Inherited from Object base class
+  virtual void DoInitialize (void);
+  virtual void DoDispose (void);
+
+  /**
+   * \brief Instruct the class to construct the bins.
+   *
+   * \warning Must have not been settled before.
+   */
+  virtual void SettleBins ();
+
+  /**
+   * \brief Receive the given sample, thereby increasing the counter of the bin
+   *        associated with the given sample by 1.
+   * \param newSample a new sample to be received
+   */
+  virtual void NewSample (double newSample);
+
+protected:
+
+private:
+
+}; // end of class StaticBins
 
 
 /**
@@ -308,10 +440,26 @@ public:
   } OutputType_t;
 
   /**
+   * \enum DistributionBinType_t
+   * \brief Type of bins supported by this class.
+   */
+  typedef enum
+  {
+    BIN_TYPE_ADAPTIVE = 0,
+    BIN_TYPE_STATIC = 1
+  } DistributionBinType_t;
+
+  /**
    * \param outputType an arbitrary output type.
    * \return representation of the output type in string.
    */
   static std::string GetOutputTypeName (OutputType_t outputType);
+
+  /**
+   * \param binType an arbitrary bin type.
+   * \return representation of the bin type in string.
+   */
+  static std::string GetBinTypeName (DistributionCollector::DistributionBinType_t binType);
 
   /// Creates a new collector instance.
   DistributionCollector ();
@@ -348,6 +496,46 @@ public:
    * \return the processing mechanism used by this instance.
    */
   OutputType_t GetOutputType () const;
+
+  /**
+   * \param binType the bin type used by this instance.
+   */
+  void SetBinType (DistributionBinType_t binType);
+
+  /**
+   * \return the bin type used by this instance.
+   */
+  DistributionBinType_t GetBinType () const;
+
+  /**
+   * \param value the smallest settling value.
+   */
+  void SetSmallestSettlingValue (double value);
+
+  /**
+   * \return the smallest settling value.
+   */
+  double GetSmallestSettlingValue () const;
+
+  /**
+   * \param value the largest settling value.
+   */
+  void SetLargestSettlingValue (double value);
+
+  /**
+   * \return the largest settling value.
+   */
+  double GetLargestSettlingValue () const;
+
+  /**
+   * \param value the allow only positive values setting.
+   */
+  void SetAllowOnlyPositiveValues (bool value);
+
+  /**
+   * \return the allow only positive values setting.
+   */
+  bool GetAllowOnlyPositiveValues () const;
 
   // TRACE SINKS //////////////////////////////////////////////////////////////
 
@@ -603,7 +791,12 @@ private:
   MinMaxAvgTotalCalculator<double> m_calculator;
 
   /// The bin categories.
-  Ptr<AdaptiveBins> m_bins;
+  Ptr<DistributionBins> m_bins;
+
+  DistributionBinType_t m_binType;  ///< Bin type.
+  double m_smallestSettlingSamples; ///< Smallest value in the storage.
+  double m_largestSettlingSamples;  ///< Largest value in the storage.
+  bool m_allowOnlyPositiveValues;   ///< Allow only positive values.
 
 }; // end of class DistributionCollector
 
