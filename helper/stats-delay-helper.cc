@@ -40,7 +40,7 @@
 
 #include <ns3/data-collection-object.h>
 #include <ns3/probe.h>
-#include <ns3/application-delay-probe.h>
+#include <ns3/address-time-probe.h>
 #include <ns3/unit-conversion-collector.h>
 #include <ns3/distribution-collector.h>
 #include <ns3/scalar-collector.h>

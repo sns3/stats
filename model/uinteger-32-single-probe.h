@@ -25,8 +25,8 @@
  * - Budiarto Herman (budiarto.herman@magister.fi)
  */
 
-#ifndef BYTES_PROBE_H
-#define BYTES_PROBE_H
+#ifndef UINTEGER_32_SINGLE_PROBE_H
+#define UINTEGER_32_SINGLE_PROBE_H
 
 #include "ns3/callback.h"
 #include "ns3/probe.h"
@@ -38,21 +38,21 @@ namespace ns3 {
  * \ingroup probes
  *
  * This class is designed to probe an underlying ns3 TraceSource exporting
- * a uint32_t which represents a size in bytes.  This probe exports a trace
- * source "Output" of type uint32_t. The Output trace source emits a value when
- * either the trace source emits a new value, or when SetValue () is called.
+ * a uint32_t. This probe exports a trace source "Output" of type uint32_t.
+ * The Output trace source emits a value when either the trace source emits
+ * a new value, or when SetValue () is called.
  *
  * This class differs with Uinteger32Probe in the following way:
  * - Uinteger32Probe expects input from a TracedValue (i.e., an old uint32_t
  *   value and a new uint32_t value) or a similar TracedCallback with two
  *   arguments.
- * - BytesProbe expects input from a TracedCallback with one argument.
+ * - Uinteger32SingleProbe expects input from a TracedCallback with one argument.
  * - Uinteger32Probe is *not* fired when the new value is the same with the old
- *   value, but BytesProbe is.
+ *   value, but Uinteger32SingleProbe is.
  *
  * The current value of the probe can be polled with the GetValue () method.
  */
-class BytesProbe : public Probe
+class Uinteger32SingleProbe : public Probe
 {
 public:
   /**
@@ -60,8 +60,8 @@ public:
    * \return the object TypeId
    */
   static TypeId GetTypeId ();
-  BytesProbe ();
-  virtual ~BytesProbe ();
+  Uinteger32SingleProbe ();
+  virtual ~Uinteger32SingleProbe ();
 
   /**
    * \return the most recent value
@@ -69,17 +69,17 @@ public:
   uint32_t GetValue (void) const;
 
   /**
-   * \param value set the traced uint32_t to a new value
+   * \param uintegerValue set the traced uint32_t to a new value
    */
-  void SetValue (uint32_t value);
+  void SetValue (uint32_t uintegerValue);
 
   /**
    * \brief Set a probe value by its name in the Config system
    *
    * \param path Config path to access the probe
-   * \param value set the traced uint32_t to a new value
+   * \param uintegerValue set the traced uint32_t to a new value
    */
-  static void SetValueByPath (std::string path, uint32_t value);
+  static void SetValueByPath (std::string path, uint32_t uintegerValue);
 
   /**
    * \brief connect to a trace source attribute provided by a given object
@@ -104,16 +104,16 @@ private:
   /**
    * \brief Method to connect to an underlying ns3::TraceSource of type uint32_t
    *
-   * \param bytes value of the uint32_t
+   * \param uintegerValue value of the uint32_t
    */
-  void TraceSink (uint32_t bytes);
+  void TraceSink (uint32_t uintegerValue);
 
   TracedCallback<uint32_t, uint32_t> m_output; //!< Output trace source.
 
   /// The size of the traced bytes.
-  uint32_t m_bytesOld;
+  uint32_t m_uintegerValue;
 };
 
 } // namespace ns3
 
-#endif // BYTES_PROBE_H
+#endif // UINTEGER_32_SINGLE_PROBE_H

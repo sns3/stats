@@ -25,92 +25,93 @@
  * - Budiarto Herman (budiarto.herman@magister.fi)
  */
 
-#include "bytes-probe.h"
 #include "ns3/log.h"
 #include "ns3/names.h"
 #include "ns3/config.h"
 #include "ns3/packet.h"
 #include "ns3/trace-source-accessor.h"
+#include "uinteger-32-single-probe.h"
 
-NS_LOG_COMPONENT_DEFINE ("BytesProbe");
+NS_LOG_COMPONENT_DEFINE ("Uinteger32SingleProbe");
 
 namespace ns3 {
 
-NS_OBJECT_ENSURE_REGISTERED (BytesProbe)
+NS_OBJECT_ENSURE_REGISTERED (Uinteger32SingleProbe)
 ;
 
 TypeId
-BytesProbe::GetTypeId ()
+Uinteger32SingleProbe::GetTypeId ()
 {
-  static TypeId tid = TypeId ("ns3::BytesProbe")
+  static TypeId tid = TypeId ("ns3::Uinteger32SingleProbe")
     .SetParent<Probe> ()
-    .AddConstructor<BytesProbe> ()
+    .AddConstructor<Uinteger32SingleProbe> ()
     .AddTraceSource ( "Output",
                       "The uint32_t that serves as output for this probe",
-                      MakeTraceSourceAccessor (&BytesProbe::m_output),
+                      MakeTraceSourceAccessor (&Uinteger32SingleProbe::m_output),
                       "ns3::Packet::PacketSizeTracedCallback")
   ;
   return tid;
 }
 
-BytesProbe::BytesProbe ()
+Uinteger32SingleProbe::Uinteger32SingleProbe () :
+  m_uintegerValue (0)
 {
   NS_LOG_FUNCTION (this);
 }
 
-BytesProbe::~BytesProbe ()
+Uinteger32SingleProbe::~Uinteger32SingleProbe ()
 {
   NS_LOG_FUNCTION (this);
 }
 
 uint32_t
-BytesProbe::GetValue (void) const
+Uinteger32SingleProbe::GetValue (void) const
 {
   NS_LOG_FUNCTION (this);
-  return m_bytesOld;
+  return m_uintegerValue;
 }
 void
-BytesProbe::SetValue (uint32_t newVal)
+Uinteger32SingleProbe::SetValue (uint32_t uintegerValue)
 {
-  NS_LOG_FUNCTION (this << newVal);
-  m_output (m_bytesOld, newVal);
-  m_bytesOld = newVal;
+  NS_LOG_FUNCTION (this << uintegerValue);
+  m_output (m_uintegerValue, uintegerValue);
+  m_uintegerValue = uintegerValue;
 }
 
 void
-BytesProbe::SetValueByPath (std::string path, uint32_t newVal)
+Uinteger32SingleProbe::SetValueByPath (std::string path, uint32_t uintegerValue)
 {
-  NS_LOG_FUNCTION (path << newVal);
-  Ptr<BytesProbe> probe = Names::Find<BytesProbe> (path);
+  NS_LOG_FUNCTION (path << uintegerValue);
+  Ptr<Uinteger32SingleProbe> probe = Names::Find<Uinteger32SingleProbe> (path);
   NS_ASSERT_MSG (probe, "Error:  Can't find probe for path " << path);
-  probe->SetValue (newVal);
+  probe->SetValue (uintegerValue);
 }
 
 bool
-BytesProbe::ConnectByObject (std::string traceSource, Ptr<Object> obj)
+Uinteger32SingleProbe::ConnectByObject (std::string traceSource, Ptr<Object> obj)
 {
   NS_LOG_FUNCTION (this << traceSource << obj);
   NS_LOG_DEBUG ("Name of probe (if any) in names database: " << Names::FindPath (obj));
-  bool connected = obj->TraceConnectWithoutContext (traceSource, MakeCallback (&ns3::BytesProbe::TraceSink, this));
+  bool connected = obj->TraceConnectWithoutContext (traceSource, MakeCallback (&ns3::Uinteger32SingleProbe::TraceSink, this));
   return connected;
 }
 
 void
-BytesProbe::ConnectByPath (std::string path)
+Uinteger32SingleProbe::ConnectByPath (std::string path)
 {
   NS_LOG_FUNCTION (this << path);
   NS_LOG_DEBUG ("Name of probe to search for in config database: " << path);
-  Config::ConnectWithoutContext (path, MakeCallback (&ns3::BytesProbe::TraceSink, this));
+  Config::ConnectWithoutContext (path, MakeCallback (&ns3::Uinteger32SingleProbe::TraceSink, this));
 }
 
 void
-BytesProbe::TraceSink (uint32_t bytes)
+Uinteger32SingleProbe::TraceSink (uint32_t uintegerValue)
 {
-  NS_LOG_FUNCTION (this << bytes);
+  NS_LOG_FUNCTION (this << uintegerValue);
   if (IsEnabled ())
     {
-      m_output (m_bytesOld, bytes);
-      m_bytesOld = bytes;
+      m_output (m_uintegerValue, uintegerValue);
+      m_uintegerValue = uintegerValue;
     }
 }
 

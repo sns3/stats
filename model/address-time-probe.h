@@ -22,12 +22,12 @@
  * - Tiago G. Rodrigues (tgr002@bucknell.edu)
  * - Mitch Watrous (watrous@u.washington.edu)
  *
- * Modified for RxDelay trace source by:
+ * Modified by:
  * - Budiarto Herman (budiarto.herman@magister.fi)
  */
 
-#ifndef APPLICATION_DELAY_PROBE_H
-#define APPLICATION_DELAY_PROBE_H
+#ifndef ADDRESS_TIME_PROBE_H
+#define ADDRESS_TIME_PROBE_H
 
 #include "ns3/nstime.h"
 #include "ns3/traced-callback.h"
@@ -40,14 +40,14 @@ namespace ns3 {
  * \brief Probe to translate from a TraceSource to two more easily parsed TraceSources.
  *
  * This class is designed to probe an underlying ns3 TraceSource exporting a
- * packet delay information and a socket address.  This probe exports a trace
+ * time information and a socket address.  This probe exports a trace
  * source "Output" with arguments of type Time and const Address&.  This probe
  * exports another trace source "OutputSeconds" with arguments of type double,
- * which is the delay of the packet in seconds.  The trace sources emit values
+ * which is the time in seconds.  The trace sources emit values
  * when either the probed trace source emits a new value, or when SetValue ()
  * is called.
  */
-class ApplicationDelayProbe : public Probe
+class AddressTimeProbe : public Probe
 {
 public:
   /**
@@ -55,25 +55,25 @@ public:
    * \return the object TypeId
    */
   static TypeId GetTypeId ();
-  ApplicationDelayProbe ();
-  virtual ~ApplicationDelayProbe ();
+  AddressTimeProbe ();
+  virtual ~AddressTimeProbe ();
 
   /**
    * \brief Set a probe value
    *
-   * \param delay set the traced delay equal to this
+   * \param timeValue set the traced time value equal to this
    * \param address set the socket address for the traced packet equal to this
    */
-  void SetValue (Time delay, const Address& address);
+  void SetValue (Time timeValue, const Address& address);
 
   /**
    * \brief Set a probe value by its name in the Config system
    *
    * \param path config path to access the probe
-   * \param delay set the traced delay equal to this
+   * \param timeValue set the traced time value equal to this
    * \param address set the socket address for the traced packet equal to this
    */
-  static void SetValueByPath (std::string path, Time delay, const Address& address);
+  static void SetValueByPath (std::string path, Time timeValue, const Address& address);
 
   /**
    * \brief connect to a trace source attribute provided by a given object
@@ -95,50 +95,49 @@ public:
   virtual void ConnectByPath (std::string path);
 
   /**
-   * \brief Callback signature for packet delay and address.
+   * \brief Callback signature for time value and address.
    *
-   * \param delay the packet delay
+   * \param timeValue the time value
    * \param address the socket address for the packet
+   *
+   * \todo Optimize by using const-reference of Time.
    */
-  typedef void (*PacketDelayAddressCallback)
-    (const Time &delay, const Address &address);
+  typedef void (*TimeAddressCallback)
+    (Time timeValue, const Address &address);
 
   /**
-   * \brief Callback signature for changes in packet delay.
+   * \brief Callback signature for changes in time value.
    *
-   * \param oldDelay the previous packet delay in seconds
-   * \param newDelay the actual packet delay in seconds
+   * \param oldValue the previous time value in seconds
+   * \param newValue the actual time value in seconds
    */
-  typedef void (*PacketDelayCallback)
-    (double oldDelay, double newDelay);
+  typedef void (*TimeCallback)
+    (double oldValue, double newValue);
 
 private:
   /**
    * \brief Method to connect to an underlying ns3::TraceSource with
-   * arguments of type Time delay and const Address&
+   * arguments of type Time value and const Address&
    *
-   * \param delay the traced delay
+   * \param timeValue the traced time value
    * \param address the socket address for the traced packet
    *
    */
-  void TraceSink (const Time &delay, const Address& address);
+  void TraceSink (Time timeValue, const Address& address);
 
-  /// Output trace, the packet delay and source address
+  /// Output trace, thetime value and source address
   TracedCallback<Time, const Address&> m_output;
-  /// Output trace, previous delay and current delay
+  /// Output trace, previous time value and current time value
   TracedCallback<double, double> m_outputSeconds;
 
-  /// The traced delay.
-  Time m_delay;
+  /// The traced time value.
+  Time m_timeValue;
 
-  /// The socket address for the traced packet.
+  /// The socket address.
   Address m_address;
-
-  /// The delay of the traced packet.
-  double m_delayOld;
 };
 
 
 } // namespace ns3
 
-#endif // APPLICATION_DELAY_PROBE_H
+#endif // ADDRESS_TIME_PROBE_H
