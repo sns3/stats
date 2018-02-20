@@ -115,6 +115,13 @@ public:
   void Create (uint32_t identifier);
 
   /**
+   * \brief Append a single collector to this map.
+   * \param identifier the identifier to be associated with the new collector.
+   * \param the new collector.
+   */
+  void Insert (uint32_t identifier, Ptr<DataCollectionObject> dataCollectionObject);
+
+  /**
    * \return true if the map contains zero collector, or false otherwise.
    */
   bool IsEmpty () const;

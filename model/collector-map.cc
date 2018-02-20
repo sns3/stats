@@ -89,6 +89,14 @@ CollectorMap::Create (uint32_t identifier)
 }
 
 
+void
+CollectorMap::Insert (uint32_t identifier, Ptr<DataCollectionObject> dataCollectionObject)
+{
+  NS_LOG_FUNCTION (this << identifier);
+  m_map[identifier] = dataCollectionObject;
+}
+
+
 bool
 CollectorMap::IsEmpty () const
 {
