@@ -20,7 +20,6 @@ def build(bld):
         'model/multi-file-aggregator.cc',
         'model/scalar-collector.cc',
         'model/time-tag.cc',
-        'model/traffic-time-tag.cc',
         'model/uinteger-32-single-probe.cc',
         'model/unit-conversion-collector.cc',
         ]
@@ -51,7 +50,6 @@ def build(bld):
         'model/multi-file-aggregator.h',
         'model/scalar-collector.h',
         'model/time-tag.h',
-        'model/traffic-time-tag.h',
         'model/uinteger-32-single-probe.h',
         'model/unit-conversion-collector.h',
         ]
