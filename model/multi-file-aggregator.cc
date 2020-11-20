@@ -110,7 +110,92 @@ MultiFileAggregator::~MultiFileAggregator ()
 {
   NS_LOG_FUNCTION (this);
 
-  // Flush all buffered data upon destruction.
+  for (std::map<std::string, std::ostringstream*>::iterator it = m_buffer.begin ();
+       it != m_buffer.end (); ++it)
+    {
+      std::string context = it->first;
+
+      // Remove any space and slash characters from the context.
+      for (size_t pos = context.find (" /");
+           pos != std::string::npos;
+           pos = context.find (" /", pos + 1, 1))
+        {
+          context[pos] = '_';
+        }
+
+      // Creating a file for output.
+      std::string fileNameOut = GetFullName (context);
+      std::string fileNameTemp = GetFullName (context, ".temp");
+
+      if (std::rename (fileNameOut.c_str (), fileNameTemp.c_str ()) == 0)
+        {
+          // Rename success, write header on a new file then append old file.
+          NS_LOG_INFO ("Creating a new file " << fileNameOut);
+
+          std::ifstream ifs (fileNameTemp);
+          std::ofstream ofs (fileNameOut);
+
+          if (!ifs || !(ifs.is_open ()))
+            {
+              NS_FATAL_ERROR ("Error reading file " << fileNameTemp);
+            }
+          if (!ofs || !(ofs.is_open ()))
+            {
+              NS_FATAL_ERROR ("Error creating file " << fileNameOut << " for output");
+            }
+
+          // Find the context-specific heading for this context.
+          // TODO how computed ?
+          std::map<std::string, std::string>::iterator it2 = m_contextHeading.find (context);
+
+          if ((it2 != m_contextHeading.end ()) && !it2->second.empty ())
+            {
+              ofs << it2->second << std::endl;
+            }
+
+          char ch;
+          while (ifs.get(ch))
+          {
+            ofs << ch;
+          }
+
+          ifs.close ();
+          ofs.close ();
+        }
+      else
+        {
+          // Rename failed, only write header a on new file.
+          std::ofstream ofs (fileNameOut);
+          if (!ofs || !(ofs.is_open ()))
+            {
+              NS_FATAL_ERROR ("Error creating file " << fileNameOut << " for output");
+            }
+
+          // Find the context-specific heading for this context.
+          std::map<std::string, std::string>::iterator it2 = m_contextHeading.find (context);
+
+          if ((it2 != m_contextHeading.end ()) && !it2->second.empty ())
+            {
+              ofs << it2->second << std::endl;
+            }
+          ofs.close ();
+        }
+      std::remove (fileNameTemp.c_str ());
+    }
+
+  for (auto it : m_buffer) delete it.second;
+}
+
+// TODO keep files open ? -> write directly to files
+// TODO factorize code
+// TODO check scallar-collector & other
+
+void
+MultiFileAggregator::Flush ()
+{
+  NS_LOG_FUNCTION (this);
+
+  // Flush all buffered data.
 
   for (std::map<std::string, std::ostringstream*>::iterator it = m_buffer.begin ();
        it != m_buffer.end (); ++it)
@@ -126,43 +211,46 @@ MultiFileAggregator::~MultiFileAggregator ()
         }
 
       // Creating a file for output.
-      std::ostringstream fileName;
-      fileName << m_outputFileName;
-      if (m_isMultiFileMode)
-        {
-          fileName << '-' + context;
-        }
-      if (m_contextWarningEnabled.count (context) > 0)
-        {
-          fileName << "-ATTN";
-        }
-      fileName << ".txt";
-      NS_LOG_INFO ("Creating a new file " << fileName.str ());
-      std::ofstream ofs (fileName.str ().c_str ());
+      std::string fileName = GetFullName (context);
+      NS_LOG_INFO ("Creating a new file " << fileName);
+
+      std::ofstream ofs (fileName, std::ios::out | std::ios::app);
 
       if (!ofs || !(ofs.is_open ()))
         {
-          NS_FATAL_ERROR ("Error creating file " << fileName.str () << " for output");
-        }
-
-      // Find the context-specific heading for this context.
-      std::map<std::string, std::string>::iterator it2 = m_contextHeading.find (context);
-
-      if ((it2 != m_contextHeading.end ()) && !it2->second.empty ())
-        {
-          ofs << it2->second << std::endl;
+          NS_FATAL_ERROR ("Error creating file " << fileName << " for output");
         }
 
       // Print the general heading.
       if (!m_generalHeading.empty ())
         {
           ofs << m_generalHeading << std::endl;
+          m_generalHeading.clear();
         }
 
-      ofs << it->second->str () << std::endl;  // print the buffered data.
+      ofs << it->second->str ();               // print the buffered data.
+      it->second->str("");                     // clear buffer
+      it->second->clear();                     // clear buffer
       ofs.close ();                            // close the file.
     }
-  for (auto it : m_buffer) delete it.second;
+}
+
+std::string
+MultiFileAggregator::GetFullName (std::string context, std::string additionalData)
+{
+  std::ostringstream fileName;
+  fileName << m_outputFileName;
+  if (m_isMultiFileMode)
+    {
+      fileName << '-' + context;
+    }
+  if (m_contextWarningEnabled.count (context) > 0)
+    {
+      fileName << "-ATTN";
+    }
+  fileName << ".txt";
+  fileName << additionalData;
+  return fileName.str ();
 }
 
 void
@@ -362,6 +450,7 @@ MultiFileAggregator::Write1d (std::string context,
           *buff << v1 << std::endl;
         }
     }
+  Flush ();
 }
 
 void
@@ -412,6 +501,7 @@ MultiFileAggregator::Write2d (std::string context,
                 << v2 << std::endl;
         }
     }
+  Flush ();
 }
 
 void
@@ -466,6 +556,7 @@ MultiFileAggregator::Write3d (std::string context,
                 << v3 << std::endl;
         }
     }
+  Flush ();
 }
 
 void
@@ -524,6 +615,7 @@ MultiFileAggregator::Write4d (std::string context,
                 << v4 << std::endl;
         }
     }
+  Flush ();
 }
 
 void
@@ -586,6 +678,7 @@ MultiFileAggregator::Write5d (std::string context,
                 << v5 << std::endl;
         }
     }
+  Flush ();
 }
 
 void
@@ -652,6 +745,7 @@ MultiFileAggregator::Write6d (std::string context,
                 << v6 << std::endl;
         }
     }
+  Flush ();
 }
 
 void
@@ -722,6 +816,7 @@ MultiFileAggregator::Write7d (std::string context,
                 << v7 << std::endl;
         }
     }
+  Flush ();
 }
 
 void
@@ -796,6 +891,7 @@ MultiFileAggregator::Write8d (std::string context,
                 << v8 << std::endl;
         }
     }
+  Flush ();
 }
 
 void
@@ -874,6 +970,7 @@ MultiFileAggregator::Write9d (std::string context,
                 << v9 << std::endl;
         }
     }
+  Flush ();
 }
 
 void
@@ -956,6 +1053,7 @@ MultiFileAggregator::Write10d (std::string context,
                 << v10 << std::endl;
         }
     }
+  Flush ();
 }
 
 std::ostringstream *
@@ -974,6 +1072,7 @@ MultiFileAggregator::GetBufferStream (std::string context)
     {
       // This is a new context.
       m_buffer[context] = new std::ostringstream ();
+      std::remove (GetFullName (context).c_str ());
       return m_buffer[context];
     }
   else

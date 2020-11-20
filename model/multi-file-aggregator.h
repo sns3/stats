@@ -440,6 +440,12 @@ private:
    */
   std::ostringstream * GetBufferStream (std::string context);
 
+  // Write the content of buffer to the file.
+  void Flush ();
+
+  // Get the full name of a file.
+  std::string GetFullName (std::string context, std::string additionalData = "");
+
   /// The file name.
   std::string m_outputFileName;
 
