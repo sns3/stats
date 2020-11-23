@@ -32,6 +32,7 @@
 #include <fstream>
 #include <map>
 #include <set>
+#include <algorithm>
 #include <string>
 #include "ns3/data-collection-object.h"
 
@@ -426,31 +427,33 @@ public:
 
 private:
   /**
-   * \param context determines which buffer stream to get.
-   * \return pointer to the output buffer stream associated with the given
-   *         context.
+   * \param context determines to which file to write.
    *
-   * \brief Get a pointer to an output buffer stream which belongs to a
-   *        specified context string.
-   *
-   * A new string buffer stream instance will be created if such instance for
-   * the context has not been created yet. The created stream will be stored in
-   * #m_buffer map using the context as the key. If the current active mode is
+   * \brief Add this context to the list of known stream and remove old trace file
+   * if it is the first occurence of this context. If the current active mode is
    * single-file, then "0" is used as the key.
    */
-  std::ostringstream * GetBufferStream (std::string context);
+  void SetContext (std::string context);
 
-  // Write the content of buffer to the file.
-  void Flush ();
-
-  // Get the full name of a file.
+  /**
+   * Get the full name of a file.
+   * \param context determines which file name stream to get.
+   * \param additionalData add additional characters at the end of file name.
+   */
   std::string GetFullName (std::string context, std::string additionalData = "");
+
+  /**
+   * open a stream to a file
+   * \param context determines which context to write.
+   * \param ofs the stream to write to the file.
+   */
+  void OpenStream (std::string context, std::ofstream *ofs);
 
   /// The file name.
   std::string m_outputFileName;
 
-  /// Map of (pointer to) output buffer streams, indexed by its context.
-  std::map<std::string, std::ostringstream*> m_buffer;
+  /// List of known contexts.
+  std::set<std::string> m_contexts;
 
   /// Determines the kind of file written by the aggregator.
   enum FileType m_fileType;
