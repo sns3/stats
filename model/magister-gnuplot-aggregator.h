@@ -300,8 +300,8 @@ private:
   /// Maps context strings to 2D datasets.
   std::map<std::string, Gnuplot2dDataset> m_2dDatasetMap;
 
-  /// Indicates if the file has already been created.
-  bool m_fileCreated;
+  /// List of contexts used.
+  std::vector<std::string> m_contexts;
 
 }; // class MagisterGnuplotAggregator
 

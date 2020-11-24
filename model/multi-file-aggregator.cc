@@ -127,46 +127,50 @@ MultiFileAggregator::~MultiFileAggregator ()
       std::string fileNameOut = GetFullName (context);
       std::string fileNameTemp = GetFullName (context, ".temp");
 
-      if (std::rename (fileNameOut.c_str (), fileNameTemp.c_str ()) == 0)
+      // We do it only if we have a header to write
+      if (m_contextHeading.find (context) != m_contextHeading.end ())
         {
-          // Rename success, write header on a new file then append old file.
-          NS_LOG_INFO ("Creating a new file " << fileNameOut);
-
-          std::ifstream ifs (fileNameTemp);
-          std::ofstream ofs (fileNameOut);
-
-          if (!ifs || !(ifs.is_open ()))
+          if (std::rename (fileNameOut.c_str (), fileNameTemp.c_str ()) == 0)
             {
-              NS_FATAL_ERROR ("Error reading file " << fileNameTemp);
+              // Rename success, write header on a new file then append old file.
+              NS_LOG_INFO ("Creating a new file " << fileNameOut);
+
+              std::ifstream ifs (fileNameTemp);
+              std::ofstream ofs (fileNameOut);
+
+              if (!ifs || !(ifs.is_open ()))
+                {
+                  NS_FATAL_ERROR ("Error reading file " << fileNameTemp);
+                }
+              if (!ofs || !(ofs.is_open ()))
+                {
+                  NS_FATAL_ERROR ("Error creating file " << fileNameOut << " for output");
+                }
+
+              // Find the context-specific heading for this context.
+              std::map<std::string, std::string>::iterator it2 = m_contextHeading.find (context);
+
+              if ((it2 != m_contextHeading.end ()) && !it2->second.empty ())
+                {
+                  ofs << it2->second << std::endl;
+                }
+
+              char ch;
+              while (ifs.get(ch))
+              {
+                ofs << ch;
+              }
+              ofs << std::endl;
+
+              ifs.close ();
+              ofs.close ();
             }
-          if (!ofs || !(ofs.is_open ()))
+          else
             {
-              NS_FATAL_ERROR ("Error creating file " << fileNameOut << " for output");
+              NS_FATAL_ERROR ("Cannot rename " << fileNameOut << " to " << fileNameTemp);
             }
-
-          // Find the context-specific heading for this context.
-          std::map<std::string, std::string>::iterator it2 = m_contextHeading.find (context);
-
-          if ((it2 != m_contextHeading.end ()) && !it2->second.empty ())
-            {
-              ofs << it2->second << std::endl;
-            }
-
-          char ch;
-          while (ifs.get(ch))
-          {
-            ofs << ch;
-          }
-          ofs << std::endl;
-
-          ifs.close ();
-          ofs.close ();
+          std::remove (fileNameTemp.c_str ());
         }
-      else
-        {
-          NS_FATAL_ERROR ("Cannot rename " << fileNameOut << " to " << fileNameTemp);
-        }
-      std::remove (fileNameTemp.c_str ());
     }
 }
 

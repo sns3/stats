@@ -71,8 +71,7 @@ MagisterGnuplotAggregator::MagisterGnuplotAggregator ()
     m_yLegend                        ("Y Values"),
     m_titleSet                       (false),
     m_xAndYLegendsSet                (false),
-    m_gnuplot                        (),
-    m_fileCreated                    (false)
+    m_gnuplot                        ()
 {
   NS_LOG_FUNCTION (this);
 }
@@ -93,22 +92,51 @@ MagisterGnuplotAggregator::~MagisterGnuplotAggregator ()
       NS_LOG_WARN ("Warning: The axis legends were not set for the gnuplot aggregator");
     }
 
+  // Skip any NaN's that appear in data.
+  m_gnuplot.AppendExtra ("set datafile missing \"-nan\"");
+
   std::string dataFileName     = m_outputFileNameWithoutExtension + ".dat";
   std::string plotFileName     = m_outputFileNameWithoutExtension + ".plt";
   std::string scriptFileName   = m_outputFileNameWithoutExtension + ".sh";
 
   // Open the gnuplot plot and data files.
   std::ofstream plotFile;
-  plotFile.open ((m_outputPath + "/" + plotFileName).c_str ());
   std::ofstream dataFile;
-  dataFile.open ((m_outputPath + "/" + dataFileName).c_str (), std::ios::out | std::ios::app);
+  plotFile.open ((m_outputPath + "/" + plotFileName).c_str ());
 
-  // Skip any NaN's that appear in data.
-  m_gnuplot.AppendExtra ("set datafile missing \"-nan\"");
-
-  for (std::map<std::string, Gnuplot2dDataset>::iterator it = m_2dDatasetMap.begin (); it != m_2dDatasetMap.end (); it++)
+  if (m_contexts.size () == 1)
     {
-      it->second.AddEmptyLine ();
+      std::remove ((m_outputPath + "/" + dataFileName).c_str ());
+      std::rename ((m_outputPath + "/" + dataFileName + "." + m_contexts[0]).c_str (), (m_outputPath + "/" + dataFileName).c_str ());
+      m_2dDatasetMap[m_contexts[0]].AddEmptyLine ();
+      dataFile.open ((m_outputPath + "/" + dataFileName).c_str (), std::ios::out | std::ios::app);
+    }
+  else
+    {
+      dataFile.open ((m_outputPath + "/" + dataFileName).c_str ());
+      for (std::string context : m_contexts)
+        {
+          NS_LOG_INFO ("Creating a new file " << (m_outputPath + "/" + dataFileName));
+
+          std::ifstream ifs ((m_outputPath + "/" + dataFileName + "." + context).c_str ());
+
+          if (!ifs || !(ifs.is_open ()))
+            {
+              NS_FATAL_ERROR ("Error reading file " << (m_outputPath + "/" + dataFileName + "." + context));
+            }
+
+          char ch;
+          while (ifs.get(ch))
+          {
+            dataFile << ch;
+          }
+          dataFile << std::endl << std::endl;
+
+          ifs.close ();
+
+          std::remove ((m_outputPath + "/" + dataFileName + "." + context).c_str ());
+          m_2dDatasetMap[context].AddEmptyLine ();
+        }
     }
 
   // Write the gnuplot plot and data files.
@@ -116,7 +144,7 @@ MagisterGnuplotAggregator::~MagisterGnuplotAggregator ()
 
   // Close the gnuplot plot and data files.
   plotFile.close ();
-  // dataFile.close ();
+  dataFile.close ();
 
   // Open the shell script file.
   std::ofstream scriptFile;
@@ -143,14 +171,8 @@ MagisterGnuplotAggregator::Write2d (std::string context, double x, double y)
 
   if (m_enabled)
     {
-      if (!m_fileCreated)
-        {
-          std::remove ((m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat").c_str ());
-          m_fileCreated = true;
-        }
-
       std::ofstream ofs;
-      m_gnuplot.GetDataStream (m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat", &ofs);
+      m_gnuplot.GetDataStream (m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat." + context, &ofs);
       ofs << x << " " << y << std::endl;
       ofs.close ();
     }
@@ -171,14 +193,8 @@ MagisterGnuplotAggregator::Write2dWithXErrorDelta (std::string context,
 
   if (m_enabled)
     {
-      if (!m_fileCreated)
-        {
-          std::remove ((m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat").c_str ());
-          m_fileCreated = true;
-        }
-
       std::ofstream ofs;
-      m_gnuplot.GetDataStream (m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat", &ofs);
+      m_gnuplot.GetDataStream (m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat." + context, &ofs);
       ofs << x << " " << y << " " << errorDelta << std::endl;
       ofs.close ();
     }
@@ -199,14 +215,8 @@ MagisterGnuplotAggregator::Write2dWithYErrorDelta (std::string context,
 
   if (m_enabled)
     {
-      if (!m_fileCreated)
-        {
-          std::remove ((m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat").c_str ());
-          m_fileCreated = true;
-        }
-
       std::ofstream ofs;
-      m_gnuplot.GetDataStream (m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat", &ofs);
+      m_gnuplot.GetDataStream (m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat." + context, &ofs);
       ofs << x << " " << y << " " << errorDelta << std::endl;
       ofs.close ();
     }
@@ -228,14 +238,8 @@ MagisterGnuplotAggregator::Write2dWithXYErrorDelta (std::string context,
 
   if (m_enabled)
     {
-      if (!m_fileCreated)
-        {
-          std::remove ((m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat").c_str ());
-          m_fileCreated = true;
-        }
-
       std::ofstream ofs;
-      m_gnuplot.GetDataStream (m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat", &ofs);
+      m_gnuplot.GetDataStream (m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat." + context, &ofs);
       ofs << x << " " << y << " " << xErrorDelta << " " << yErrorDelta << std::endl;
       ofs.close ();
     }
@@ -300,6 +304,10 @@ MagisterGnuplotAggregator::Add2dDataset (const std::string &dataset,
 
   // Add this dataset to the plot so that its values can be plotted.
   m_gnuplot.AddDataset (m_2dDatasetMap[dataset]);
+  m_contexts.push_back (dataset);
+
+  // Remove old file if it exists
+  std::remove ((m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat." + dataset).c_str ());
 }
 
 void
