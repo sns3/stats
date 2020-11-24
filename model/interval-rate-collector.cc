@@ -377,7 +377,7 @@ IntervalRateCollector::NewInterval ()
 void
 IntervalRateCollector::TraceSinkDouble (double oldData, double newData)
 {
-  //NS_LOG_FUNCTION (this << GetName () << newData);
+  NS_LOG_FUNCTION (this << GetName () << oldData << newData);
 
   if (IsEnabled ())
     {
@@ -424,7 +424,7 @@ IntervalRateCollector::TraceSinkUinteger32 (uint32_t oldData, uint32_t newData)
 void
 IntervalRateCollector::TraceSinkUinteger64 (uint64_t oldData, uint64_t newData)
 {
-  //NS_LOG_FUNCTION (this << GetName () << newData);
+  NS_LOG_FUNCTION (this << GetName () << oldData << newData);
 
   if (IsEnabled ())
     {
@@ -447,7 +447,7 @@ IntervalRateCollector::TraceSinkUinteger64 (uint64_t oldData, uint64_t newData)
 void
 IntervalRateCollector::TraceSinkBoolean (bool oldData, bool newData)
 {
-  //NS_LOG_FUNCTION (this << GetName () << newData);
+  NS_LOG_FUNCTION (this << GetName () << oldData << newData);
 
   if (IsEnabled ())
     {

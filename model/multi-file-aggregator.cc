@@ -142,7 +142,6 @@ MultiFileAggregator::~MultiFileAggregator ()
             }
 
           // Find the context-specific heading for this context.
-          // TODO how computed ?
           std::map<std::string, std::string>::iterator it2 = m_contextHeading.find (context);
 
           if ((it2 != m_contextHeading.end ()) && !it2->second.empty ())
@@ -1036,6 +1035,8 @@ MultiFileAggregator::SetContext (std::string context)
 std::string
 MultiFileAggregator::GetFullName (std::string context, std::string additionalData)
 {
+  NS_LOG_FUNCTION (this << context << additionalData);
+
   std::ostringstream fileName;
   fileName << m_outputFileName;
   if (m_isMultiFileMode)
