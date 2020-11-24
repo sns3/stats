@@ -22,6 +22,8 @@
  *
  * Modified to support writing to a different directory by:
  * - Budiarto Herman (budiarto.herman@magister.fi)
+ *
+ * Modified by: Bastien Tauran <bastien.tauran@viveris.fr>
  */
 
 #ifndef MAGISTER_GNUPLOT_AGGREGATOR_H
@@ -30,6 +32,7 @@
 #include <map>
 #include <string>
 #include "ns3/gnuplot.h"
+#include "ns3/stats-gnuplot.h"
 #include "ns3/data-collection-object.h"
 
 namespace ns3 {
@@ -292,10 +295,13 @@ private:
   bool m_xAndYLegendsSet;
 
   /// Used to create gnuplot files.
-  Gnuplot m_gnuplot;
+  StatsGnuplot m_gnuplot;
 
   /// Maps context strings to 2D datasets.
   std::map<std::string, Gnuplot2dDataset> m_2dDatasetMap;
+
+  /// Indicates if the file has already been created.
+  bool m_fileCreated;
 
 }; // class MagisterGnuplotAggregator
 

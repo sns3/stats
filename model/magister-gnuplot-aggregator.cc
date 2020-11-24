@@ -20,6 +20,8 @@
  *
  * Modified to support writing to a different directory by:
  * - Budiarto Herman (budiarto.herman@magister.fi)
+ *
+ * Modified by: Bastien Tauran <bastien.tauran@viveris.fr>
  */
 
 #include <iostream>
@@ -69,7 +71,8 @@ MagisterGnuplotAggregator::MagisterGnuplotAggregator ()
     m_yLegend                        ("Y Values"),
     m_titleSet                       (false),
     m_xAndYLegendsSet                (false),
-    m_gnuplot                        ()
+    m_gnuplot                        (),
+    m_fileCreated                    (false)
 {
   NS_LOG_FUNCTION (this);
 }
@@ -98,17 +101,22 @@ MagisterGnuplotAggregator::~MagisterGnuplotAggregator ()
   std::ofstream plotFile;
   plotFile.open ((m_outputPath + "/" + plotFileName).c_str ());
   std::ofstream dataFile;
-  dataFile.open ((m_outputPath + "/" + dataFileName).c_str ());
+  dataFile.open ((m_outputPath + "/" + dataFileName).c_str (), std::ios::out | std::ios::app);
 
   // Skip any NaN's that appear in data.
   m_gnuplot.AppendExtra ("set datafile missing \"-nan\"");
+
+  for (std::map<std::string, Gnuplot2dDataset>::iterator it = m_2dDatasetMap.begin (); it != m_2dDatasetMap.end (); it++)
+    {
+      it->second.AddEmptyLine ();
+    }
 
   // Write the gnuplot plot and data files.
   m_gnuplot.GenerateOutput (plotFile, dataFile, dataFileName);
 
   // Close the gnuplot plot and data files.
   plotFile.close ();
-  dataFile.close ();
+  // dataFile.close ();
 
   // Open the shell script file.
   std::ofstream scriptFile;
@@ -135,8 +143,16 @@ MagisterGnuplotAggregator::Write2d (std::string context, double x, double y)
 
   if (m_enabled)
     {
-      // Add this 2D data point to its dataset.
-      m_2dDatasetMap[context].Add (x, y);
+      if (!m_fileCreated)
+        {
+          std::remove ((m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat").c_str ());
+          m_fileCreated = true;
+        }
+
+      std::ofstream ofs;
+      m_gnuplot.GetDataStream (m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat", &ofs);
+      ofs << x << " " << y << std::endl;
+      ofs.close ();
     }
 }
 
@@ -155,8 +171,16 @@ MagisterGnuplotAggregator::Write2dWithXErrorDelta (std::string context,
 
   if (m_enabled)
     {
-      // Add this 2D data point with its error bar to its dataset.
-      m_2dDatasetMap[context].Add (x, y, errorDelta);
+      if (!m_fileCreated)
+        {
+          std::remove ((m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat").c_str ());
+          m_fileCreated = true;
+        }
+
+      std::ofstream ofs;
+      m_gnuplot.GetDataStream (m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat", &ofs);
+      ofs << x << " " << y << " " << errorDelta << std::endl;
+      ofs.close ();
     }
 }
 
@@ -175,8 +199,16 @@ MagisterGnuplotAggregator::Write2dWithYErrorDelta (std::string context,
 
   if (m_enabled)
     {
-      // Add this 2D data point with its error bar to its dataset.
-      m_2dDatasetMap[context].Add (x, y, errorDelta);
+      if (!m_fileCreated)
+        {
+          std::remove ((m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat").c_str ());
+          m_fileCreated = true;
+        }
+
+      std::ofstream ofs;
+      m_gnuplot.GetDataStream (m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat", &ofs);
+      ofs << x << " " << y << " " << errorDelta << std::endl;
+      ofs.close ();
     }
 }
 
@@ -196,8 +228,16 @@ MagisterGnuplotAggregator::Write2dWithXYErrorDelta (std::string context,
 
   if (m_enabled)
     {
-      // Add this 2D data point with its error bar to its dataset.
-      m_2dDatasetMap[context].Add (x, y, xErrorDelta, yErrorDelta);
+      if (!m_fileCreated)
+        {
+          std::remove ((m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat").c_str ());
+          m_fileCreated = true;
+        }
+
+      std::ofstream ofs;
+      m_gnuplot.GetDataStream (m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat", &ofs);
+      ofs << x << " " << y << " " << xErrorDelta << " " << yErrorDelta << std::endl;
+      ofs.close ();
     }
 }
 

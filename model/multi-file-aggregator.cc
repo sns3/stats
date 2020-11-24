@@ -22,6 +22,9 @@
  * Modified to support writing to multiple files according to context and with
  * special heading information by:
  * - Budiarto Herman (budiarto.herman@magister.fi)
+ *
+ * Modified to improve performance by:
+ * - Bastien Tauran <bastien.tauran@viveris.fr>
  */
 
 #include <iostream>
