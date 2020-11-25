@@ -171,6 +171,17 @@ MultiFileAggregator::~MultiFileAggregator ()
             }
           std::remove (fileNameTemp.c_str ());
         }
+      else
+        {
+          // We append a blank line at the end.
+          std::ofstream ofs (fileNameOut, std::ios::out | std::ios::app);
+          if (!ofs || !(ofs.is_open ()))
+            {
+              NS_FATAL_ERROR ("Error creating file " << fileNameOut << " for output");
+            }
+          ofs << std::endl;
+          ofs.close ();
+        }
     }
 }
 
@@ -196,13 +207,6 @@ MultiFileAggregator::OpenStream (std::string context, std::ofstream *ofs)
   if (!(*ofs) || !(ofs->is_open ()))
     {
       NS_FATAL_ERROR ("Error creating file " << fileName << " for output");
-    }
-
-  // Print the general heading.
-  if (!m_generalHeading.empty ())
-    {
-      *ofs << m_generalHeading << std::endl;
-      m_generalHeading.clear();
     }
 }
 
@@ -1036,6 +1040,10 @@ MultiFileAggregator::SetContext (std::string context)
       // This is a new context.
       m_contexts.insert (context);
       std::remove (GetFullName (context).c_str ());
+
+      std::ofstream ofs (GetFullName (context));
+      ofs << m_generalHeading << std::endl;
+      ofs.close ();
     }
 }
 
