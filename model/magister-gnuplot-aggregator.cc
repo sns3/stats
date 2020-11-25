@@ -103,16 +103,27 @@ MagisterGnuplotAggregator::~MagisterGnuplotAggregator ()
   std::ofstream plotFile;
   std::ofstream dataFile;
   plotFile.open ((m_outputPath + "/" + plotFileName).c_str ());
+  dataFile.open ((m_outputPath + "/" + dataFileName).c_str ());
+
+  // Write the gnuplot plot file. dataFile needs to be put here, but will be overwritten later.
+  m_gnuplot.GenerateOutput (plotFile, dataFile, dataFileName);
+
+  // Close the gnuplot plot and data files.
+  plotFile.close ();
+  dataFile.close ();
 
   if (m_contexts.size () == 1)
     {
+      // Just copy temp file to final file
       std::remove ((m_outputPath + "/" + dataFileName).c_str ());
       std::rename ((m_outputPath + "/" + dataFileName + "." + m_contexts[0]).c_str (), (m_outputPath + "/" + dataFileName).c_str ());
-      m_2dDatasetMap[m_contexts[0]].AddEmptyLine ();
       dataFile.open ((m_outputPath + "/" + dataFileName).c_str (), std::ios::out | std::ios::app);
+      dataFile << std::endl << std::endl;
+      dataFile.close ();
     }
   else
     {
+      // Merge files from all contexts
       dataFile.open ((m_outputPath + "/" + dataFileName).c_str ());
       for (std::string context : m_contexts)
         {
@@ -135,16 +146,9 @@ MagisterGnuplotAggregator::~MagisterGnuplotAggregator ()
           ifs.close ();
 
           std::remove ((m_outputPath + "/" + dataFileName + "." + context).c_str ());
-          m_2dDatasetMap[context].AddEmptyLine ();
         }
+      dataFile.close ();
     }
-
-  // Write the gnuplot plot and data files.
-  m_gnuplot.GenerateOutput (plotFile, dataFile, dataFileName);
-
-  // Close the gnuplot plot and data files.
-  plotFile.close ();
-  dataFile.close ();
 
   // Open the shell script file.
   std::ofstream scriptFile;
@@ -301,6 +305,7 @@ MagisterGnuplotAggregator::Add2dDataset (const std::string &dataset,
   // Add this dataset to the map so that its values can be saved.
   Gnuplot2dDataset gnuplot2dDataset (title);
   m_2dDatasetMap[dataset] = gnuplot2dDataset;
+  m_2dDatasetMap[dataset].AddEmptyLine ();
 
   // Add this dataset to the plot so that its values can be plotted.
   m_gnuplot.AddDataset (m_2dDatasetMap[dataset]);
