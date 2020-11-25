@@ -262,6 +262,15 @@ public:
    */
   void SetKeyLocation (enum KeyLocation keyLocation);
 
+  /**
+   * TODO
+   * \param dataFileName The name of file to open.
+   * \param ofs The stream writing to the file.
+   *
+   * \brief open a file for reading and gets the associated stream.
+   */
+  void GetDataStream (std::string dataFileName, std::ofstream *ofs);
+
 private:
   /// The path to write the output files (without the trailing slash).
   std::string m_outputPath;
@@ -295,7 +304,7 @@ private:
   bool m_xAndYLegendsSet;
 
   /// Used to create gnuplot files.
-  StatsGnuplot m_gnuplot;
+  Gnuplot m_gnuplot;
 
   /// Maps context strings to 2D datasets.
   std::map<std::string, Gnuplot2dDataset> m_2dDatasetMap;

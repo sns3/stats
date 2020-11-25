@@ -133,7 +133,9 @@ MagisterGnuplotAggregator::~MagisterGnuplotAggregator ()
 
           if (!ifs || !(ifs.is_open ()))
             {
-              NS_FATAL_ERROR ("Error reading file " << (m_outputPath + "/" + dataFileName + "." + context));
+              // File not found: nothing has been written for this context.
+              dataFile << std::endl << std::endl;
+              continue;
             }
 
           char ch;
@@ -176,7 +178,7 @@ MagisterGnuplotAggregator::Write2d (std::string context, double x, double y)
   if (m_enabled)
     {
       std::ofstream ofs;
-      m_gnuplot.GetDataStream (m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat." + context, &ofs);
+      GetDataStream (m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat." + context, &ofs);
       ofs << x << " " << y << std::endl;
       ofs.close ();
     }
@@ -198,7 +200,7 @@ MagisterGnuplotAggregator::Write2dWithXErrorDelta (std::string context,
   if (m_enabled)
     {
       std::ofstream ofs;
-      m_gnuplot.GetDataStream (m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat." + context, &ofs);
+      GetDataStream (m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat." + context, &ofs);
       ofs << x << " " << y << " " << errorDelta << std::endl;
       ofs.close ();
     }
@@ -220,7 +222,7 @@ MagisterGnuplotAggregator::Write2dWithYErrorDelta (std::string context,
   if (m_enabled)
     {
       std::ofstream ofs;
-      m_gnuplot.GetDataStream (m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat." + context, &ofs);
+      GetDataStream (m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat." + context, &ofs);
       ofs << x << " " << y << " " << errorDelta << std::endl;
       ofs.close ();
     }
@@ -243,7 +245,7 @@ MagisterGnuplotAggregator::Write2dWithXYErrorDelta (std::string context,
   if (m_enabled)
     {
       std::ofstream ofs;
-      m_gnuplot.GetDataStream (m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat." + context, &ofs);
+      GetDataStream (m_outputPath + "/" + m_outputFileNameWithoutExtension + ".dat." + context, &ofs);
       ofs << x << " " << y << " " << xErrorDelta << " " << yErrorDelta << std::endl;
       ofs.close ();
     }
@@ -413,6 +415,16 @@ MagisterGnuplotAggregator::SetKeyLocation (enum MagisterGnuplotAggregator::KeyLo
     default:
       m_gnuplot.AppendExtra ("set key inside");
       break;
+    }
+}
+
+void
+MagisterGnuplotAggregator::GetDataStream (std::string dataFileName, std::ofstream *ofs)
+{
+  ofs->open (dataFileName, std::ios::out | std::ios::app);
+  if (!(*ofs) || !(ofs->is_open ()))
+    {
+      NS_FATAL_ERROR ("Error creating file " << dataFileName << " for output");
     }
 }
 
