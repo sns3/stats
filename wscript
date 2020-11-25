@@ -22,7 +22,6 @@ def build(bld):
         'model/time-tag.cc',
         'model/uinteger-32-single-probe.cc',
         'model/unit-conversion-collector.cc',
-        'model/stats-gnuplot.cc',
         ]
 
     module_test = bld.create_ns3_module_test_library('magister-stats')
@@ -53,7 +52,6 @@ def build(bld):
         'model/time-tag.h',
         'model/uinteger-32-single-probe.h',
         'model/unit-conversion-collector.h',
-        'model/stats-gnuplot.h',
         ]
         
     if (bld.env['ENABLE_EXAMPLES']):
