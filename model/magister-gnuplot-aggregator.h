@@ -32,7 +32,6 @@
 #include <map>
 #include <string>
 #include "ns3/gnuplot.h"
-#include "ns3/stats-gnuplot.h"
 #include "ns3/data-collection-object.h"
 
 namespace ns3 {
