@@ -686,7 +686,7 @@ DistributionBins::DistributionBins ()
   m_numOfBins (0),
   m_isSettled (false),
   m_allowOnlyPositiveValues (false),
-  m_notifyInaccuracy (0)
+  m_notifyInaccuracy ()
 {
   NS_LOG_FUNCTION (this);
   NS_FATAL_ERROR ("This constructor should not be called");
@@ -707,7 +707,7 @@ DistributionBins::DistributionBins (uint32_t numOfBins)
     m_numOfBins (numOfBins),
     m_isSettled (false),
     m_allowOnlyPositiveValues (false),
-    m_notifyInaccuracy (0)
+    m_notifyInaccuracy ()
 {
   NS_LOG_FUNCTION (this);
 }

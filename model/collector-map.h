@@ -356,10 +356,10 @@ CollectorMap::ConnectWithProbe (Ptr<Probe>   probe,
                                 R (C::*collectorTraceSink)(P, P)) const
 {
   Ptr<DataCollectionObject> collector = Get (collectorIdentifier);
-  NS_ASSERT_MSG (collector != 0,
+  NS_ASSERT_MSG (collector != nullptr,
                  "Error finding collector with identifier " << collectorIdentifier);
   Ptr<C> c = collector->GetObject<C> ();
-  NS_ASSERT_MSG (c != 0,
+  NS_ASSERT_MSG (c != nullptr,
                  "Collector type " << collector->GetInstanceTypeId ().GetName ()
                                    << " is incompatible with the specified trace sink");
   return probe->TraceConnectWithoutContext (probeTraceSourceName,
@@ -375,10 +375,10 @@ CollectorMap::DisconnectWithProbe (Ptr<Probe>   probe,
                                    R (C::*collectorTraceSink)(P, P)) const
 {
   Ptr<DataCollectionObject> collector = Get (collectorIdentifier);
-  NS_ASSERT_MSG (collector != 0,
+  NS_ASSERT_MSG (collector != nullptr,
                  "Error finding collector with identifier " << collectorIdentifier);
   Ptr<C> c = collector->GetObject<C> ();
-  NS_ASSERT_MSG (c != 0,
+  NS_ASSERT_MSG (c != nullptr,
                  "Collector type " << collector->GetInstanceTypeId ().GetName ()
                                    << " is incompatible with the specified trace sink");
   return probe->TraceDisconnectWithoutContext (probeTraceSourceName,
@@ -399,12 +399,12 @@ CollectorMap::ConnectToCollector (std::string traceSourceName,
     {
       const uint32_t identifier = it->first;
       const Ptr<DataCollectionObject> source = it->second;
-      NS_ASSERT (source != 0);
+      NS_ASSERT (source != nullptr);
       Ptr<DataCollectionObject> target = targetMap.Get (identifier);
-      NS_ASSERT_MSG (target != 0,
+      NS_ASSERT_MSG (target != nullptr,
                      "Unable to find target collector with identifier " << identifier);
       Ptr<C> c = target->GetObject<C> ();
-      NS_ASSERT_MSG (c != 0,
+      NS_ASSERT_MSG (c != nullptr,
                      "Collector type " << target->GetInstanceTypeId ().GetName ()
                                        << " is incompatible with the specified trace sink");
       if (!source->TraceConnectWithoutContext (traceSourceName,
@@ -427,10 +427,10 @@ CollectorMap::ConnectToAggregator (std::string traceSourceName,
   for (CollectorMap::Iterator it = m_map.begin (); it != m_map.end (); ++it)
     {
       Ptr<DataCollectionObject> collector = it->second;
-      NS_ASSERT (collector != 0);
+      NS_ASSERT (collector != nullptr);
       const std::string context = collector->GetName ();
       Ptr<C> c = aggregator->GetObject<C> ();
-      NS_ASSERT_MSG (c != 0,
+      NS_ASSERT_MSG (c != nullptr,
                      "Aggregator type " << aggregator->GetInstanceTypeId ().GetName ()
                                         << " is incompatible with the specified trace sink");
       if (!collector->TraceConnect (traceSourceName, context,
@@ -453,10 +453,10 @@ CollectorMap::ConnectToAggregator (std::string traceSourceName,
   for (CollectorMap::Iterator it = m_map.begin (); it != m_map.end (); ++it)
     {
       Ptr<DataCollectionObject> collector = it->second;
-      NS_ASSERT (collector != 0);
+      NS_ASSERT (collector != nullptr);
       const std::string context = collector->GetName ();
       Ptr<C> c = aggregator->GetObject<C> ();
-      NS_ASSERT_MSG (c != 0,
+      NS_ASSERT_MSG (c != nullptr,
                      "Aggregator type " << aggregator->GetInstanceTypeId ().GetName ()
                                         << " is incompatible with the specified trace sink");
       if (!collector->TraceConnect (traceSourceName, context,
@@ -480,10 +480,10 @@ CollectorMap::ConnectToAggregator (std::string traceSourceName,
   for (CollectorMap::Iterator it = m_map.begin (); it != m_map.end (); ++it)
     {
       Ptr<DataCollectionObject> collector = it->second;
-      NS_ASSERT (collector != 0);
+      NS_ASSERT (collector != nullptr);
       const std::string context = collector->GetName ();
       Ptr<C> c = aggregator->GetObject<C> ();
-      NS_ASSERT_MSG (c != 0,
+      NS_ASSERT_MSG (c != nullptr,
                      "Aggregator type " << aggregator->GetInstanceTypeId ().GetName ()
                                         << " is incompatible with the specified trace sink");
       if (!collector->TraceConnect (traceSourceName, context,

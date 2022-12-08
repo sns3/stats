@@ -192,7 +192,7 @@ StatsThroughputHelper::DoInstall ()
                                          "EnableContextPrinting", BooleanValue (false),
                                          "GeneralHeading", StringValue (GetDistributionHeading ("throughput_kbps")));
         Ptr<MultiFileAggregator> fileAggregator = m_aggregator->GetObject<MultiFileAggregator> ();
-        NS_ASSERT (fileAggregator != 0);
+        NS_ASSERT (fileAggregator != nullptr);
 
         // Setup the final-level collector.
         m_averagingCollector = CreateObject<DistributionCollector> ();
@@ -258,7 +258,7 @@ StatsThroughputHelper::DoInstall ()
                                          "OutputFileName", StringValue (GetName ()));
         Ptr<MagisterGnuplotAggregator> plotAggregator
           = m_aggregator->GetObject<MagisterGnuplotAggregator> ();
-        NS_ASSERT (plotAggregator != 0);
+        NS_ASSERT (plotAggregator != nullptr);
         //plot->SetTitle ("");
         plotAggregator->SetLegend ("Time (in seconds)",
                                    "Received throughput (in kilobits per second)");
@@ -305,7 +305,7 @@ StatsThroughputHelper::DoInstall ()
                                          "OutputFileName", StringValue (GetName ()));
         Ptr<MagisterGnuplotAggregator> plotAggregator
           = m_aggregator->GetObject<MagisterGnuplotAggregator> ();
-        NS_ASSERT (plotAggregator != 0);
+        NS_ASSERT (plotAggregator != nullptr);
         //plot->SetTitle ("");
         plotAggregator->SetLegend ("Received throughput (in kilobits per second)",
                                    "Frequency");
@@ -410,10 +410,10 @@ StatsThroughputHelper::RxCallback (Ptr<const Packet> packet,
         {
           // Find the first-level collector with the right identifier.
           Ptr<DataCollectionObject> collector = m_conversionCollectors.Get (it->second);
-          NS_ASSERT_MSG (collector != 0,
+          NS_ASSERT_MSG (collector != nullptr,
                          "Unable to find collector with identifier " << it->second);
           Ptr<UnitConversionCollector> c = collector->GetObject<UnitConversionCollector> ();
-          NS_ASSERT (c != 0);
+          NS_ASSERT (c != nullptr);
 
           // Pass the sample to the collector.
           c->TraceSinkUinteger32 (0, packet->GetSize ());

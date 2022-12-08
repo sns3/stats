@@ -167,7 +167,7 @@ StatsDelayHelper::DoInstall ()
                                              "EnableContextPrinting", BooleanValue (false),
                                              "GeneralHeading", StringValue (GetDistributionHeading ("delay_sec")));
             Ptr<MultiFileAggregator> fileAggregator = m_aggregator->GetObject<MultiFileAggregator> ();
-            NS_ASSERT (fileAggregator != 0);
+            NS_ASSERT (fileAggregator != nullptr);
 
             // Setup the final-level collector.
             m_averagingCollector = CreateObject<DistributionCollector> ();
@@ -257,7 +257,7 @@ StatsDelayHelper::DoInstall ()
                                          "OutputFileName", StringValue (GetName ()));
         Ptr<MagisterGnuplotAggregator> plotAggregator
           = m_aggregator->GetObject<MagisterGnuplotAggregator> ();
-        NS_ASSERT (plotAggregator != 0);
+        NS_ASSERT (plotAggregator != nullptr);
         //plot->SetTitle ("");
         plotAggregator->SetLegend ("Time (in seconds)",
                                    "Packet delay (in seconds)");
@@ -292,7 +292,7 @@ StatsDelayHelper::DoInstall ()
                                              "OutputFileName", StringValue (GetName ()));
             Ptr<MagisterGnuplotAggregator> plotAggregator
               = m_aggregator->GetObject<MagisterGnuplotAggregator> ();
-            NS_ASSERT (plotAggregator != 0);
+            NS_ASSERT (plotAggregator != nullptr);
             //plot->SetTitle ("");
             plotAggregator->SetLegend ("Packet delay (in seconds)",
                                        "Frequency");
@@ -344,7 +344,7 @@ StatsDelayHelper::DoInstall ()
                                              "OutputFileName", StringValue (GetName ()));
             Ptr<MagisterGnuplotAggregator> plotAggregator
               = m_aggregator->GetObject<MagisterGnuplotAggregator> ();
-            NS_ASSERT (plotAggregator != 0);
+            NS_ASSERT (plotAggregator != nullptr);
             //plot->SetTitle ("");
             plotAggregator->SetLegend ("Packet delay (in seconds)",
                                        "Frequency");
@@ -470,7 +470,7 @@ StatsDelayHelper::PassSampleToCollector (Time delay, uint32_t identifier)
   //NS_LOG_FUNCTION (this << delay.GetSeconds () << identifier);
 
   Ptr<DataCollectionObject> collector = m_terminalCollectors.Get (identifier);
-  NS_ASSERT_MSG (collector != 0,
+  NS_ASSERT_MSG (collector != nullptr,
                  "Unable to find collector with identifier " << identifier);
 
   switch (GetOutputType ())
@@ -479,7 +479,7 @@ StatsDelayHelper::PassSampleToCollector (Time delay, uint32_t identifier)
     case StatsHelper::OUTPUT_SCALAR_PLOT:
       {
         Ptr<ScalarCollector> c = collector->GetObject<ScalarCollector> ();
-        NS_ASSERT (c != 0);
+        NS_ASSERT (c != nullptr);
         c->TraceSinkDouble (0.0, delay.GetSeconds ());
         break;
       }
@@ -488,7 +488,7 @@ StatsDelayHelper::PassSampleToCollector (Time delay, uint32_t identifier)
     case StatsHelper::OUTPUT_SCATTER_PLOT:
       {
         Ptr<UnitConversionCollector> c = collector->GetObject<UnitConversionCollector> ();
-        NS_ASSERT (c != 0);
+        NS_ASSERT (c != nullptr);
         c->TraceSinkDouble (0.0, delay.GetSeconds ());
         break;
       }
@@ -502,13 +502,13 @@ StatsDelayHelper::PassSampleToCollector (Time delay, uint32_t identifier)
       if (m_averagingMode)
         {
           Ptr<ScalarCollector> c = collector->GetObject<ScalarCollector> ();
-          NS_ASSERT (c != 0);
+          NS_ASSERT (c != nullptr);
           c->TraceSinkDouble (0.0, delay.GetSeconds ());
         }
       else
         {
           Ptr<DistributionCollector> c = collector->GetObject<DistributionCollector> ();
-          NS_ASSERT (c != 0);
+          NS_ASSERT (c != nullptr);
           c->TraceSinkDouble (0.0, delay.GetSeconds ());
         }
       break;
@@ -571,7 +571,7 @@ StatsAppDelayHelper::DoInstallProbes ()
            * Connect to Rx trace sources of receiver applications in order to read
            * traffic time tags.
            */
-          if (app->GetInstanceTypeId ().LookupTraceSourceByName ("Rx") != 0)
+          if (app->GetInstanceTypeId ().LookupTraceSourceByName ("Rx") != nullptr)
             {
               NS_LOG_INFO (this << " attempt to connect using Rx");
               Callback<void, Ptr<const Packet>, const Address &> rxCallback
@@ -585,7 +585,7 @@ StatsAppDelayHelper::DoInstallProbes ()
           /**
            * Connect to Tx trace sources of sender applications in order to attach traffic time tags
            */
-          if (app->GetInstanceTypeId ().LookupTraceSourceByName ("Tx") != 0)
+          if (app->GetInstanceTypeId ().LookupTraceSourceByName ("Tx") != nullptr)
             {
               NS_LOG_INFO (this << " attempt to connect using Tx");
               Callback<void, Ptr<const Packet> > txCallback
