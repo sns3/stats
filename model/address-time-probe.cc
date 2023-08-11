@@ -27,96 +27,100 @@
  */
 
 #include "ns3/address-time-probe.h"
+
+#include "ns3/callback.h"
+#include "ns3/config.h"
 #include "ns3/log.h"
 #include "ns3/names.h"
-#include "ns3/config.h"
 #include "ns3/simulator.h"
-#include "ns3/callback.h"
 
-NS_LOG_COMPONENT_DEFINE ("AddressTimeProbe");
+NS_LOG_COMPONENT_DEFINE("AddressTimeProbe");
 
-namespace ns3 {
+namespace ns3
+{
 
-NS_OBJECT_ENSURE_REGISTERED (AddressTimeProbe)
-;
+NS_OBJECT_ENSURE_REGISTERED(AddressTimeProbe);
 
 TypeId
-AddressTimeProbe::GetTypeId ()
+AddressTimeProbe::GetTypeId()
 {
-  static TypeId tid = TypeId ("ns3::AddressTimeProbe")
-    .SetParent<Probe> ()
-    .AddConstructor<AddressTimeProbe> ()
-    .AddTraceSource ( "Output",
-                      "The time value plus its socket address that serve as the output for this probe",
-                      MakeTraceSourceAccessor (&AddressTimeProbe::m_output),
-                      "ns3::AddressTimeProbe::TimeAddressCallback")
-    .AddTraceSource ( "OutputSeconds",
-                      "The time value of the trace",
-                      MakeTraceSourceAccessor (&AddressTimeProbe::m_outputSeconds),
-                      "ns3::AddressTimeProbe::TimeCallback")
-  ;
-  return tid;
+    static TypeId tid =
+        TypeId("ns3::AddressTimeProbe")
+            .SetParent<Probe>()
+            .AddConstructor<AddressTimeProbe>()
+            .AddTraceSource(
+                "Output",
+                "The time value plus its socket address that serve as the output for this probe",
+                MakeTraceSourceAccessor(&AddressTimeProbe::m_output),
+                "ns3::AddressTimeProbe::TimeAddressCallback")
+            .AddTraceSource("OutputSeconds",
+                            "The time value of the trace",
+                            MakeTraceSourceAccessor(&AddressTimeProbe::m_outputSeconds),
+                            "ns3::AddressTimeProbe::TimeCallback");
+    return tid;
 }
 
-AddressTimeProbe::AddressTimeProbe ()
+AddressTimeProbe::AddressTimeProbe()
 {
-  NS_LOG_FUNCTION (this);
-  m_timeValue = MilliSeconds (0);
+    NS_LOG_FUNCTION(this);
+    m_timeValue = MilliSeconds(0);
 }
 
-AddressTimeProbe::~AddressTimeProbe ()
+AddressTimeProbe::~AddressTimeProbe()
 {
-  NS_LOG_FUNCTION (this);
-}
-
-void
-AddressTimeProbe::SetValue (Time timeValue, const Address& address)
-{
-  NS_LOG_FUNCTION (this << timeValue.GetSeconds () << address);
-
-  m_output (timeValue, address);
-  m_outputSeconds (m_timeValue.GetSeconds(), timeValue.GetSeconds ());
-  m_timeValue = timeValue;
-  m_address = address;
+    NS_LOG_FUNCTION(this);
 }
 
 void
-AddressTimeProbe::SetValueByPath (std::string path, Time timeValue, const Address& address)
+AddressTimeProbe::SetValue(Time timeValue, const Address& address)
 {
-  NS_LOG_FUNCTION (path << timeValue.GetSeconds () << address);
-  Ptr<AddressTimeProbe> probe = Names::Find<AddressTimeProbe> (path);
-  NS_ASSERT_MSG (probe, "Error:  Can't find probe for path " << path);
-  probe->SetValue (timeValue, address);
+    NS_LOG_FUNCTION(this << timeValue.GetSeconds() << address);
+
+    m_output(timeValue, address);
+    m_outputSeconds(m_timeValue.GetSeconds(), timeValue.GetSeconds());
+    m_timeValue = timeValue;
+    m_address = address;
+}
+
+void
+AddressTimeProbe::SetValueByPath(std::string path, Time timeValue, const Address& address)
+{
+    NS_LOG_FUNCTION(path << timeValue.GetSeconds() << address);
+    Ptr<AddressTimeProbe> probe = Names::Find<AddressTimeProbe>(path);
+    NS_ASSERT_MSG(probe, "Error:  Can't find probe for path " << path);
+    probe->SetValue(timeValue, address);
 }
 
 bool
-AddressTimeProbe::ConnectByObject (std::string traceSource, Ptr<Object> obj)
+AddressTimeProbe::ConnectByObject(std::string traceSource, Ptr<Object> obj)
 {
-  NS_LOG_FUNCTION (this << traceSource << obj);
-  NS_LOG_DEBUG ("Name of probe (if any) in names database: " << Names::FindPath (obj));
-  bool connected = obj->TraceConnectWithoutContext (traceSource, MakeCallback (&ns3::AddressTimeProbe::TraceSink, this));
-  return connected;
+    NS_LOG_FUNCTION(this << traceSource << obj);
+    NS_LOG_DEBUG("Name of probe (if any) in names database: " << Names::FindPath(obj));
+    bool connected =
+        obj->TraceConnectWithoutContext(traceSource,
+                                        MakeCallback(&ns3::AddressTimeProbe::TraceSink, this));
+    return connected;
 }
 
 void
-AddressTimeProbe::ConnectByPath (std::string path)
+AddressTimeProbe::ConnectByPath(std::string path)
 {
-  NS_LOG_FUNCTION (this << path);
-  NS_LOG_DEBUG ("Name of probe to search for in config database: " << path);
-  Config::ConnectWithoutContext (path, MakeCallback (&ns3::AddressTimeProbe::TraceSink, this));
+    NS_LOG_FUNCTION(this << path);
+    NS_LOG_DEBUG("Name of probe to search for in config database: " << path);
+    Config::ConnectWithoutContext(path, MakeCallback(&ns3::AddressTimeProbe::TraceSink, this));
 }
 
 void
-AddressTimeProbe::TraceSink (Time timeValue, const Address& address)
+AddressTimeProbe::TraceSink(Time timeValue, const Address& address)
 {
-  NS_LOG_FUNCTION (this << timeValue.GetSeconds () << address);
+    NS_LOG_FUNCTION(this << timeValue.GetSeconds() << address);
 
-  if (IsEnabled ())
+    if (IsEnabled())
     {
-      m_output (timeValue, address);
-      m_outputSeconds (m_timeValue.GetSeconds(), timeValue.GetSeconds ());
-      m_timeValue = timeValue;
-      m_address = address;
+        m_output(timeValue, address);
+        m_outputSeconds(m_timeValue.GetSeconds(), timeValue.GetSeconds());
+        m_timeValue = timeValue;
+        m_address = address;
     }
 }
 

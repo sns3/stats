@@ -21,10 +21,11 @@
 #ifndef ADDRESS_TAG_H
 #define ADDRESS_TAG_H
 
-#include <ns3/tag.h>
 #include <ns3/address.h>
+#include <ns3/tag.h>
 
-namespace ns3 {
+namespace ns3
+{
 
 /**
  * \ingroup magister-stats
@@ -33,74 +34,68 @@ namespace ns3 {
  */
 class AddressTag : public Tag
 {
-public:
+  public:
+    /**
+     * / Creates a AddressTag instance with an invalid source address.
+     */
+    AddressTag();
 
-  /**
-   * / Creates a AddressTag instance with an invalid source address.
-   */
-  AddressTag ();
+    /**
+     * \brief Creates a AddressTag instance with the given source address.
+     * \param addr the source address.
+     */
+    AddressTag(Address addr);
 
-  /**
-   * \brief Creates a AddressTag instance with the given source address.
-   * \param addr the source address.
-   */
-  AddressTag (Address addr);
+    /**
+     * \brief Set the source address.
+     * \param addr the source address.
+     */
+    void SetSourceAddress(Address addr);
 
-  /**
-   * \brief Set the source address.
-   * \param addr the source address.
-   */
-  void SetSourceAddress (Address addr);
+    /**
+     * \brief Get the source address.
+     * \return the source address.
+     */
+    Address GetSourceAddress() const;
 
-  /**
-   * \brief Get the source address.
-   * \return the source address.
-   */
-  Address GetSourceAddress () const;
+    /**
+     * Inherited from ObjectBase base class.
+     */
+    static TypeId GetTypeId();
 
+    /**
+     * \brief Get the type ID of instance
+     * \return the object TypeId
+     */
+    virtual TypeId GetInstanceTypeId() const;
 
-  /**
-   * Inherited from ObjectBase base class.
-   */
-  static TypeId GetTypeId ();
+    /**
+     * Inherited from Tag base class.
+     */
+    virtual uint32_t GetSerializedSize() const;
 
-  /**
-   * \brief Get the type ID of instance
-   * \return the object TypeId
-   */
-  virtual TypeId GetInstanceTypeId () const;
+    /**
+     * Serializes information to buffer from this instance of Inherited
+     * \param buf Buffer in which the information is serialized
+     */
+    virtual void Serialize(TagBuffer buf) const;
 
+    /**
+     * Deserializes information from buffer to this instance of Inherited
+     * \param buf Buffer from which the information is deserialized
+     */
+    virtual void Deserialize(TagBuffer buf);
 
-  /**
-   * Inherited from Tag base class.
-   */
-  virtual uint32_t GetSerializedSize () const;
+    /**
+     * Print time stamp of this instance of Inherited
+     * \param &os Output stream to which tag timestamp is printed.
+     */
+    virtual void Print(std::ostream& os) const;
 
-  /**
-   * Serializes information to buffer from this instance of Inherited
-   * \param buf Buffer in which the information is serialized
-   */
-  virtual void Serialize (TagBuffer buf) const;
-
-  /**
-   * Deserializes information from buffer to this instance of Inherited
-   * \param buf Buffer from which the information is deserialized
-   */
-  virtual void Deserialize (TagBuffer buf);
-
-  /**
-   * Print time stamp of this instance of Inherited
-   * \param &os Output stream to which tag timestamp is printed.
-   */
-  virtual void Print (std::ostream &os) const;
-
-private:
-  Address m_sourceAddress;  ///< The source address.
-
+  private:
+    Address m_sourceAddress; ///< The source address.
 };
 
-
 } // namespace ns3
-
 
 #endif /* ADDRESS_TAG_H */

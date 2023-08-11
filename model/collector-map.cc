@@ -20,134 +20,121 @@
  */
 
 #include "collector-map.h"
-#include <ns3/log.h>
+
 #include <ns3/fatal-error.h>
+#include <ns3/log.h>
 
+NS_LOG_COMPONENT_DEFINE("CollectorMap");
 
-NS_LOG_COMPONENT_DEFINE ("CollectorMap");
-
-
-namespace ns3 {
-
-
-CollectorMap::CollectorMap ()
+namespace ns3
 {
-  NS_LOG_FUNCTION (this);
-}
 
+CollectorMap::CollectorMap()
+{
+    NS_LOG_FUNCTION(this);
+}
 
 void
-CollectorMap::SetType (std::string type)
+CollectorMap::SetType(std::string type)
 {
-  NS_LOG_FUNCTION (this << type);
+    NS_LOG_FUNCTION(this << type);
 
-  TypeId tid;
-  const bool isValidType = TypeId::LookupByNameFailSafe (type, &tid);
+    TypeId tid;
+    const bool isValidType = TypeId::LookupByNameFailSafe(type, &tid);
 
-  if (!isValidType)
+    if (!isValidType)
     {
-      NS_FATAL_ERROR ("Invalid type " << type);
+        NS_FATAL_ERROR("Invalid type " << type);
     }
-  else
+    else
     {
-      TypeId baseTid = TypeId::LookupByName ("ns3::DataCollectionObject");
-      const bool isCollector = tid.IsChildOf (baseTid);
+        TypeId baseTid = TypeId::LookupByName("ns3::DataCollectionObject");
+        const bool isCollector = tid.IsChildOf(baseTid);
 
-      if (!isCollector)
+        if (!isCollector)
         {
-          NS_FATAL_ERROR ("Type " << type << " is not a child of"
-                                  << " ns3::DataCollectionObject");
+            NS_FATAL_ERROR("Type " << type << " is not a child of"
+                                   << " ns3::DataCollectionObject");
         }
-      else
+        else
         {
-          m_factory.SetTypeId (tid);
+            m_factory.SetTypeId(tid);
         }
     }
 }
-
 
 TypeId
-CollectorMap::GetType () const
+CollectorMap::GetType() const
 {
-  return m_factory.GetTypeId ();
+    return m_factory.GetTypeId();
 }
-
 
 void
-CollectorMap::SetAttribute (std::string n, const AttributeValue &v)
+CollectorMap::SetAttribute(std::string n, const AttributeValue& v)
 {
-  NS_LOG_FUNCTION (this << n);
-  m_factory.Set (n, v);
+    NS_LOG_FUNCTION(this << n);
+    m_factory.Set(n, v);
 }
-
 
 void
-CollectorMap::Create (uint32_t identifier)
+CollectorMap::Create(uint32_t identifier)
 {
-  NS_LOG_FUNCTION (this << identifier);
-  m_map[identifier] = m_factory.Create ()->GetObject<DataCollectionObject> ();
+    NS_LOG_FUNCTION(this << identifier);
+    m_map[identifier] = m_factory.Create()->GetObject<DataCollectionObject>();
 }
-
 
 void
-CollectorMap::Insert (uint32_t identifier, Ptr<DataCollectionObject> dataCollectionObject)
+CollectorMap::Insert(uint32_t identifier, Ptr<DataCollectionObject> dataCollectionObject)
 {
-  NS_LOG_FUNCTION (this << identifier);
-  m_map[identifier] = dataCollectionObject;
+    NS_LOG_FUNCTION(this << identifier);
+    m_map[identifier] = dataCollectionObject;
 }
-
 
 bool
-CollectorMap::IsEmpty () const
+CollectorMap::IsEmpty() const
 {
-  return m_map.empty ();
+    return m_map.empty();
 }
-
 
 bool
-CollectorMap::IsExists (uint32_t identifier) const
+CollectorMap::IsExists(uint32_t identifier) const
 {
-  CollectorMap::Iterator it = m_map.find (identifier);
-  return it != m_map.end ();
+    CollectorMap::Iterator it = m_map.find(identifier);
+    return it != m_map.end();
 }
-
 
 uint32_t
-CollectorMap::GetN () const
+CollectorMap::GetN() const
 {
-  return m_map.size ();
+    return m_map.size();
 }
-
 
 CollectorMap::Iterator
-CollectorMap::Begin () const
+CollectorMap::Begin() const
 {
-  return m_map.begin ();
+    return m_map.begin();
 }
-
 
 CollectorMap::Iterator
-CollectorMap::End () const
+CollectorMap::End() const
 {
-  return m_map.end ();
+    return m_map.end();
 }
-
 
 Ptr<DataCollectionObject>
-CollectorMap::Get (uint32_t identifier) const
+CollectorMap::Get(uint32_t identifier) const
 {
-  CollectorMap::Iterator it = m_map.find (identifier);
+    CollectorMap::Iterator it = m_map.find(identifier);
 
-  if (it == m_map.end ())
+    if (it == m_map.end())
     {
-      NS_LOG_WARN (this << " cannot find collector with identifier " << identifier);
-      return 0;
+        NS_LOG_WARN(this << " cannot find collector with identifier " << identifier);
+        return 0;
     }
-  else
+    else
     {
-      return it->second;
+        return it->second;
     }
 }
-
 
 } // end of namespace ns3

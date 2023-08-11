@@ -29,12 +29,13 @@
 #ifndef ADDRESS_BOOLEAN_PROBE_H
 #define ADDRESS_BOOLEAN_PROBE_H
 
-#include "ns3/nstime.h"
-#include "ns3/traced-callback.h"
 #include "ns3/address.h"
+#include "ns3/nstime.h"
 #include "ns3/probe.h"
+#include "ns3/traced-callback.h"
 
-namespace ns3 {
+namespace ns3
+{
 
 /**
  * \brief Probe to translate from a TraceSource to two more easily parsed TraceSources.
@@ -48,93 +49,90 @@ namespace ns3 {
  */
 class AddressBooleanProbe : public Probe
 {
-public:
-  /**
-   * \brief Get the type ID.
-   * \return the object TypeId
-   */
-  static TypeId GetTypeId ();
-  AddressBooleanProbe ();
-  virtual ~AddressBooleanProbe ();
+  public:
+    /**
+     * \brief Get the type ID.
+     * \return the object TypeId
+     */
+    static TypeId GetTypeId();
+    AddressBooleanProbe();
+    virtual ~AddressBooleanProbe();
 
-  /**
-   * \brief Set a probe value
-   *
-   * \param booleanValue set the traced boolean equal to this
-   * \param address set the socket address for the traced packet equal to this
-   */
-  void SetValue (bool booleanValue, const Address& address);
+    /**
+     * \brief Set a probe value
+     *
+     * \param booleanValue set the traced boolean equal to this
+     * \param address set the socket address for the traced packet equal to this
+     */
+    void SetValue(bool booleanValue, const Address& address);
 
-  /**
-   * \brief Set a probe value by its name in the Config system
-   *
-   * \param path config path to access the probe
-   * \param booleanValue set the traced boolean equal to this
-   * \param address set the socket address for the traced packet equal to this
-   */
-  static void SetValueByPath (std::string path, bool booleanValue, const Address& address);
+    /**
+     * \brief Set a probe value by its name in the Config system
+     *
+     * \param path config path to access the probe
+     * \param booleanValue set the traced boolean equal to this
+     * \param address set the socket address for the traced packet equal to this
+     */
+    static void SetValueByPath(std::string path, bool booleanValue, const Address& address);
 
-  /**
-   * \brief connect to a trace source attribute provided by a given object
-   *
-   * \param traceSource the name of the attribute TraceSource to connect to
-   * \param obj ns3::Object to connect to
-   * \return true if the trace source was successfully connected
-   */
-  virtual bool ConnectByObject (std::string traceSource, Ptr<Object> obj);
+    /**
+     * \brief connect to a trace source attribute provided by a given object
+     *
+     * \param traceSource the name of the attribute TraceSource to connect to
+     * \param obj ns3::Object to connect to
+     * \return true if the trace source was successfully connected
+     */
+    virtual bool ConnectByObject(std::string traceSource, Ptr<Object> obj);
 
-  /**
-   * \brief connect to a trace source provided by a config path
-   *
-   * \param path Config path to bind to
-   *
-   * Note, if an invalid path is provided, the probe will not be connected
-   * to anything.
-   */
-  virtual void ConnectByPath (std::string path);
+    /**
+     * \brief connect to a trace source provided by a config path
+     *
+     * \param path Config path to bind to
+     *
+     * Note, if an invalid path is provided, the probe will not be connected
+     * to anything.
+     */
+    virtual void ConnectByPath(std::string path);
 
-  /**
-   * \brief Callback signature for boolean and address.
-   *
-   * \param value the packet delay
-   * \param address the socket address for the packet
-   *
-   */
-  typedef void (*BooleanAddressCallback)
-    (bool value, const Address &address);
+    /**
+     * \brief Callback signature for boolean and address.
+     *
+     * \param value the packet delay
+     * \param address the socket address for the packet
+     *
+     */
+    typedef void (*BooleanAddressCallback)(bool value, const Address& address);
 
-  /**
-   * \brief Callback signature for changes in boolean.
-   *
-   * \param oldValue the previous boolean
-   * \param newValue the actual boolean
-   */
-  typedef void (*BooleanCallback)
-    (bool oldValue, bool newValue);
+    /**
+     * \brief Callback signature for changes in boolean.
+     *
+     * \param oldValue the previous boolean
+     * \param newValue the actual boolean
+     */
+    typedef void (*BooleanCallback)(bool oldValue, bool newValue);
 
-private:
-  /**
-   * \brief Method to connect to an underlying ns3::TraceSource with
-   * arguments of type bool value and const Address&
-   *
-   * \param booleanValue the traced boolean
-   * \param address the socket address for the traced packet
-   *
-   */
-  void TraceSink (bool booleanValue, const Address& address);
+  private:
+    /**
+     * \brief Method to connect to an underlying ns3::TraceSource with
+     * arguments of type bool value and const Address&
+     *
+     * \param booleanValue the traced boolean
+     * \param address the socket address for the traced packet
+     *
+     */
+    void TraceSink(bool booleanValue, const Address& address);
 
-  /// Output trace, the boolean and source address
-  TracedCallback<bool, const Address&> m_output;
-  /// Output trace, previous value and current value
-  TracedCallback<bool, bool> m_outputBoolean;
+    /// Output trace, the boolean and source address
+    TracedCallback<bool, const Address&> m_output;
+    /// Output trace, previous value and current value
+    TracedCallback<bool, bool> m_outputBoolean;
 
-  /// The traced boolean.
-  bool m_booleanValue;
+    /// The traced boolean.
+    bool m_booleanValue;
 
-  /// The socket address for the traced packet.
-  Address m_address;
+    /// The socket address for the traced packet.
+    Address m_address;
 };
-
 
 } // namespace ns3
 

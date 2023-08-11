@@ -23,16 +23,16 @@
 #ifndef STATS_THROUGHPUT_HELPER_H
 #define STATS_THROUGHPUT_HELPER_H
 
-#include <ns3/stats-helper.h>
-#include <ns3/ptr.h>
 #include <ns3/address.h>
 #include <ns3/collector-map.h>
+#include <ns3/ptr.h>
+#include <ns3/stats-helper.h>
+
 #include <list>
 #include <map>
 
-
-namespace ns3 {
-
+namespace ns3
+{
 
 // BASE CLASS /////////////////////////////////////////////////////////////////
 
@@ -47,77 +47,75 @@ class DistributionCollector;
  */
 class StatsThroughputHelper : public StatsHelper
 {
-public:
-  // inherited from StatsHelper base class
-  StatsThroughputHelper ();
+  public:
+    // inherited from StatsHelper base class
+    StatsThroughputHelper();
 
-  /**
-   * / Destructor.
-   */
-  virtual ~StatsThroughputHelper ();
+    /**
+     * / Destructor.
+     */
+    virtual ~StatsThroughputHelper();
 
+    /**
+     * inherited from ObjectBase base class
+     */
+    static TypeId GetTypeId();
 
-  /**
-   * inherited from ObjectBase base class
-   */
-  static TypeId GetTypeId ();
+    /**
+     * \param averagingMode average all samples before passing them to aggregator.
+     */
+    void SetAveragingMode(bool averagingMode);
 
-  /**
-   * \param averagingMode average all samples before passing them to aggregator.
-   */
-  void SetAveragingMode (bool averagingMode);
+    /**
+     * \return the currently active averaging mode.
+     */
+    bool GetAveragingMode() const;
 
-  /**
-   * \return the currently active averaging mode.
-   */
-  bool GetAveragingMode () const;
+    /**
+     * \brief Set up several probes or other means of listeners and connect them
+     *        to the first-level collectors.
+     */
+    void InstallProbes();
 
-  /**
-   * \brief Set up several probes or other means of listeners and connect them
-   *        to the first-level collectors.
-   */
-  void InstallProbes ();
+    /**
+     * \brief Receive inputs from trace sources and determine the right collector
+     *        to forward the inputs to.
+     * \param packet received packet data.
+     * \param from the address of the sender of the packet.
+     *
+     * Used in received traffic statistics. DoInstallProbes() is expected to connect
+     * the right trace sources to this method.
+     */
+    void RxCallback(Ptr<const Packet> packet, const Address& from);
 
-  /**
-   * \brief Receive inputs from trace sources and determine the right collector
-   *        to forward the inputs to.
-   * \param packet received packet data.
-   * \param from the address of the sender of the packet.
-   *
-   * Used in received traffic statistics. DoInstallProbes() is expected to connect
-   * the right trace sources to this method.
-   */
-  void RxCallback (Ptr<const Packet> packet, const Address &from);
+  protected:
+    // inherited from StatsHelper base class
+    void DoInstall();
 
-protected:
-  // inherited from StatsHelper base class
-  void DoInstall ();
+    /**
+     * \brief Install probes to trace sources. Implemented by child classes.
+     */
+    virtual void DoInstallProbes() = 0;
 
-  /**
-   * \brief Install probes to trace sources. Implemented by child classes.
-   */
-  virtual void DoInstallProbes () = 0;
+    /// Maintains a list of first-level collectors created by this helper.
+    CollectorMap m_conversionCollectors;
 
-  /// Maintains a list of first-level collectors created by this helper.
-  CollectorMap m_conversionCollectors;
+    /// Maintains a list of second-level collectors created by this helper.
+    CollectorMap m_terminalCollectors;
 
-  /// Maintains a list of second-level collectors created by this helper.
-  CollectorMap m_terminalCollectors;
+    /// The final collector utilized in averaged output (histogram, PDF, and CDF).
+    Ptr<DistributionCollector> m_averagingCollector;
 
-  /// The final collector utilized in averaged output (histogram, PDF, and CDF).
-  Ptr<DistributionCollector> m_averagingCollector;
+    /// The aggregator created by this helper.
+    Ptr<DataCollectionObject> m_aggregator;
 
-  /// The aggregator created by this helper.
-  Ptr<DataCollectionObject> m_aggregator;
+    /// Map of address and the identifier associated with it (for return link).
+    std::map<const Address, uint32_t> m_identifierMap;
 
-  /// Map of address and the identifier associated with it (for return link).
-  std::map<const Address, uint32_t> m_identifierMap;
-
-private:
-  bool m_averagingMode;  ///< `AveragingMode` attribute.
+  private:
+    bool m_averagingMode; ///< `AveragingMode` attribute.
 
 }; // end of class StatsThroughputHelper
-
 
 // APPLICATION-LEVEL /////////////////////////////////////////////
 
@@ -139,33 +137,30 @@ class Probe;
  */
 class StatsAppThroughputHelper : public StatsThroughputHelper
 {
-public:
-  // inherited from StatsHelper base class
-  StatsAppThroughputHelper ();
+  public:
+    // inherited from StatsHelper base class
+    StatsAppThroughputHelper();
 
+    /**
+     * / Destructor.
+     */
+    virtual ~StatsAppThroughputHelper();
 
-  /**
-   * / Destructor.
-   */
-  virtual ~StatsAppThroughputHelper ();
+    /**
+     * inherited from ObjectBase base class
+     */
+    static TypeId GetTypeId();
 
+  protected:
+    // inherited from StatsThroughputHelper base class
+    void DoInstallProbes();
 
-  /**
-   * inherited from ObjectBase base class
-   */
-  static TypeId GetTypeId ();
-
-protected:
-  // inherited from StatsThroughputHelper base class
-  void DoInstallProbes ();
-
-private:
-  /// Maintains a list of probes created by this helper.
-  std::list<Ptr<Probe> > m_probes;
+  private:
+    /// Maintains a list of probes created by this helper.
+    std::list<Ptr<Probe>> m_probes;
 
 }; // end of class StatsAppThroughputHelper
 
 } // end of namespace ns3
-
 
 #endif /* STATS_THROUGHPUT_HELPER_H */

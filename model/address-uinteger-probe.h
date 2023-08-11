@@ -29,12 +29,13 @@
 #ifndef ADDRESS_UINTEGER_PROBE_H
 #define ADDRESS_UINTEGER_PROBE_H
 
-#include "ns3/nstime.h"
-#include "ns3/traced-callback.h"
 #include "ns3/address.h"
+#include "ns3/nstime.h"
 #include "ns3/probe.h"
+#include "ns3/traced-callback.h"
 
-namespace ns3 {
+namespace ns3
+{
 
 /**
  * \brief Probe to translate from a TraceSource to two more easily parsed TraceSources.
@@ -48,93 +49,90 @@ namespace ns3 {
  */
 class AddressUintegerProbe : public Probe
 {
-public:
-  /**
-   * \brief Get the type ID.
-   * \return the object TypeId
-   */
-  static TypeId GetTypeId ();
-  AddressUintegerProbe ();
-  virtual ~AddressUintegerProbe ();
+  public:
+    /**
+     * \brief Get the type ID.
+     * \return the object TypeId
+     */
+    static TypeId GetTypeId();
+    AddressUintegerProbe();
+    virtual ~AddressUintegerProbe();
 
-  /**
-   * \brief Set a probe value
-   *
-   * \param uintegerValue set the traced Uinteger equal to this
-   * \param address set the socket address for the traced packet equal to this
-   */
-  void SetValue (uint32_t uintegerValue, const Address& address);
+    /**
+     * \brief Set a probe value
+     *
+     * \param uintegerValue set the traced Uinteger equal to this
+     * \param address set the socket address for the traced packet equal to this
+     */
+    void SetValue(uint32_t uintegerValue, const Address& address);
 
-  /**
-   * \brief Set a probe value by its name in the Config system
-   *
-   * \param path config path to access the probe
-   * \param uintegerValue set the traced Uinteger equal to this
-   * \param address set the socket address for the traced packet equal to this
-   */
-  static void SetValueByPath (std::string path, uint32_t uintegerValue, const Address& address);
+    /**
+     * \brief Set a probe value by its name in the Config system
+     *
+     * \param path config path to access the probe
+     * \param uintegerValue set the traced Uinteger equal to this
+     * \param address set the socket address for the traced packet equal to this
+     */
+    static void SetValueByPath(std::string path, uint32_t uintegerValue, const Address& address);
 
-  /**
-   * \brief connect to a trace source attribute provided by a given object
-   *
-   * \param traceSource the name of the attribute TraceSource to connect to
-   * \param obj ns3::Object to connect to
-   * \return true if the trace source was successfully connected
-   */
-  virtual bool ConnectByObject (std::string traceSource, Ptr<Object> obj);
+    /**
+     * \brief connect to a trace source attribute provided by a given object
+     *
+     * \param traceSource the name of the attribute TraceSource to connect to
+     * \param obj ns3::Object to connect to
+     * \return true if the trace source was successfully connected
+     */
+    virtual bool ConnectByObject(std::string traceSource, Ptr<Object> obj);
 
-  /**
-   * \brief connect to a trace source provided by a config path
-   *
-   * \param path Config path to bind to
-   *
-   * Note, if an invalid path is provided, the probe will not be connected
-   * to anything.
-   */
-  virtual void ConnectByPath (std::string path);
+    /**
+     * \brief connect to a trace source provided by a config path
+     *
+     * \param path Config path to bind to
+     *
+     * Note, if an invalid path is provided, the probe will not be connected
+     * to anything.
+     */
+    virtual void ConnectByPath(std::string path);
 
-  /**
-   * \brief Callback signature for Uinteger and address.
-   *
-   * \param uintegerValue the Uinteger
-   * \param address the socket address for the packet
-   *
-   */
-  typedef void (*UintegerAddressCallback)
-    (uint32_t uintegerValue, const Address &address);
+    /**
+     * \brief Callback signature for Uinteger and address.
+     *
+     * \param uintegerValue the Uinteger
+     * \param address the socket address for the packet
+     *
+     */
+    typedef void (*UintegerAddressCallback)(uint32_t uintegerValue, const Address& address);
 
-  /**
-   * \brief Callback signature for changes in packet boolean.
-   *
-   * \param oldValue the previous Uinteger
-   * \param newValue the actual Uinteger
-   */
-  typedef void (*UintegerCallback)
-    (uint32_t oldValue, uint32_t newValue);
+    /**
+     * \brief Callback signature for changes in packet boolean.
+     *
+     * \param oldValue the previous Uinteger
+     * \param newValue the actual Uinteger
+     */
+    typedef void (*UintegerCallback)(uint32_t oldValue, uint32_t newValue);
 
-private:
-  /**
-   * \brief Method to connect to an underlying ns3::TraceSource with
-   * arguments of type Uinteger value and const Address&
-   *
-   * \param uintegerValue the traced Uinteger
-   * \param address the socket address for the traced packet
-   *
-   */
-  void TraceSink (uint32_t uintegerValue, const Address& address);
+  private:
+    /**
+     * \brief Method to connect to an underlying ns3::TraceSource with
+     * arguments of type Uinteger value and const Address&
+     *
+     * \param uintegerValue the traced Uinteger
+     * \param address the socket address for the traced packet
+     *
+     */
+    void TraceSink(uint32_t uintegerValue, const Address& address);
 
-  /// Output trace, the Uinteger and source address
-  TracedCallback<uint32_t, const Address&> m_output;
-  /// Output trace, previous value and current value
-  TracedCallback<uint32_t, uint32_t> m_outputUinteger;
+    /// Output trace, the Uinteger and source address
+    TracedCallback<uint32_t, const Address&> m_output;
+    /// Output trace, previous value and current value
+    TracedCallback<uint32_t, uint32_t> m_outputUinteger;
 
-  /// The traced Uinteger.
-  uint32_t m_uintegerValue;
+    /// The traced Uinteger.
+    uint32_t m_uintegerValue;
 
-  /// The socket address for the traced packet.
-  Address m_address;
+    /// The socket address for the traced packet.
+    Address m_address;
 };
-
 
 } // namespace ns3
 

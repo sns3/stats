@@ -22,16 +22,16 @@
 #ifndef STATS_DELAY_HELPER_H
 #define STATS_DELAY_HELPER_H
 
-#include <ns3/stats-helper.h>
-#include <ns3/ptr.h>
 #include <ns3/address.h>
 #include <ns3/collector-map.h>
+#include <ns3/ptr.h>
+#include <ns3/stats-helper.h>
+
 #include <list>
 #include <map>
 
-
-namespace ns3 {
-
+namespace ns3
+{
 
 // BASE CLASS /////////////////////////////////////////////////////////////////
 
@@ -46,80 +46,77 @@ class DistributionCollector;
  */
 class StatsDelayHelper : public StatsHelper
 {
-public:
-  // inherited from StatsHelper base class
-  StatsDelayHelper ();
+  public:
+    // inherited from StatsHelper base class
+    StatsDelayHelper();
 
+    /**
+     * / Destructor.
+     */
+    virtual ~StatsDelayHelper();
 
-  /**
-   * / Destructor.
-   */
-  virtual ~StatsDelayHelper ();
+    /**
+     * inherited from ObjectBase base class
+     */
+    static TypeId GetTypeId();
 
+    /**
+     * \param averagingMode average all samples before passing them to aggregator.
+     */
+    void SetAveragingMode(bool averagingMode);
 
-  /**
-   * inherited from ObjectBase base class
-   */
-  static TypeId GetTypeId ();
+    /**
+     * \return the currently active averaging mode.
+     */
+    bool GetAveragingMode() const;
 
-  /**
-   * \param averagingMode average all samples before passing them to aggregator.
-   */
-  void SetAveragingMode (bool averagingMode);
+    /**
+     * \brief Set up several probes or other means of listeners and connect them
+     *        to the collectors.
+     */
+    void InstallProbes();
 
-  /**
-   * \return the currently active averaging mode.
-   */
-  bool GetAveragingMode () const;
+  protected:
+    // inherited from StatsHelper base class
+    void DoInstall();
 
-  /**
-   * \brief Set up several probes or other means of listeners and connect them
-   *        to the collectors.
-   */
-  void InstallProbes ();
+    /**
+     * \brief Install callbacks and probes to application trace sources,
+     * if needed. Implemented by child classes.
+     */
+    virtual void DoInstallProbes() = 0;
 
-protected:
-  // inherited from StatsHelper base class
-  void DoInstall ();
+    /**
+     * \brief Connect the probe to the right collector.
+     * \param probe
+     * \param identifier
+     */
+    bool ConnectProbeToCollector(Ptr<Probe> probe, uint32_t identifier);
 
-  /**
-   * \brief Install callbacks and probes to application trace sources,
-   * if needed. Implemented by child classes.
-   */
-  virtual void DoInstallProbes () = 0;
+    /**
+     * \brief Find a collector with the right identifier and pass a sample data
+     *        to it.
+     * \param delay
+     * \param identifier
+     */
+    void PassSampleToCollector(Time delay, uint32_t identifier);
 
-  /**
-   * \brief Connect the probe to the right collector.
-   * \param probe
-   * \param identifier
-   */
-  bool ConnectProbeToCollector (Ptr<Probe> probe, uint32_t identifier);
+    /// Maintains a list of collectors created by this helper.
+    CollectorMap m_terminalCollectors;
 
-  /**
-   * \brief Find a collector with the right identifier and pass a sample data
-   *        to it.
-   * \param delay
-   * \param identifier
-   */
-  void PassSampleToCollector (Time delay, uint32_t identifier);
+    /// The final collector utilized in averaged output (histogram, PDF, and CDF).
+    Ptr<DistributionCollector> m_averagingCollector;
 
-  /// Maintains a list of collectors created by this helper.
-  CollectorMap m_terminalCollectors;
+    /// The aggregator created by this helper.
+    Ptr<DataCollectionObject> m_aggregator;
 
-  /// The final collector utilized in averaged output (histogram, PDF, and CDF).
-  Ptr<DistributionCollector> m_averagingCollector;
+    /// Map of address and the identifier associated with it (for return link).
+    std::map<const Address, uint32_t> m_identifierMap;
 
-  /// The aggregator created by this helper.
-  Ptr<DataCollectionObject> m_aggregator;
-
-  /// Map of address and the identifier associated with it (for return link).
-  std::map<const Address, uint32_t> m_identifierMap;
-
-private:
-  bool m_averagingMode;  ///< `AveragingMode` attribute.
+  private:
+    bool m_averagingMode; ///< `AveragingMode` attribute.
 
 }; // end of class StatsDelayHelper
-
 
 // APPLICATION-LEVEL /////////////////////////////////////////////
 
@@ -141,56 +138,53 @@ class Probe;
  */
 class StatsAppDelayHelper : public StatsDelayHelper
 {
-public:
-  // inherited from StatsHelper base class
-  StatsAppDelayHelper ();
+  public:
+    // inherited from StatsHelper base class
+    StatsAppDelayHelper();
 
+    /**
+     * Destructor for StatsFwdAppDelayHelper.
+     */
+    virtual ~StatsAppDelayHelper();
 
-  /**
-   * Destructor for StatsFwdAppDelayHelper.
-   */
-  virtual ~StatsAppDelayHelper ();
+    /**
+     * inherited from ObjectBase base class
+     */
+    static TypeId GetTypeId();
 
+    /**
+     * \brief Receive inputs from trace sources and determine the right collector
+     *        to forward the inputs to.
+     * \param helper Pointer to the delay statistics collector helper
+     * \param identifier Identifier used to group statistics.
+     * \param packet the received packet, expected to have been tagged with
+     *               TrafficTimeTag.
+     * \param from the InetSocketAddress of the sender of the packet.
+     */
+    static void RxCallback(Ptr<StatsAppDelayHelper> helper,
+                           uint32_t identifier,
+                           Ptr<const Packet> packet,
+                           const Address& from);
 
-  /**
-   * inherited from ObjectBase base class
-   */
-  static TypeId GetTypeId ();
+    /**
+     * \brief Receive inputs from trace sources and determine the right collector
+     *        to forward the inputs to.
+     * \param helper Pointer to the delay statistics collector helper
+     * \param identifier Identifier used to group statistics.
+     * \param packet the sent packet, yo which TrafficTimeTag will be attached.
+     */
+    static void TxCallback(Ptr<StatsAppDelayHelper> helper, Ptr<const Packet> packet);
 
-  /**
-   * \brief Receive inputs from trace sources and determine the right collector
-   *        to forward the inputs to.
-   * \param helper Pointer to the delay statistics collector helper
-   * \param identifier Identifier used to group statistics.
-   * \param packet the received packet, expected to have been tagged with
-   *               TrafficTimeTag.
-   * \param from the InetSocketAddress of the sender of the packet.
-   */
-  static void RxCallback (Ptr<StatsAppDelayHelper> helper,
-                          uint32_t identifier,
-                          Ptr<const Packet> packet,
-                          const Address &from);
+  protected:
+    // inherited from StatsDelayHelper base class
+    void DoInstallProbes();
 
-  /**
-   * \brief Receive inputs from trace sources and determine the right collector
-   *        to forward the inputs to.
-   * \param helper Pointer to the delay statistics collector helper
-   * \param identifier Identifier used to group statistics.
-   * \param packet the sent packet, yo which TrafficTimeTag will be attached.
-   */
-  static void TxCallback (Ptr<StatsAppDelayHelper> helper,
-                          Ptr<const Packet> packet);
-
-protected:
-  // inherited from StatsDelayHelper base class
-  void DoInstallProbes ();
-
-private:
-  /// Maintains a list of probes created by this helper.
-  std::list<Ptr<Probe> > m_probes;
+  private:
+    /// Maintains a list of probes created by this helper.
+    std::list<Ptr<Probe>> m_probes;
 
 }; // end of class StatsAppDelayHelper
 
-}
+} // namespace ns3
 
 #endif /* STATS_DELAY_HELPER_H */

@@ -21,11 +21,11 @@
 #ifndef TIME_TAG_H
 #define TIME_TAG_H
 
-#include <ns3/tag.h>
 #include <ns3/nstime.h>
+#include <ns3/tag.h>
 
-
-namespace ns3 {
+namespace ns3
+{
 
 /*
  * There are 3 classes defined here: PhyTimeTag, MacTimeTag,
@@ -40,72 +40,69 @@ namespace ns3 {
  */
 class PhyTimeTag : public Tag
 {
-public:
+  public:
+    /**
+     * \brief Get the type ID
+     * \return the object TypeId
+     */
+    static TypeId GetTypeId(void);
 
-  /**
-   * \brief Get the type ID
-   * \return the object TypeId
-   */
-  static TypeId  GetTypeId (void);
+    /**
+     * \brief Get the type ID of instance
+     * \return the object TypeId
+     */
+    virtual TypeId GetInstanceTypeId(void) const;
 
-  /**
-   * \brief Get the type ID of instance
-   * \return the object TypeId
-   */
-  virtual TypeId  GetInstanceTypeId (void) const;
+    /**
+     * Default constructor.
+     */
+    PhyTimeTag();
 
-  /**
-   * Default constructor.
-   */
-  PhyTimeTag ();
+    /**
+     * Constructor with initialization parameters.
+     * \param senderTimestamp
+     */
+    PhyTimeTag(Time senderTimestamp);
 
-  /**
-   * Constructor with initialization parameters.
-   * \param senderTimestamp 
-   */
-  PhyTimeTag (Time senderTimestamp);
+    /**
+     * Serializes information to buffer from this instance of PhyTimeTag
+     * \param i Buffer in which the information is serialized
+     */
+    virtual void Serialize(TagBuffer i) const;
 
-  /**
-   * Serializes information to buffer from this instance of PhyTimeTag
-   * \param i Buffer in which the information is serialized
-   */
-  virtual void  Serialize (TagBuffer i) const;
+    /**
+     * Deserializes information from buffer to this instance of PhyTimeTag
+     * \param i Buffer from which the information is deserialized
+     */
+    virtual void Deserialize(TagBuffer i);
 
-  /**
-   * Deserializes information from buffer to this instance of PhyTimeTag
-   * \param i Buffer from which the information is deserialized
-   */
-  virtual void  Deserialize (TagBuffer i);
+    /**
+     * Get serialized size of PhyTimeTag
+     * \return Serialized size in bytes
+     */
+    virtual uint32_t GetSerializedSize() const;
 
-  /**
-   * Get serialized size of PhyTimeTag
-   * \return Serialized size in bytes
-   */
-  virtual uint32_t  GetSerializedSize () const;
+    /**
+     * Print time stamp of this instance of PhyTimeTag
+     * \param &os Output stream to which tag timestamp is printed.
+     */
+    virtual void Print(std::ostream& os) const;
 
-  /**
-   * Print time stamp of this instance of PhyTimeTag
-   * \param &os Output stream to which tag timestamp is printed.
-   */
-  virtual void Print (std::ostream &os) const;
+    /**
+     * Get sender time stamp of this tag.
+     * \return Sender timestamp
+     */
+    Time GetSenderTimestamp(void) const;
 
-  /**
-   * Get sender time stamp of this tag.
-   * \return Sender timestamp
-   */
-  Time GetSenderTimestamp (void) const;
+    /**
+     * Set sender time stamp of this tag.
+     * \param senderTimestamp Sender time stamp
+     */
+    void SetSenderTimestamp(Time senderTimestamp);
 
-  /**
-   * Set sender time stamp of this tag.
-   * \param senderTimestamp Sender time stamp
-   */
-  void SetSenderTimestamp (Time senderTimestamp);
-
-private:
-  Time m_senderTimestamp;
-
+  private:
+    Time m_senderTimestamp;
 };
-
 
 /**
  * \ingroup magister-stats
@@ -114,72 +111,69 @@ private:
  */
 class MacTimeTag : public Tag
 {
-public:
+  public:
+    /**
+     * \brief Get the type ID
+     * \return the object TypeId
+     */
+    static TypeId GetTypeId(void);
 
-  /**
-   * \brief Get the type ID
-   * \return the object TypeId
-   */
-  static TypeId  GetTypeId (void);
+    /**
+     * \brief Get the type ID of instance
+     * \return the object TypeId
+     */
+    virtual TypeId GetInstanceTypeId(void) const;
 
-  /**
-   * \brief Get the type ID of instance
-   * \return the object TypeId
-   */
-  virtual TypeId  GetInstanceTypeId (void) const;
+    /**
+     * Default constructor.
+     */
+    MacTimeTag();
 
-  /**
-   * Default constructor.
-   */
-  MacTimeTag ();
+    /**
+     * Constructor with initialization parameters.
+     * \param senderTimestamp
+     */
+    MacTimeTag(Time senderTimestamp);
 
-  /**
-   * Constructor with initialization parameters.
-   * \param senderTimestamp 
-   */
-  MacTimeTag (Time senderTimestamp);
+    /**
+     * Serializes information to buffer from this instance of MacTimeTag
+     * \param i Buffer in which the information is serialized
+     */
+    virtual void Serialize(TagBuffer i) const;
 
-  /**
-   * Serializes information to buffer from this instance of MacTimeTag
-   * \param i Buffer in which the information is serialized
-   */
-  virtual void  Serialize (TagBuffer i) const;
+    /**
+     * Deserializes information from buffer to this instance of MacTimeTag
+     * \param i Buffer from which the information is deserialized
+     */
+    virtual void Deserialize(TagBuffer i);
 
-  /**
-   * Deserializes information from buffer to this instance of MacTimeTag
-   * \param i Buffer from which the information is deserialized
-   */
-  virtual void  Deserialize (TagBuffer i);
+    /**
+     * Get serialized size of MacTimeTag
+     * \return Serialized size in bytes
+     */
+    virtual uint32_t GetSerializedSize() const;
 
-  /**
-   * Get serialized size of MacTimeTag
-   * \return Serialized size in bytes
-   */
-  virtual uint32_t  GetSerializedSize () const;
+    /**
+     * Print time stamp of this instance of MacTimeTag
+     * \param &os Output stream to which tag timestamp is printed.
+     */
+    virtual void Print(std::ostream& os) const;
 
-  /**
-   * Print time stamp of this instance of MacTimeTag
-   * \param &os Output stream to which tag timestamp is printed.
-   */
-  virtual void Print (std::ostream &os) const;
+    /**
+     * Get sender time stamp of this tag.
+     * \return Sender timestamp
+     */
+    Time GetSenderTimestamp(void) const;
 
-  /**
-   * Get sender time stamp of this tag.
-   * \return Sender timestamp
-   */
-  Time GetSenderTimestamp (void) const;
+    /**
+     * Set sender time stamp of this tag.
+     * \param senderTimestamp Sender time stamp
+     */
+    void SetSenderTimestamp(Time senderTimestamp);
 
-  /**
-   * Set sender time stamp of this tag.
-   * \param senderTimestamp Sender time stamp
-   */
-  void SetSenderTimestamp (Time senderTimestamp);
-
-private:
-  Time m_senderTimestamp;
-
+  private:
+    Time m_senderTimestamp;
 };
-
 
 /**
  * \ingroup magister-stats
@@ -188,74 +182,70 @@ private:
  */
 class DevTimeTag : public Tag
 {
-public:
+  public:
+    /**
+     * \brief Get the type ID
+     * \return the object TypeId
+     */
+    static TypeId GetTypeId(void);
 
-  /**
-   * \brief Get the type ID
-   * \return the object TypeId
-   */
-  static TypeId  GetTypeId (void);
+    /**
+     * \brief Get the type ID of instance
+     * \return the object TypeId
+     */
+    virtual TypeId GetInstanceTypeId(void) const;
 
-  /**
-   * \brief Get the type ID of instance
-   * \return the object TypeId
-   */
-  virtual TypeId  GetInstanceTypeId (void) const;
+    /**
+     * Default constructor.
+     */
+    DevTimeTag();
 
-  /**
-   * Default constructor.
-   */
-  DevTimeTag ();
+    /**
+     * Constructor with initialization parameters.
+     * \param senderTimestamp
+     */
+    DevTimeTag(Time senderTimestamp);
 
-  /**
-   * Constructor with initialization parameters.
-   * \param senderTimestamp 
-   */
-  DevTimeTag (Time senderTimestamp);
+    /**
+     * Serializes information to buffer from this instance of DevTimeTag
+     * \param i Buffer in which the information is serialized
+     */
+    virtual void Serialize(TagBuffer i) const;
 
-  /**
-   * Serializes information to buffer from this instance of DevTimeTag
-   * \param i Buffer in which the information is serialized
-   */
-  virtual void  Serialize (TagBuffer i) const;
+    /**
+     * Deserializes information from buffer to this instance of DevTimeTag
+     * \param i Buffer from which the information is deserialized
+     */
+    virtual void Deserialize(TagBuffer i);
 
-  /**
-   * Deserializes information from buffer to this instance of DevTimeTag
-   * \param i Buffer from which the information is deserialized
-   */
-  virtual void  Deserialize (TagBuffer i);
+    /**
+     * Get serialized size of DevTimeTag
+     * \return Serialized size in bytes
+     */
+    virtual uint32_t GetSerializedSize() const;
 
-  /**
-   * Get serialized size of DevTimeTag
-   * \return Serialized size in bytes
-   */
-  virtual uint32_t  GetSerializedSize () const;
+    /**
+     * Print time stamp of this instance of DevTimeTag
+     * \param &os Output stream to which tag timestamp is printed.
+     */
+    virtual void Print(std::ostream& os) const;
 
-  /**
-   * Print time stamp of this instance of DevTimeTag
-   * \param &os Output stream to which tag timestamp is printed.
-   */
-  virtual void Print (std::ostream &os) const;
+    /**
+     * Get sender time stamp of this tag.
+     * \return Sender timestamp
+     */
+    Time GetSenderTimestamp(void) const;
 
-  /**
-   * Get sender time stamp of this tag.
-   * \return Sender timestamp
-   */
-  Time GetSenderTimestamp (void) const;
+    /**
+     * Set sender time stamp of this tag.
+     * \param senderTimestamp Sender time stamp
+     */
+    void SetSenderTimestamp(Time senderTimestamp);
 
-  /**
-   * Set sender time stamp of this tag.
-   * \param senderTimestamp Sender time stamp
-   */
-  void SetSenderTimestamp (Time senderTimestamp);
-
-private:
-  Time m_senderTimestamp;
-
+  private:
+    Time m_senderTimestamp;
 };
 
-
-
-} //namespace ns3
+} // namespace ns3
 
 #endif /* TIME_TAG_H */

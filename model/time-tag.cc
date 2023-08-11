@@ -20,7 +20,8 @@
 
 #include "time-tag.h"
 
-namespace ns3 {
+namespace ns3
+{
 
 /*
  * There are 3 classes defined here: PhyTimeTag, MacTimeTag and
@@ -28,219 +29,208 @@ namespace ns3 {
  * exactly the same definitions.
  */
 
-
 // PHY ////////////////////////////////////////////////////////////////////////
 
-NS_OBJECT_ENSURE_REGISTERED (PhyTimeTag);
+NS_OBJECT_ENSURE_REGISTERED(PhyTimeTag);
 
-PhyTimeTag::PhyTimeTag ()
-  : m_senderTimestamp (Seconds (0))
+PhyTimeTag::PhyTimeTag()
+    : m_senderTimestamp(Seconds(0))
 {
-  // Nothing to do here
+    // Nothing to do here
 }
 
-PhyTimeTag::PhyTimeTag (Time senderTimestamp)
-  : m_senderTimestamp (senderTimestamp)
+PhyTimeTag::PhyTimeTag(Time senderTimestamp)
+    : m_senderTimestamp(senderTimestamp)
 {
-  // Nothing to do here
-}
-
-TypeId
-PhyTimeTag::GetTypeId (void)
-{
-  static TypeId tid = TypeId ("ns3::PhyTimeTag")
-    .SetParent<Tag> ()
-    .AddConstructor<PhyTimeTag> ();
-  return tid;
+    // Nothing to do here
 }
 
 TypeId
-PhyTimeTag::GetInstanceTypeId (void) const
+PhyTimeTag::GetTypeId(void)
 {
-  return GetTypeId ();
+    static TypeId tid = TypeId("ns3::PhyTimeTag").SetParent<Tag>().AddConstructor<PhyTimeTag>();
+    return tid;
+}
+
+TypeId
+PhyTimeTag::GetInstanceTypeId(void) const
+{
+    return GetTypeId();
 }
 
 uint32_t
-PhyTimeTag::GetSerializedSize (void) const
+PhyTimeTag::GetSerializedSize(void) const
 {
-  return sizeof(Time);
+    return sizeof(Time);
 }
 
 void
-PhyTimeTag::Serialize (TagBuffer i) const
+PhyTimeTag::Serialize(TagBuffer i) const
 {
-  int64_t senderTimestamp = m_senderTimestamp.GetNanoSeconds ();
-  i.Write ((const uint8_t *)&senderTimestamp, sizeof(int64_t));
+    int64_t senderTimestamp = m_senderTimestamp.GetNanoSeconds();
+    i.Write((const uint8_t*)&senderTimestamp, sizeof(int64_t));
 }
 
 void
-PhyTimeTag::Deserialize (TagBuffer i)
+PhyTimeTag::Deserialize(TagBuffer i)
 {
-  int64_t senderTimestamp;
-  i.Read ((uint8_t *)&senderTimestamp, 8);
-  m_senderTimestamp = NanoSeconds (senderTimestamp);
+    int64_t senderTimestamp;
+    i.Read((uint8_t*)&senderTimestamp, 8);
+    m_senderTimestamp = NanoSeconds(senderTimestamp);
 }
 
 void
-PhyTimeTag::Print (std::ostream &os) const
+PhyTimeTag::Print(std::ostream& os) const
 {
-  os << m_senderTimestamp;
+    os << m_senderTimestamp;
 }
 
 Time
-PhyTimeTag::GetSenderTimestamp (void) const
+PhyTimeTag::GetSenderTimestamp(void) const
 {
-  return m_senderTimestamp;
+    return m_senderTimestamp;
 }
 
 void
-PhyTimeTag::SetSenderTimestamp (Time senderTimestamp)
+PhyTimeTag::SetSenderTimestamp(Time senderTimestamp)
 {
-  this->m_senderTimestamp = senderTimestamp;
+    this->m_senderTimestamp = senderTimestamp;
 }
-
 
 // MAC ////////////////////////////////////////////////////////////////////////
 
-NS_OBJECT_ENSURE_REGISTERED (MacTimeTag);
+NS_OBJECT_ENSURE_REGISTERED(MacTimeTag);
 
-MacTimeTag::MacTimeTag ()
-  : m_senderTimestamp (Seconds (0))
+MacTimeTag::MacTimeTag()
+    : m_senderTimestamp(Seconds(0))
 {
-  // Nothing to do here
+    // Nothing to do here
 }
 
-MacTimeTag::MacTimeTag (Time senderTimestamp)
-  : m_senderTimestamp (senderTimestamp)
+MacTimeTag::MacTimeTag(Time senderTimestamp)
+    : m_senderTimestamp(senderTimestamp)
 {
-  // Nothing to do here
-}
-
-TypeId
-MacTimeTag::GetTypeId (void)
-{
-  static TypeId tid = TypeId ("ns3::MacTimeTag")
-    .SetParent<Tag> ()
-    .AddConstructor<MacTimeTag> ();
-  return tid;
+    // Nothing to do here
 }
 
 TypeId
-MacTimeTag::GetInstanceTypeId (void) const
+MacTimeTag::GetTypeId(void)
 {
-  return GetTypeId ();
+    static TypeId tid = TypeId("ns3::MacTimeTag").SetParent<Tag>().AddConstructor<MacTimeTag>();
+    return tid;
+}
+
+TypeId
+MacTimeTag::GetInstanceTypeId(void) const
+{
+    return GetTypeId();
 }
 
 uint32_t
-MacTimeTag::GetSerializedSize (void) const
+MacTimeTag::GetSerializedSize(void) const
 {
-  return sizeof(Time);
+    return sizeof(Time);
 }
 
 void
-MacTimeTag::Serialize (TagBuffer i) const
+MacTimeTag::Serialize(TagBuffer i) const
 {
-  int64_t senderTimestamp = m_senderTimestamp.GetNanoSeconds ();
-  i.Write ((const uint8_t *)&senderTimestamp, sizeof(int64_t));
+    int64_t senderTimestamp = m_senderTimestamp.GetNanoSeconds();
+    i.Write((const uint8_t*)&senderTimestamp, sizeof(int64_t));
 }
 
 void
-MacTimeTag::Deserialize (TagBuffer i)
+MacTimeTag::Deserialize(TagBuffer i)
 {
-  int64_t senderTimestamp;
-  i.Read ((uint8_t *)&senderTimestamp, 8);
-  m_senderTimestamp = NanoSeconds (senderTimestamp);
+    int64_t senderTimestamp;
+    i.Read((uint8_t*)&senderTimestamp, 8);
+    m_senderTimestamp = NanoSeconds(senderTimestamp);
 }
 
 void
-MacTimeTag::Print (std::ostream &os) const
+MacTimeTag::Print(std::ostream& os) const
 {
-  os << m_senderTimestamp;
+    os << m_senderTimestamp;
 }
 
 Time
-MacTimeTag::GetSenderTimestamp (void) const
+MacTimeTag::GetSenderTimestamp(void) const
 {
-  return m_senderTimestamp;
+    return m_senderTimestamp;
 }
 
 void
-MacTimeTag::SetSenderTimestamp (Time senderTimestamp)
+MacTimeTag::SetSenderTimestamp(Time senderTimestamp)
 {
-  this->m_senderTimestamp = senderTimestamp;
+    this->m_senderTimestamp = senderTimestamp;
 }
-
 
 // DEV ////////////////////////////////////////////////////////////////////////
 
-NS_OBJECT_ENSURE_REGISTERED (DevTimeTag);
+NS_OBJECT_ENSURE_REGISTERED(DevTimeTag);
 
-DevTimeTag::DevTimeTag ()
-  : m_senderTimestamp (Seconds (0))
+DevTimeTag::DevTimeTag()
+    : m_senderTimestamp(Seconds(0))
 {
-  // Nothing to do here
+    // Nothing to do here
 }
 
-DevTimeTag::DevTimeTag (Time senderTimestamp)
-  : m_senderTimestamp (senderTimestamp)
+DevTimeTag::DevTimeTag(Time senderTimestamp)
+    : m_senderTimestamp(senderTimestamp)
 {
-  // Nothing to do here
-}
-
-TypeId
-DevTimeTag::GetTypeId (void)
-{
-  static TypeId tid = TypeId ("ns3::DevTimeTag")
-    .SetParent<Tag> ()
-    .AddConstructor<DevTimeTag> ();
-  return tid;
+    // Nothing to do here
 }
 
 TypeId
-DevTimeTag::GetInstanceTypeId (void) const
+DevTimeTag::GetTypeId(void)
 {
-  return GetTypeId ();
+    static TypeId tid = TypeId("ns3::DevTimeTag").SetParent<Tag>().AddConstructor<DevTimeTag>();
+    return tid;
+}
+
+TypeId
+DevTimeTag::GetInstanceTypeId(void) const
+{
+    return GetTypeId();
 }
 
 uint32_t
-DevTimeTag::GetSerializedSize (void) const
+DevTimeTag::GetSerializedSize(void) const
 {
-  return sizeof(Time);
+    return sizeof(Time);
 }
 
 void
-DevTimeTag::Serialize (TagBuffer i) const
+DevTimeTag::Serialize(TagBuffer i) const
 {
-  int64_t senderTimestamp = m_senderTimestamp.GetNanoSeconds ();
-  i.Write ((const uint8_t *)&senderTimestamp, sizeof(int64_t));
+    int64_t senderTimestamp = m_senderTimestamp.GetNanoSeconds();
+    i.Write((const uint8_t*)&senderTimestamp, sizeof(int64_t));
 }
 
 void
-DevTimeTag::Deserialize (TagBuffer i)
+DevTimeTag::Deserialize(TagBuffer i)
 {
-  int64_t senderTimestamp;
-  i.Read ((uint8_t *)&senderTimestamp, 8);
-  m_senderTimestamp = NanoSeconds (senderTimestamp);
+    int64_t senderTimestamp;
+    i.Read((uint8_t*)&senderTimestamp, 8);
+    m_senderTimestamp = NanoSeconds(senderTimestamp);
 }
 
 void
-DevTimeTag::Print (std::ostream &os) const
+DevTimeTag::Print(std::ostream& os) const
 {
-  os << m_senderTimestamp;
+    os << m_senderTimestamp;
 }
 
 Time
-DevTimeTag::GetSenderTimestamp (void) const
+DevTimeTag::GetSenderTimestamp(void) const
 {
-  return m_senderTimestamp;
+    return m_senderTimestamp;
 }
 
 void
-DevTimeTag::SetSenderTimestamp (Time senderTimestamp)
+DevTimeTag::SetSenderTimestamp(Time senderTimestamp)
 {
-  this->m_senderTimestamp = senderTimestamp;
+    this->m_senderTimestamp = senderTimestamp;
 }
 
-
 } // namespace ns3
-

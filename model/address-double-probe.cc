@@ -27,95 +27,99 @@
  */
 
 #include "ns3/address-double-probe.h"
+
+#include "ns3/callback.h"
+#include "ns3/config.h"
 #include "ns3/log.h"
 #include "ns3/names.h"
-#include "ns3/config.h"
 #include "ns3/simulator.h"
-#include "ns3/callback.h"
 
-NS_LOG_COMPONENT_DEFINE ("AddressDoubleProbe");
+NS_LOG_COMPONENT_DEFINE("AddressDoubleProbe");
 
-namespace ns3 {
+namespace ns3
+{
 
-NS_OBJECT_ENSURE_REGISTERED (AddressDoubleProbe)
-;
+NS_OBJECT_ENSURE_REGISTERED(AddressDoubleProbe);
 
 TypeId
-AddressDoubleProbe::GetTypeId ()
+AddressDoubleProbe::GetTypeId()
 {
-  static TypeId tid = TypeId ("ns3::AddressDoubleProbe")
-    .SetParent<Probe> ()
-    .AddConstructor<AddressDoubleProbe> ()
-    .AddTraceSource ( "Output",
-                      "The delay plus its socket address that serve as the output for this probe",
-                      MakeTraceSourceAccessor (&AddressDoubleProbe::m_output),
-                      "ns3::AddressDoubleProbe::DoubleAddressCallback")
-    .AddTraceSource ( "OutputDouble",
-                      "The double of the traced packet",
-                      MakeTraceSourceAccessor (&AddressDoubleProbe::m_outputDouble),
-                      "ns3::AddressDoubleProbe::DoubleCallback")
-  ;
-  return tid;
+    static TypeId tid =
+        TypeId("ns3::AddressDoubleProbe")
+            .SetParent<Probe>()
+            .AddConstructor<AddressDoubleProbe>()
+            .AddTraceSource(
+                "Output",
+                "The delay plus its socket address that serve as the output for this probe",
+                MakeTraceSourceAccessor(&AddressDoubleProbe::m_output),
+                "ns3::AddressDoubleProbe::DoubleAddressCallback")
+            .AddTraceSource("OutputDouble",
+                            "The double of the traced packet",
+                            MakeTraceSourceAccessor(&AddressDoubleProbe::m_outputDouble),
+                            "ns3::AddressDoubleProbe::DoubleCallback");
+    return tid;
 }
 
-AddressDoubleProbe::AddressDoubleProbe ()
+AddressDoubleProbe::AddressDoubleProbe()
 {
-  NS_LOG_FUNCTION (this);
-  m_doubleValue = 0.0;
+    NS_LOG_FUNCTION(this);
+    m_doubleValue = 0.0;
 }
 
-AddressDoubleProbe::~AddressDoubleProbe ()
+AddressDoubleProbe::~AddressDoubleProbe()
 {
-  NS_LOG_FUNCTION (this);
-}
-
-void
-AddressDoubleProbe::SetValue (double doubleValue, const Address& address)
-{
-  NS_LOG_FUNCTION (this << doubleValue << address);
-
-  m_output (doubleValue, address);
-  m_outputDouble (m_doubleValue, doubleValue);
-  m_doubleValue = doubleValue;
-  m_address = address;
+    NS_LOG_FUNCTION(this);
 }
 
 void
-AddressDoubleProbe::SetValueByPath (std::string path, double doubleValue, const Address& address)
+AddressDoubleProbe::SetValue(double doubleValue, const Address& address)
 {
-  NS_LOG_FUNCTION (path << doubleValue << address);
-  Ptr<AddressDoubleProbe> probe = Names::Find<AddressDoubleProbe> (path);
-  NS_ASSERT_MSG (probe, "Error:  Can't find probe for path " << path);
-  probe->SetValue (doubleValue, address);
+    NS_LOG_FUNCTION(this << doubleValue << address);
+
+    m_output(doubleValue, address);
+    m_outputDouble(m_doubleValue, doubleValue);
+    m_doubleValue = doubleValue;
+    m_address = address;
+}
+
+void
+AddressDoubleProbe::SetValueByPath(std::string path, double doubleValue, const Address& address)
+{
+    NS_LOG_FUNCTION(path << doubleValue << address);
+    Ptr<AddressDoubleProbe> probe = Names::Find<AddressDoubleProbe>(path);
+    NS_ASSERT_MSG(probe, "Error:  Can't find probe for path " << path);
+    probe->SetValue(doubleValue, address);
 }
 
 bool
-AddressDoubleProbe::ConnectByObject (std::string traceSource, Ptr<Object> obj)
+AddressDoubleProbe::ConnectByObject(std::string traceSource, Ptr<Object> obj)
 {
-  NS_LOG_FUNCTION (this << traceSource << obj);
-  NS_LOG_DEBUG ("Name of probe (if any) in names database: " << Names::FindPath (obj));
-  bool connected = obj->TraceConnectWithoutContext (traceSource, MakeCallback (&ns3::AddressDoubleProbe::TraceSink, this));
-  return connected;
+    NS_LOG_FUNCTION(this << traceSource << obj);
+    NS_LOG_DEBUG("Name of probe (if any) in names database: " << Names::FindPath(obj));
+    bool connected =
+        obj->TraceConnectWithoutContext(traceSource,
+                                        MakeCallback(&ns3::AddressDoubleProbe::TraceSink, this));
+    return connected;
 }
 
 void
-AddressDoubleProbe::ConnectByPath (std::string path)
+AddressDoubleProbe::ConnectByPath(std::string path)
 {
-  NS_LOG_FUNCTION (this << path);
-  NS_LOG_DEBUG ("Name of probe to search for in config database: " << path);
-  Config::ConnectWithoutContext (path, MakeCallback (&ns3::AddressDoubleProbe::TraceSink, this));
+    NS_LOG_FUNCTION(this << path);
+    NS_LOG_DEBUG("Name of probe to search for in config database: " << path);
+    Config::ConnectWithoutContext(path, MakeCallback(&ns3::AddressDoubleProbe::TraceSink, this));
 }
 
 void
-AddressDoubleProbe::TraceSink (double doubleValue, const Address& address)
+AddressDoubleProbe::TraceSink(double doubleValue, const Address& address)
 {
-  NS_LOG_FUNCTION (this << doubleValue << address);
-  if (IsEnabled ())
+    NS_LOG_FUNCTION(this << doubleValue << address);
+    if (IsEnabled())
     {
-      m_output (doubleValue, address);
-      m_outputDouble (m_doubleValue, doubleValue);
-      m_doubleValue = doubleValue;
-      m_address = address;
+        m_output(doubleValue, address);
+        m_outputDouble(m_doubleValue, doubleValue);
+        m_doubleValue = doubleValue;
+        m_address = address;
     }
 }
 

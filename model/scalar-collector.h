@@ -23,11 +23,11 @@
 #define SCALAR_COLLECTOR_H
 
 #include <ns3/data-collection-object.h>
-#include <ns3/traced-callback.h>
 #include <ns3/nstime.h>
+#include <ns3/traced-callback.h>
 
-
-namespace ns3 {
+namespace ns3
+{
 
 /**
  * \ingroup aggregator
@@ -60,201 +60,199 @@ namespace ns3 {
  */
 class ScalarCollector : public DataCollectionObject
 {
-public:
-  /**
-   * \enum InputDataType_t
-   * \brief Data types that can serve as inputs for this class.
-   */
-  typedef enum
-  {
-    INPUT_DATA_TYPE_DOUBLE = 0,  ///< Accepts `double` data type as input.
-    INPUT_DATA_TYPE_UINTEGER,    ///< Accepts unsigned integer data types as input.
-    INPUT_DATA_TYPE_BOOLEAN      ///< Accepts boolean data type as input.
-  } InputDataType_t;
-
-  /**
-   * \param inputDataType an arbitrary input data type.
-   * \return representation of the input data type in string.
-   */
-  static std::string GetInputDataTypeName (InputDataType_t inputDataType);
-
-  /**
-   * \enum OutputType_t
-   * \brief Type of output supported by this class.
-   */
-  typedef enum
-  {
+  public:
     /**
-     * The sum of all the received inputs.
+     * \enum InputDataType_t
+     * \brief Data types that can serve as inputs for this class.
      */
-    OUTPUT_TYPE_SUM = 0,
+    typedef enum
+    {
+        INPUT_DATA_TYPE_DOUBLE = 0, ///< Accepts `double` data type as input.
+        INPUT_DATA_TYPE_UINTEGER,   ///< Accepts unsigned integer data types as input.
+        INPUT_DATA_TYPE_BOOLEAN     ///< Accepts boolean data type as input.
+    } InputDataType_t;
+
     /**
-     * The number of received input samples.
+     * \param inputDataType an arbitrary input data type.
+     * \return representation of the input data type in string.
      */
-    OUTPUT_TYPE_NUMBER_OF_SAMPLE,
+    static std::string GetInputDataTypeName(InputDataType_t inputDataType);
+
     /**
-     * The sum of the received inputs, divided by the number of input samples.
-     * Equals to `-nan` if there is no input sample received.
+     * \enum OutputType_t
+     * \brief Type of output supported by this class.
      */
-    OUTPUT_TYPE_AVERAGE_PER_SAMPLE,
+    typedef enum
+    {
+        /**
+         * The sum of all the received inputs.
+         */
+        OUTPUT_TYPE_SUM = 0,
+        /**
+         * The number of received input samples.
+         */
+        OUTPUT_TYPE_NUMBER_OF_SAMPLE,
+        /**
+         * The sum of the received inputs, divided by the number of input samples.
+         * Equals to `-nan` if there is no input sample received.
+         */
+        OUTPUT_TYPE_AVERAGE_PER_SAMPLE,
+        /**
+         * The sum of the received inputs, divided by the time difference between
+         * the last received input sample and the first received input sample.
+         */
+        OUTPUT_TYPE_AVERAGE_PER_SECOND
+    } OutputType_t;
+
     /**
-     * The sum of the received inputs, divided by the time difference between
-     * the last received input sample and the first received input sample.
+     * \param outputType an arbitrary output type.
+     * \return representation of the output type in string.
      */
-    OUTPUT_TYPE_AVERAGE_PER_SECOND
-  } OutputType_t;
+    static std::string GetOutputTypeName(OutputType_t outputType);
 
-  /**
-   * \param outputType an arbitrary output type.
-   * \return representation of the output type in string.
-   */
-  static std::string GetOutputTypeName (OutputType_t outputType);
+    /// Creates a new collector instance.
+    ScalarCollector();
 
-  /// Creates a new collector instance.
-  ScalarCollector ();
+    // inherited from ObjectBase base class
+    static TypeId GetTypeId();
 
-  // inherited from ObjectBase base class
-  static TypeId GetTypeId ();
+    // ATTRIBUTE SETTERS AND GETTERS ////////////////////////////////////////////
 
-  // ATTRIBUTE SETTERS AND GETTERS ////////////////////////////////////////////
+    /**
+     * \param inputDataType the data type accepted as input.
+     */
+    void SetInputDataType(InputDataType_t inputDataType);
 
-  /**
-   * \param inputDataType the data type accepted as input.
-   */
-  void SetInputDataType (InputDataType_t inputDataType);
+    /**
+     * \return the data type accepted as input.
+     */
+    InputDataType_t GetInputDataType() const;
 
-  /**
-   * \return the data type accepted as input.
-   */
-  InputDataType_t GetInputDataType () const;
+    /**
+     * \param outputType the processing mechanism used by this instance.
+     */
+    void SetOutputType(OutputType_t outputType);
 
-  /**
-   * \param outputType the processing mechanism used by this instance.
-   */
-  void SetOutputType (OutputType_t outputType);
+    /**
+     * \return the processing mechanism used by this instance.
+     */
+    OutputType_t GetOutputType() const;
 
-  /**
-   * \return the processing mechanism used by this instance.
-   */
-  OutputType_t GetOutputType () const;
+    // TRACE SINKS //////////////////////////////////////////////////////////////
 
-  // TRACE SINKS //////////////////////////////////////////////////////////////
+    /**
+     * \brief Trace sink for receiving data from `double` valued trace sources.
+     * \param oldData the original value.
+     * \param newData the new value.
+     *
+     * This method serves as a trace sink to `double` valued trace sources.
+     *
+     * This trace sink is only operating when the current input data type is set
+     * to `INPUT_DATA_TYPE_DOUBLE`. This can be set by calling the
+     * SetInputDataType() method or setting the `InputDataType` attribute.
+     */
+    void TraceSinkDouble(double oldData, double newData);
 
-  /**
-   * \brief Trace sink for receiving data from `double` valued trace sources.
-   * \param oldData the original value.
-   * \param newData the new value.
-   *
-   * This method serves as a trace sink to `double` valued trace sources.
-   *
-   * This trace sink is only operating when the current input data type is set
-   * to `INPUT_DATA_TYPE_DOUBLE`. This can be set by calling the
-   * SetInputDataType() method or setting the `InputDataType` attribute.
-   */
-  void TraceSinkDouble (double oldData, double newData);
+    /**
+     * \brief Trace sink for receiving data from `uint8_t` valued trace sources.
+     * \param oldData the original value.
+     * \param newData the new value.
+     *
+     * This method serves as a trace sink to `uint8_t` valued trace sources.
+     * The data will be converted to `uint64_t` and then simply passed to the
+     * TraceSinkUinteger64() method.
+     *
+     * This trace sink is only operating when the current input data type is set
+     * to `INPUT_DATA_TYPE_UINTEGER`. This can be set by calling the
+     * SetInputDataType() method or setting the `InputDataType` attribute.
+     */
+    void TraceSinkUinteger8(uint8_t oldData, uint8_t newData);
 
-  /**
-   * \brief Trace sink for receiving data from `uint8_t` valued trace sources.
-   * \param oldData the original value.
-   * \param newData the new value.
-   *
-   * This method serves as a trace sink to `uint8_t` valued trace sources.
-   * The data will be converted to `uint64_t` and then simply passed to the
-   * TraceSinkUinteger64() method.
-   *
-   * This trace sink is only operating when the current input data type is set
-   * to `INPUT_DATA_TYPE_UINTEGER`. This can be set by calling the
-   * SetInputDataType() method or setting the `InputDataType` attribute.
-   */
-  void TraceSinkUinteger8 (uint8_t oldData, uint8_t newData);
+    /**
+     * \brief Trace sink for receiving data from `uint16_t` valued trace sources.
+     * \param oldData the original value.
+     * \param newData the new value.
+     *
+     * This method serves as a trace sink to `uint16_t` valued trace sources.
+     * The data will be converted to `uint64_t` and then simply passed to the
+     * TraceSinkUinteger64() method.
+     *
+     * This trace sink is only operating when the current input data type is set
+     * to `INPUT_DATA_TYPE_UINTEGER`. This can be set by calling the
+     * SetInputDataType() method or setting the `InputDataType` attribute.
+     */
+    void TraceSinkUinteger16(uint16_t oldData, uint16_t newData);
 
-  /**
-   * \brief Trace sink for receiving data from `uint16_t` valued trace sources.
-   * \param oldData the original value.
-   * \param newData the new value.
-   *
-   * This method serves as a trace sink to `uint16_t` valued trace sources.
-   * The data will be converted to `uint64_t` and then simply passed to the
-   * TraceSinkUinteger64() method.
-   *
-   * This trace sink is only operating when the current input data type is set
-   * to `INPUT_DATA_TYPE_UINTEGER`. This can be set by calling the
-   * SetInputDataType() method or setting the `InputDataType` attribute.
-   */
-  void TraceSinkUinteger16 (uint16_t oldData, uint16_t newData);
+    /**
+     * \brief Trace sink for receiving data from `uint32_t` valued trace sources.
+     * \param oldData the original value.
+     * \param newData the new value.
+     *
+     * This method serves as a trace sink to `uint32_t` valued trace sources.
+     * The data will be converted to `uint64_t` and then simply passed to the
+     * TraceSinkUinteger64() method.
+     *
+     * This trace sink is only operating when the current input data type is set
+     * to `INPUT_DATA_TYPE_UINTEGER`. This can be set by calling the
+     * SetInputDataType() method or setting the `InputDataType` attribute.
+     */
+    void TraceSinkUinteger32(uint32_t oldData, uint32_t newData);
 
-  /**
-   * \brief Trace sink for receiving data from `uint32_t` valued trace sources.
-   * \param oldData the original value.
-   * \param newData the new value.
-   *
-   * This method serves as a trace sink to `uint32_t` valued trace sources.
-   * The data will be converted to `uint64_t` and then simply passed to the
-   * TraceSinkUinteger64() method.
-   *
-   * This trace sink is only operating when the current input data type is set
-   * to `INPUT_DATA_TYPE_UINTEGER`. This can be set by calling the
-   * SetInputDataType() method or setting the `InputDataType` attribute.
-   */
-  void TraceSinkUinteger32 (uint32_t oldData, uint32_t newData);
+    /**
+     * \brief Trace sink for receiving data from `uint64_t` valued trace sources.
+     * \param oldData the original value.
+     * \param newData the new value.
+     *
+     * This method serves as a trace sink to `uint64_t` valued trace sources.
+     *
+     * This trace sink is only operating when the current input data type is set
+     * to `INPUT_DATA_TYPE_UINTEGER`. This can be set by calling the
+     * SetInputDataType() method or setting the `InputDataType` attribute.
+     */
+    void TraceSinkUinteger64(uint64_t oldData, uint64_t newData);
 
-  /**
-   * \brief Trace sink for receiving data from `uint64_t` valued trace sources.
-   * \param oldData the original value.
-   * \param newData the new value.
-   *
-   * This method serves as a trace sink to `uint64_t` valued trace sources.
-   *
-   * This trace sink is only operating when the current input data type is set
-   * to `INPUT_DATA_TYPE_UINTEGER`. This can be set by calling the
-   * SetInputDataType() method or setting the `InputDataType` attribute.
-   */
-  void TraceSinkUinteger64 (uint64_t oldData, uint64_t newData);
+    /**
+     * \brief Trace sink for receiving data from `bool` valued trace sources.
+     * \param oldData the original value.
+     * \param newData the new value.
+     *
+     * This method serves as a trace sink to `bool` valued trace sources.
+     *
+     * This trace sink is only operating when the current input data type is set
+     * to `INPUT_DATA_TYPE_BOOLEAN`. This can be set by calling the
+     * SetInputDataType() method or setting the `InputDataType` attribute.
+     */
+    void TraceSinkBoolean(bool oldData, bool newData);
 
-  /**
-   * \brief Trace sink for receiving data from `bool` valued trace sources.
-   * \param oldData the original value.
-   * \param newData the new value.
-   *
-   * This method serves as a trace sink to `bool` valued trace sources.
-   *
-   * This trace sink is only operating when the current input data type is set
-   * to `INPUT_DATA_TYPE_BOOLEAN`. This can be set by calling the
-   * SetInputDataType() method or setting the `InputDataType` attribute.
-   */
-  void TraceSinkBoolean (bool oldData, bool newData);
+  protected:
+    // Inherited from Object base class
+    virtual void DoDispose();
 
-protected:
-  // Inherited from Object base class
-  virtual void DoDispose ();
+  private:
+    /// Sum of all `DOUBLE` input samples received.
+    double m_sumDouble;
 
-private:
-  /// Sum of all `DOUBLE` input samples received.
-  double    m_sumDouble;
+    /// Sum of all `UINTEGER` and `BOOLEAN` input samples received.
+    uint64_t m_sumUinteger;
 
-  /// Sum of all `UINTEGER` and `BOOLEAN` input samples received.
-  uint64_t  m_sumUinteger;
+    /// Number of input samples that have been received.
+    uint32_t m_numOfSamples;
 
-  /// Number of input samples that have been received.
-  uint32_t  m_numOfSamples;
+    /// The time when the first input sample is received.
+    Time m_firstSample;
 
-  /// The time when the first input sample is received.
-  Time      m_firstSample;
+    /// The time when the last input sample is received.
+    Time m_lastSample;
 
-  /// The time when the last input sample is received.
-  Time      m_lastSample;
+    /// True if an input sample has been received.
+    bool m_hasReceivedSample;
 
-  /// True if an input sample has been received.
-  bool      m_hasReceivedSample;
-
-  InputDataType_t m_inputDataType;  ///< `InputDataType` attribute.
-  OutputType_t m_outputType;        ///< `OutputType` attribute.
-  TracedCallback<double> m_output;  ///< `Output` trace source.
+    InputDataType_t m_inputDataType; ///< `InputDataType` attribute.
+    OutputType_t m_outputType;       ///< `OutputType` attribute.
+    TracedCallback<double> m_output; ///< `Output` trace source.
 
 }; // end of class ScalarCollector
 
-
 } // end of namespace ns3
-
 
 #endif /* SCALAR_COLLECTOR_H */

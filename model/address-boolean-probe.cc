@@ -27,95 +27,99 @@
  */
 
 #include "ns3/address-boolean-probe.h"
+
+#include "ns3/callback.h"
+#include "ns3/config.h"
 #include "ns3/log.h"
 #include "ns3/names.h"
-#include "ns3/config.h"
 #include "ns3/simulator.h"
-#include "ns3/callback.h"
 
-NS_LOG_COMPONENT_DEFINE ("AddressBooleanProbe");
+NS_LOG_COMPONENT_DEFINE("AddressBooleanProbe");
 
-namespace ns3 {
+namespace ns3
+{
 
-NS_OBJECT_ENSURE_REGISTERED (AddressBooleanProbe)
-;
+NS_OBJECT_ENSURE_REGISTERED(AddressBooleanProbe);
 
 TypeId
-AddressBooleanProbe::GetTypeId ()
+AddressBooleanProbe::GetTypeId()
 {
-  static TypeId tid = TypeId ("ns3::AddressBooleanProbe")
-    .SetParent<Probe> ()
-    .AddConstructor<AddressBooleanProbe> ()
-    .AddTraceSource ( "Output",
-                      "The delay plus its socket address that serve as the output for this probe",
-                      MakeTraceSourceAccessor (&AddressBooleanProbe::m_output),
-                      "ns3::AddressBooleanProbe::BooleanAddressCallback")
-    .AddTraceSource ( "OutputBoolean",
-                      "The boolean of the traced packet",
-                      MakeTraceSourceAccessor (&AddressBooleanProbe::m_outputBoolean),
-                      "ns3::AddressBooleanProbe::BooleanCallback")
-  ;
-  return tid;
+    static TypeId tid =
+        TypeId("ns3::AddressBooleanProbe")
+            .SetParent<Probe>()
+            .AddConstructor<AddressBooleanProbe>()
+            .AddTraceSource(
+                "Output",
+                "The delay plus its socket address that serve as the output for this probe",
+                MakeTraceSourceAccessor(&AddressBooleanProbe::m_output),
+                "ns3::AddressBooleanProbe::BooleanAddressCallback")
+            .AddTraceSource("OutputBoolean",
+                            "The boolean of the traced packet",
+                            MakeTraceSourceAccessor(&AddressBooleanProbe::m_outputBoolean),
+                            "ns3::AddressBooleanProbe::BooleanCallback");
+    return tid;
 }
 
-AddressBooleanProbe::AddressBooleanProbe ()
+AddressBooleanProbe::AddressBooleanProbe()
 {
-  NS_LOG_FUNCTION (this);
-  m_booleanValue = false;
+    NS_LOG_FUNCTION(this);
+    m_booleanValue = false;
 }
 
-AddressBooleanProbe::~AddressBooleanProbe ()
+AddressBooleanProbe::~AddressBooleanProbe()
 {
-  NS_LOG_FUNCTION (this);
-}
-
-void
-AddressBooleanProbe::SetValue (bool booleanValue, const Address& address)
-{
-  NS_LOG_FUNCTION (this << booleanValue << address);
-
-  m_output (booleanValue, address);
-  m_outputBoolean (m_booleanValue, booleanValue);
-  m_booleanValue = booleanValue;
-  m_address = address;
+    NS_LOG_FUNCTION(this);
 }
 
 void
-AddressBooleanProbe::SetValueByPath (std::string path, bool booleanValue, const Address& address)
+AddressBooleanProbe::SetValue(bool booleanValue, const Address& address)
 {
-  NS_LOG_FUNCTION (path << booleanValue << address);
-  Ptr<AddressBooleanProbe> probe = Names::Find<AddressBooleanProbe> (path);
-  NS_ASSERT_MSG (probe, "Error:  Can't find probe for path " << path);
-  probe->SetValue (booleanValue, address);
+    NS_LOG_FUNCTION(this << booleanValue << address);
+
+    m_output(booleanValue, address);
+    m_outputBoolean(m_booleanValue, booleanValue);
+    m_booleanValue = booleanValue;
+    m_address = address;
+}
+
+void
+AddressBooleanProbe::SetValueByPath(std::string path, bool booleanValue, const Address& address)
+{
+    NS_LOG_FUNCTION(path << booleanValue << address);
+    Ptr<AddressBooleanProbe> probe = Names::Find<AddressBooleanProbe>(path);
+    NS_ASSERT_MSG(probe, "Error:  Can't find probe for path " << path);
+    probe->SetValue(booleanValue, address);
 }
 
 bool
-AddressBooleanProbe::ConnectByObject (std::string traceSource, Ptr<Object> obj)
+AddressBooleanProbe::ConnectByObject(std::string traceSource, Ptr<Object> obj)
 {
-  NS_LOG_FUNCTION (this << traceSource << obj);
-  NS_LOG_DEBUG ("Name of probe (if any) in names database: " << Names::FindPath (obj));
-  bool connected = obj->TraceConnectWithoutContext (traceSource, MakeCallback (&ns3::AddressBooleanProbe::TraceSink, this));
-  return connected;
+    NS_LOG_FUNCTION(this << traceSource << obj);
+    NS_LOG_DEBUG("Name of probe (if any) in names database: " << Names::FindPath(obj));
+    bool connected =
+        obj->TraceConnectWithoutContext(traceSource,
+                                        MakeCallback(&ns3::AddressBooleanProbe::TraceSink, this));
+    return connected;
 }
 
 void
-AddressBooleanProbe::ConnectByPath (std::string path)
+AddressBooleanProbe::ConnectByPath(std::string path)
 {
-  NS_LOG_FUNCTION (this << path);
-  NS_LOG_DEBUG ("Name of probe to search for in config database: " << path);
-  Config::ConnectWithoutContext (path, MakeCallback (&ns3::AddressBooleanProbe::TraceSink, this));
+    NS_LOG_FUNCTION(this << path);
+    NS_LOG_DEBUG("Name of probe to search for in config database: " << path);
+    Config::ConnectWithoutContext(path, MakeCallback(&ns3::AddressBooleanProbe::TraceSink, this));
 }
 
 void
-AddressBooleanProbe::TraceSink (bool booleanValue, const Address& address)
+AddressBooleanProbe::TraceSink(bool booleanValue, const Address& address)
 {
-  NS_LOG_FUNCTION (this << booleanValue << address);
-  if (IsEnabled ())
+    NS_LOG_FUNCTION(this << booleanValue << address);
+    if (IsEnabled())
     {
-      m_output (booleanValue, address);
-      m_outputBoolean (m_booleanValue, booleanValue);
-      m_booleanValue = booleanValue;
-      m_address = address;
+        m_output(booleanValue, address);
+        m_outputBoolean(m_booleanValue, booleanValue);
+        m_booleanValue = booleanValue;
+        m_address = address;
     }
 }
 

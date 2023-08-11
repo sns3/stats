@@ -18,95 +18,83 @@
  * Author: Frans Laakso <frans.laakso@magister.fi>
  */
 
-#include <ns3/log.h>
 #include "address-tag.h"
 
-NS_LOG_COMPONENT_DEFINE ("AddressTag");
+#include <ns3/log.h>
 
-namespace ns3 {
+NS_LOG_COMPONENT_DEFINE("AddressTag");
 
-NS_OBJECT_ENSURE_REGISTERED (AddressTag);
-
-
-AddressTag::AddressTag ()
-  : Tag ()
+namespace ns3
 {
-  NS_LOG_FUNCTION (this);
+
+NS_OBJECT_ENSURE_REGISTERED(AddressTag);
+
+AddressTag::AddressTag()
+    : Tag()
+{
+    NS_LOG_FUNCTION(this);
 }
 
-
-AddressTag::AddressTag (Address addr)
-  : Tag (),
-    m_sourceAddress (addr)
+AddressTag::AddressTag(Address addr)
+    : Tag(),
+      m_sourceAddress(addr)
 {
-  NS_LOG_FUNCTION (this);
+    NS_LOG_FUNCTION(this);
 }
-
 
 TypeId
-AddressTag::GetTypeId (void)
+AddressTag::GetTypeId(void)
 {
-  static TypeId tid = TypeId ("ns3::AddressTag")
-    .SetParent<Tag> ()
-    .AddConstructor<AddressTag> ()
-  ;
-  return tid;
+    static TypeId tid = TypeId("ns3::AddressTag").SetParent<Tag>().AddConstructor<AddressTag>();
+    return tid;
 }
-
 
 TypeId
-AddressTag::GetInstanceTypeId () const
+AddressTag::GetInstanceTypeId() const
 {
-  return GetTypeId ();
+    return GetTypeId();
 }
-
 
 uint32_t
-AddressTag::GetSerializedSize () const
+AddressTag::GetSerializedSize() const
 {
-  return m_sourceAddress.GetSerializedSize ();
+    return m_sourceAddress.GetSerializedSize();
 }
-
 
 void
-AddressTag::Serialize (TagBuffer i) const
+AddressTag::Serialize(TagBuffer i) const
 {
-  NS_LOG_FUNCTION (this << &i);
+    NS_LOG_FUNCTION(this << &i);
 
-  m_sourceAddress.Serialize (i);
+    m_sourceAddress.Serialize(i);
 }
-
 
 void
-AddressTag::Deserialize (TagBuffer i)
+AddressTag::Deserialize(TagBuffer i)
 {
-  NS_LOG_FUNCTION (this << &i);
+    NS_LOG_FUNCTION(this << &i);
 
-  m_sourceAddress.Deserialize (i);
+    m_sourceAddress.Deserialize(i);
 }
-
 
 void
-AddressTag::Print (std::ostream &os) const
+AddressTag::Print(std::ostream& os) const
 {
-  NS_LOG_FUNCTION (this << &os);
-  os << "(SourceAddress=" << m_sourceAddress << ")";
+    NS_LOG_FUNCTION(this << &os);
+    os << "(SourceAddress=" << m_sourceAddress << ")";
 }
-
 
 void
-AddressTag::SetSourceAddress (Address addr)
+AddressTag::SetSourceAddress(Address addr)
 {
-  NS_LOG_FUNCTION (this << addr);
-  m_sourceAddress = addr;
+    NS_LOG_FUNCTION(this << addr);
+    m_sourceAddress = addr;
 }
-
 
 Address
-AddressTag::GetSourceAddress () const
+AddressTag::GetSourceAddress() const
 {
-  return m_sourceAddress;
+    return m_sourceAddress;
 }
-
 
 } // namespace ns3

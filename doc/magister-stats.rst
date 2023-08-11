@@ -7,9 +7,9 @@ Magister Statistics Module Documentation
    ============= Subsection (#.#.#)
    ############# Paragraph (no number)
 
-Magister Statistics module provides statistics model additions to default stats 
-module of NS-3. The models are mainly used for statistics of the Satellite module, 
-but by deploying the provided generic statistics helpers, one can easily use the 
+Magister Statistics module provides statistics model additions to default stats
+module of NS-3. The models are mainly used for statistics of the Satellite module,
+but by deploying the provided generic statistics helpers, one can easily use the
 helpers outside of SNS3.
 
 Aggregators
@@ -65,8 +65,8 @@ the destination files.
 Examples
 ~~~~~~~~
 
-Statistics helper classes derived from StatsHelper utilize MultiFileAggregator 
-to produce separate statistics files for each identifier. User does not necessarily 
+Statistics helper classes derived from StatsHelper utilize MultiFileAggregator
+to produce separate statistics files for each identifier. User does not necessarily
 need to handle MultiFileaggregator, but rather let the helpers do the complicated tasks.
 
 Collectors
@@ -176,7 +176,7 @@ samples. Example `OutputString` output:
   % percentile_50: 0.245
   % percentile_75: 0.265
   % percentile_95: 0.9855
-  
+
 
 IntervalRateCollector
 =====================
@@ -335,7 +335,7 @@ All of the above information are exported using `double` data type in the
 unit specified by the selected conversion type. An exception here is in the
 trace source `OutputTimeValue` where the time information is exported in
 unit of seconds by default, or as specified otherwise by calling the
-SetTimeUnit() method or setting the `TimeUnit` attribute. 
+SetTimeUnit() method or setting the `TimeUnit` attribute.
 
 Data Collection Helpers
 ***********************
@@ -346,9 +346,9 @@ StatsHelper classes
 Overview
 ########
 
-StatsHelper is a base class for DCF-based statistics helper classes. 
-Helper classes based on it are responsible of locating source objects, 
-create probes, collectors, and aggregators, and connect them together 
+StatsHelper is a base class for DCF-based statistics helper classes.
+Helper classes based on it are responsible of locating source objects,
+create probes, collectors, and aggregators, and connect them together
 in a proper way to produce the required statistics.
 
 The main inputs for the helpers are a
@@ -360,31 +360,31 @@ can be started into action by invoking Install(). For example:
 
   NodeContainer nodes;
   nodes.Create (2);
-  
+
   // ... (snip) ...
-  
+
   Ptr<StatsAppThroughputHelper> stat = CreateObject<StatsAppThroughputHelper> ();
   stat->SetName ("name");
   stat->SetIdentifierType (StatsHelper::IDENTIFIER_GLOBAL);
   stat->SetOutputType (StatsHelper::OUTPUT_SCALAR_FILE);
   stat->InstallNodes (nodes);
   stat->Install ();
-  
+
   // ... (run simulation) ...
-  
+
   stat->Dispose (); // Disposing of helper creates output files
 
 
 This parent abstract class hosts several protected methods which are intended
 to simplify the development of child classes. These methods handle
-tasks related to DCF components. 
+tasks related to DCF components.
 
 Output path and file naming
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To select the output directory for the statistics files, StatsHelper has an 
-OutputPath attribute. By default, its value is ns-3-root-directory/output/. 
-File names are based on helper name: if we create a helper 
+To select the output directory for the statistics files, StatsHelper has an
+OutputPath attribute. By default, its value is ns-3-root-directory/output/.
+File names are based on helper name: if we create a helper
 
 ::
 
@@ -392,26 +392,26 @@ File names are based on helper name: if we create a helper
   stat->SetName ("throughput_by_node_scatter");
   stat->SetIdentifierType (StatsHelper::IDENTIFIER_NODE);
   stat->SetOutputType (StatsHelper::OUTPUT_SCATTER_FILE);
-  
-then the output files of this helper are named throughput_by_node_scatter.txt. 
-Note that there may be other file extensions, or node ID suffixes in the file name 
-based on output type. 
+
+then the output files of this helper are named throughput_by_node_scatter.txt.
+Note that there may be other file extensions, or node ID suffixes in the file name
+based on output type.
 
 Identifier types
 ~~~~~~~~~~~~~~~~
 
-By default, there are two identifier types available: IDENTIFIER_GLOBAL and 
-IDENTIFIER_NODE. IDENTIFIER_GLOBAL causes statistics from all installed nodes 
-to be combined under single global identifier ("0" as id). IDENTIFIER_NODE will 
-separate statistics of all installed nodes under different IDs (node IDs). 
-More identifiers may naturally be created, but this will require some other 
-type of identifier ID creation in DoInstallProbes method of inherited helper 
-classes. 
+By default, there are two identifier types available: IDENTIFIER_GLOBAL and
+IDENTIFIER_NODE. IDENTIFIER_GLOBAL causes statistics from all installed nodes
+to be combined under single global identifier ("0" as id). IDENTIFIER_NODE will
+separate statistics of all installed nodes under different IDs (node IDs).
+More identifiers may naturally be created, but this will require some other
+type of identifier ID creation in DoInstallProbes method of inherited helper
+classes.
 
 Output types
 ~~~~~~~~~~~~
 
-There are several output types available: 
+There are several output types available:
 
 * OUTPUT_SCALAR_FILE
 * OUTPUT_SCATTER_FILE
@@ -424,35 +424,35 @@ There are several output types available:
 * OUTPUT_PDF_PLOT
 * OUTPUT_CDF_PLOT
 
-Output types with FILE suffix produce a generic text file or PDf file 
-based on collected statistics. Types with PLOT suffix generate Gnuplot 
-data files and scripts for automatically generating PNG figures with Gnuplot. 
+Output types with FILE suffix produce a generic text file or PDf file
+based on collected statistics. Types with PLOT suffix generate Gnuplot
+data files and scripts for automatically generating PNG figures with Gnuplot.
 
-Scatter output types produce files, which have a list of time values and corresponding 
-statistics values. Scalar output types calculate single average value for each identifier, 
-e.g. in StatsAppThroughputHelper 
-a scalar file would contain sum of transmitted application layer bytes divided by time 
+Scatter output types produce files, which have a list of time values and corresponding
+statistics values. Scalar output types calculate single average value for each identifier,
+e.g. in StatsAppThroughputHelper
+a scalar file would contain sum of transmitted application layer bytes divided by time
 per identifier.
 
-Note that depending on the inherited helper class, not all output types may 
-be supported. In some cases, it is not even meaningful to enable all formats. 
+Note that depending on the inherited helper class, not all output types may
+be supported. In some cases, it is not even meaningful to enable all formats.
 
 
 StatsAppDelayHelper
 ###################
 
-StatsAppDelayHelper produces application layer delay statistics from nodes 
-installed to it. It is mainly an example of using the StatsHelper as a template 
-for statistics collection. 
+StatsAppDelayHelper produces application layer delay statistics from nodes
+installed to it. It is mainly an example of using the StatsHelper as a template
+for statistics collection.
 
-StatsAppDelayHelper collects delay information from installed nodes by adding 
-TrafficTimeTags as byte tags to sent packets. It does this by hooking into 
-Rx and Tx trace sources of applications installed into nodes. 
-Once a packet with a tag is received 
-by other application, the timestamp from the tag is removed and difference between 
-send and receive times is registered as delay. 
+StatsAppDelayHelper collects delay information from installed nodes by adding
+TrafficTimeTags as byte tags to sent packets. It does this by hooking into
+Rx and Tx trace sources of applications installed into nodes.
+Once a packet with a tag is received
+by other application, the timestamp from the tag is removed and difference between
+send and receive times is registered as delay.
 
-Installing StatsAppDelayHelper is straightforward: 
+Installing StatsAppDelayHelper is straightforward:
 
 ::
 
@@ -462,27 +462,27 @@ Installing StatsAppDelayHelper is straightforward:
   delayCdfByNode->SetOutputType (StatsHelper::OUTPUT_CDF_FILE);
   delayCdfByNode->InstallNodes (nodes);
   delayCdfByNode->Install ();
-  
+
   // Run the simulation
-  
+
   delayCdfByNode->Dispose ();
-  
-This type of configuration causes helper to produce cumulative distribution function of the delay 
-values placed in text files with node id suffixes. 
+
+This type of configuration causes helper to produce cumulative distribution function of the delay
+values placed in text files with node id suffixes.
 
 StatsAppThroughputHelper
 ########################
 
-StatsAppThroughputHelper produces application layer throughput statistics from nodes 
-installed to it. As StatsAppDelayHelper, it is mainly an example of using the StatsHelper 
-as a template for statistics collection. 
+StatsAppThroughputHelper produces application layer throughput statistics from nodes
+installed to it. As StatsAppDelayHelper, it is mainly an example of using the StatsHelper
+as a template for statistics collection.
 
-StatsAppThroughputHelper collects throughput statistics by creating ApplicationPacketProbes and 
-hooking them into Rx trace sources of any applications in target nodes. 
-Once a packet is received by application, the size of the packet is saved for later use. 
-The packet sizes and timing are use to calculate the data rate of received packets. 
+StatsAppThroughputHelper collects throughput statistics by creating ApplicationPacketProbes and
+hooking them into Rx trace sources of any applications in target nodes.
+Once a packet is received by application, the size of the packet is saved for later use.
+The packet sizes and timing are use to calculate the data rate of received packets.
 
-Installing StatsAppThroughputHelper is straightforward: 
+Installing StatsAppThroughputHelper is straightforward:
 
 ::
 
@@ -492,16 +492,16 @@ Installing StatsAppThroughputHelper is straightforward:
   throughputScatterByNode->SetOutputType (StatsHelper::OUTPUT_SCATTER_FILE);
   throughputScatterByNode->InstallNodes (nodes);
   throughputScatterByNode->Install ();
-  
-  // Run the simulation
-  
-  throughputScatterByNode->Dispose ();
-  
-This type of configuration causes helper to produce scatter values, i.e. tuples of time and throughput on 
-preceding interval, listed in a separate text file for each node. 
 
-Note that some of the StatsAppThroughputHelper configuration modes require averaging mode to be set on. 
-This can be done by configuring 
+  // Run the simulation
+
+  throughputScatterByNode->Dispose ();
+
+This type of configuration causes helper to produce scatter values, i.e. tuples of time and throughput on
+preceding interval, listed in a separate text file for each node.
+
+Note that some of the StatsAppThroughputHelper configuration modes require averaging mode to be set on.
+This can be done by configuring
 
 ::
 

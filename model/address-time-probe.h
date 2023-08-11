@@ -29,12 +29,13 @@
 #ifndef ADDRESS_TIME_PROBE_H
 #define ADDRESS_TIME_PROBE_H
 
-#include "ns3/nstime.h"
-#include "ns3/traced-callback.h"
 #include "ns3/address.h"
+#include "ns3/nstime.h"
 #include "ns3/probe.h"
+#include "ns3/traced-callback.h"
 
-namespace ns3 {
+namespace ns3
+{
 
 /**
  * \brief Probe to translate from a TraceSource to two more easily parsed TraceSources.
@@ -49,94 +50,91 @@ namespace ns3 {
  */
 class AddressTimeProbe : public Probe
 {
-public:
-  /**
-   * \brief Get the type ID.
-   * \return the object TypeId
-   */
-  static TypeId GetTypeId ();
-  AddressTimeProbe ();
-  virtual ~AddressTimeProbe ();
+  public:
+    /**
+     * \brief Get the type ID.
+     * \return the object TypeId
+     */
+    static TypeId GetTypeId();
+    AddressTimeProbe();
+    virtual ~AddressTimeProbe();
 
-  /**
-   * \brief Set a probe value
-   *
-   * \param timeValue set the traced time value equal to this
-   * \param address set the socket address for the traced packet equal to this
-   */
-  void SetValue (Time timeValue, const Address& address);
+    /**
+     * \brief Set a probe value
+     *
+     * \param timeValue set the traced time value equal to this
+     * \param address set the socket address for the traced packet equal to this
+     */
+    void SetValue(Time timeValue, const Address& address);
 
-  /**
-   * \brief Set a probe value by its name in the Config system
-   *
-   * \param path config path to access the probe
-   * \param timeValue set the traced time value equal to this
-   * \param address set the socket address for the traced packet equal to this
-   */
-  static void SetValueByPath (std::string path, Time timeValue, const Address& address);
+    /**
+     * \brief Set a probe value by its name in the Config system
+     *
+     * \param path config path to access the probe
+     * \param timeValue set the traced time value equal to this
+     * \param address set the socket address for the traced packet equal to this
+     */
+    static void SetValueByPath(std::string path, Time timeValue, const Address& address);
 
-  /**
-   * \brief connect to a trace source attribute provided by a given object
-   *
-   * \param traceSource the name of the attribute TraceSource to connect to
-   * \param obj ns3::Object to connect to
-   * \return true if the trace source was successfully connected
-   */
-  virtual bool ConnectByObject (std::string traceSource, Ptr<Object> obj);
+    /**
+     * \brief connect to a trace source attribute provided by a given object
+     *
+     * \param traceSource the name of the attribute TraceSource to connect to
+     * \param obj ns3::Object to connect to
+     * \return true if the trace source was successfully connected
+     */
+    virtual bool ConnectByObject(std::string traceSource, Ptr<Object> obj);
 
-  /**
-   * \brief connect to a trace source provided by a config path
-   *
-   * \param path Config path to bind to
-   *
-   * Note, if an invalid path is provided, the probe will not be connected
-   * to anything.
-   */
-  virtual void ConnectByPath (std::string path);
+    /**
+     * \brief connect to a trace source provided by a config path
+     *
+     * \param path Config path to bind to
+     *
+     * Note, if an invalid path is provided, the probe will not be connected
+     * to anything.
+     */
+    virtual void ConnectByPath(std::string path);
 
-  /**
-   * \brief Callback signature for time value and address.
-   *
-   * \param timeValue the time value
-   * \param address the socket address for the packet
-   *
-   * \todo Optimize by using const-reference of Time.
-   */
-  typedef void (*TimeAddressCallback)
-    (Time timeValue, const Address &address);
+    /**
+     * \brief Callback signature for time value and address.
+     *
+     * \param timeValue the time value
+     * \param address the socket address for the packet
+     *
+     * \todo Optimize by using const-reference of Time.
+     */
+    typedef void (*TimeAddressCallback)(Time timeValue, const Address& address);
 
-  /**
-   * \brief Callback signature for changes in time value.
-   *
-   * \param oldValue the previous time value in seconds
-   * \param newValue the actual time value in seconds
-   */
-  typedef void (*TimeCallback)
-    (double oldValue, double newValue);
+    /**
+     * \brief Callback signature for changes in time value.
+     *
+     * \param oldValue the previous time value in seconds
+     * \param newValue the actual time value in seconds
+     */
+    typedef void (*TimeCallback)(double oldValue, double newValue);
 
-private:
-  /**
-   * \brief Method to connect to an underlying ns3::TraceSource with
-   * arguments of type Time value and const Address&
-   *
-   * \param timeValue the traced time value
-   * \param address the socket address for the traced packet
-   *
-   */
-  void TraceSink (Time timeValue, const Address& address);
+  private:
+    /**
+     * \brief Method to connect to an underlying ns3::TraceSource with
+     * arguments of type Time value and const Address&
+     *
+     * \param timeValue the traced time value
+     * \param address the socket address for the traced packet
+     *
+     */
+    void TraceSink(Time timeValue, const Address& address);
 
-  /// Output trace, thetime value and source address
-  TracedCallback<Time, const Address&> m_output;
-  /// Output trace, previous time value and current time value
-  TracedCallback<double, double> m_outputSeconds;
+    /// Output trace, thetime value and source address
+    TracedCallback<Time, const Address&> m_output;
+    /// Output trace, previous time value and current time value
+    TracedCallback<double, double> m_outputSeconds;
 
-  /// The traced time value.
-  Time m_timeValue;
+    /// The traced time value.
+    Time m_timeValue;
 
-  /// The socket address.
-  Address m_address;
+    /// The socket address.
+    Address m_address;
 };
-
 
 } // namespace ns3
 
