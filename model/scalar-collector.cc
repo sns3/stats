@@ -103,7 +103,7 @@ ScalarCollector::GetTypeId()
                           "this separation, output data type from trace sources are "
                           "still fixed to double in any case.",
                           EnumValue(ScalarCollector::INPUT_DATA_TYPE_DOUBLE),
-                          MakeEnumAccessor(&ScalarCollector::SetInputDataType,
+                          MakeEnumAccessor<ScalarCollector::InputDataType_t>(&ScalarCollector::SetInputDataType,
                                            &ScalarCollector::GetInputDataType),
                           MakeEnumChecker(ScalarCollector::INPUT_DATA_TYPE_DOUBLE,
                                           "DOUBLE",
@@ -115,7 +115,7 @@ ScalarCollector::GetTypeId()
                 "OutputType",
                 "Determines the mechanism of processing the incoming samples.",
                 EnumValue(ScalarCollector::OUTPUT_TYPE_SUM),
-                MakeEnumAccessor(&ScalarCollector::SetOutputType, &ScalarCollector::GetOutputType),
+                MakeEnumAccessor<ScalarCollector::OutputType_t>(&ScalarCollector::SetOutputType, &ScalarCollector::GetOutputType),
                 MakeEnumChecker(ScalarCollector::OUTPUT_TYPE_SUM,
                                 "SUM",
                                 ScalarCollector::OUTPUT_TYPE_NUMBER_OF_SAMPLE,

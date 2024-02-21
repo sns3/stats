@@ -63,7 +63,7 @@ MultiFileAggregator::GetTypeId()
             .AddAttribute("FileType",
                           "Determines the kind of file written by the aggregator.",
                           EnumValue(MultiFileAggregator::SPACE_SEPARATED),
-                          MakeEnumAccessor(&MultiFileAggregator::SetFileType),
+                          MakeEnumAccessor<MultiFileAggregator::FileType>(&MultiFileAggregator::SetFileType),
                           MakeEnumChecker(MultiFileAggregator::FORMATTED,
                                           "FORMATTED",
                                           MultiFileAggregator::SPACE_SEPARATED,
