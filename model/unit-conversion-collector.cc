@@ -77,7 +77,7 @@ UnitConversionCollector::GetTypeId()
                           "Determines the unit conversion procedure utilized to "
                           "process the incoming samples.",
                           EnumValue(UnitConversionCollector::TRANSPARENT),
-                          MakeEnumAccessor(&UnitConversionCollector::SetConversionType,
+                          MakeEnumAccessor<UnitConversionCollector::ConversionType_t>(&UnitConversionCollector::SetConversionType,
                                            &UnitConversionCollector::GetConversionType),
                           MakeEnumChecker(UnitConversionCollector::TRANSPARENT,
                                           "TRANSPARENT",
@@ -97,7 +97,7 @@ UnitConversionCollector::GetTypeId()
                           "Determines the unit used for the timed output (i.e., the "
                           "`OutputTimeValue` trace source",
                           EnumValue(Time::S),
-                          MakeEnumAccessor(&UnitConversionCollector::SetTimeUnit,
+                          MakeEnumAccessor<Time::Unit>(&UnitConversionCollector::SetTimeUnit,
                                            &UnitConversionCollector::GetTimeUnit),
                           MakeEnumChecker(Time::Y,
                                           "Y", // year, 365 days
