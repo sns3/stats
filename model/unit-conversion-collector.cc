@@ -21,9 +21,10 @@
 
 #include "unit-conversion-collector.h"
 
+#include "magister-stats.h"
+
 #include <ns3/enum.h>
 #include <ns3/log.h>
-#include <ns3/magister-stats.h>
 #include <ns3/simulator.h>
 
 NS_LOG_COMPONENT_DEFINE("UnitConversionCollector");
@@ -77,8 +78,9 @@ UnitConversionCollector::GetTypeId()
                           "Determines the unit conversion procedure utilized to "
                           "process the incoming samples.",
                           EnumValue(UnitConversionCollector::TRANSPARENT),
-                          MakeEnumAccessor(&UnitConversionCollector::SetConversionType,
-                                           &UnitConversionCollector::GetConversionType),
+                          MakeEnumAccessor<UnitConversionCollector::ConversionType_t>(
+                              &UnitConversionCollector::SetConversionType,
+                              &UnitConversionCollector::GetConversionType),
                           MakeEnumChecker(UnitConversionCollector::TRANSPARENT,
                                           "TRANSPARENT",
                                           UnitConversionCollector::FROM_BYTES_TO_BIT,
@@ -97,8 +99,8 @@ UnitConversionCollector::GetTypeId()
                           "Determines the unit used for the timed output (i.e., the "
                           "`OutputTimeValue` trace source",
                           EnumValue(Time::S),
-                          MakeEnumAccessor(&UnitConversionCollector::SetTimeUnit,
-                                           &UnitConversionCollector::GetTimeUnit),
+                          MakeEnumAccessor<Time::Unit>(&UnitConversionCollector::SetTimeUnit,
+                                                       &UnitConversionCollector::GetTimeUnit),
                           MakeEnumChecker(Time::Y,
                                           "Y", // year, 365 days
                                           Time::D,

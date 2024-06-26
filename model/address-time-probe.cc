@@ -26,7 +26,7 @@
  * - Budiarto Herman (budiarto.herman@magister.fi)
  */
 
-#include "ns3/address-time-probe.h"
+#include "address-time-probe.h"
 
 #include "ns3/callback.h"
 #include "ns3/config.h"

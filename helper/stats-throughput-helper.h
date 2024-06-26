@@ -23,10 +23,11 @@
 #ifndef STATS_THROUGHPUT_HELPER_H
 #define STATS_THROUGHPUT_HELPER_H
 
+#include "stats-helper.h"
+
 #include <ns3/address.h>
 #include <ns3/collector-map.h>
 #include <ns3/ptr.h>
-#include <ns3/stats-helper.h>
 
 #include <list>
 #include <map>

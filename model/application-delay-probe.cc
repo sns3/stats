@@ -26,7 +26,7 @@
  * - Budiarto Herman (budiarto.herman@magister.fi)
  */
 
-#include "ns3/application-delay-probe.h"
+#include "application-delay-probe.h"
 
 #include "ns3/callback.h"
 #include "ns3/config.h"

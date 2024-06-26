@@ -21,9 +21,10 @@
 
 #include "interval-rate-collector.h"
 
+#include "magister-stats.h"
+
 #include <ns3/enum.h>
 #include <ns3/log.h>
-#include <ns3/magister-stats.h>
 #include <ns3/simulator.h>
 
 #include <sstream>
@@ -122,8 +123,9 @@ IntervalRateCollector::GetTypeId()
                           "In spite of this separation, output data type from trace "
                           "sources are still fixed to `double` in any case.",
                           EnumValue(IntervalRateCollector::INPUT_DATA_TYPE_DOUBLE),
-                          MakeEnumAccessor(&IntervalRateCollector::SetInputDataType,
-                                           &IntervalRateCollector::GetInputDataType),
+                          MakeEnumAccessor<IntervalRateCollector::InputDataType_t>(
+                              &IntervalRateCollector::SetInputDataType,
+                              &IntervalRateCollector::GetInputDataType),
                           MakeEnumChecker(IntervalRateCollector::INPUT_DATA_TYPE_DOUBLE,
                                           "DOUBLE",
                                           IntervalRateCollector::INPUT_DATA_TYPE_UINTEGER,
@@ -133,8 +135,9 @@ IntervalRateCollector::GetTypeId()
             .AddAttribute("OutputType",
                           "Determines the mechanism of processing the incoming samples.",
                           EnumValue(IntervalRateCollector::OUTPUT_TYPE_SUM),
-                          MakeEnumAccessor(&IntervalRateCollector::SetOutputType,
-                                           &IntervalRateCollector::GetOutputType),
+                          MakeEnumAccessor<IntervalRateCollector::OutputType_t>(
+                              &IntervalRateCollector::SetOutputType,
+                              &IntervalRateCollector::GetOutputType),
                           MakeEnumChecker(IntervalRateCollector::OUTPUT_TYPE_SUM,
                                           "SUM",
                                           IntervalRateCollector::OUTPUT_TYPE_NUMBER_OF_SAMPLE,
@@ -145,8 +148,8 @@ IntervalRateCollector::GetTypeId()
                           "Determines the unit used for the time output (i.e., the "
                           "`OutputWithTime` trace source",
                           EnumValue(Time::S),
-                          MakeEnumAccessor(&IntervalRateCollector::SetTimeUnit,
-                                           &IntervalRateCollector::GetTimeUnit),
+                          MakeEnumAccessor<Time::Unit>(&IntervalRateCollector::SetTimeUnit,
+                                                       &IntervalRateCollector::GetTimeUnit),
                           MakeEnumChecker(Time::Y,
                                           "Y", // year, 365 days
                                           Time::D,

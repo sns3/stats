@@ -22,11 +22,12 @@
 
 #include "distribution-collector.h"
 
+#include "magister-stats.h"
+
 #include <ns3/boolean.h>
 #include <ns3/double.h>
 #include <ns3/enum.h>
 #include <ns3/log.h>
-#include <ns3/magister-stats.h>
 #include <ns3/pointer.h>
 #include <ns3/simulator.h>
 #include <ns3/uinteger.h>
@@ -111,8 +112,9 @@ DistributionCollector::GetTypeId()
             .AddAttribute("OutputType",
                           "Determines the mechanism of processing the incoming samples.",
                           EnumValue(DistributionCollector::OUTPUT_TYPE_HISTOGRAM),
-                          MakeEnumAccessor(&DistributionCollector::SetOutputType,
-                                           &DistributionCollector::GetOutputType),
+                          MakeEnumAccessor<DistributionCollector::OutputType_t>(
+                              &DistributionCollector::SetOutputType,
+                              &DistributionCollector::GetOutputType),
                           MakeEnumChecker(DistributionCollector::OUTPUT_TYPE_HISTOGRAM,
                                           "HISTOGRAM",
                                           DistributionCollector::OUTPUT_TYPE_PROBABILITY,
@@ -122,8 +124,9 @@ DistributionCollector::GetTypeId()
             .AddAttribute("DistributionBinType",
                           "Determine the distribution bin type.",
                           EnumValue(DistributionCollector::BIN_TYPE_ADAPTIVE),
-                          MakeEnumAccessor(&DistributionCollector::SetBinType,
-                                           &DistributionCollector::GetBinType),
+                          MakeEnumAccessor<DistributionCollector::DistributionBinType_t>(
+                              &DistributionCollector::SetBinType,
+                              &DistributionCollector::GetBinType),
                           MakeEnumChecker(DistributionCollector::BIN_TYPE_ADAPTIVE,
                                           "ADAPTIVE",
                                           DistributionCollector::BIN_TYPE_STATIC,

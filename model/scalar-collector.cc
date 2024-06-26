@@ -21,9 +21,10 @@
 
 #include "scalar-collector.h"
 
+#include "magister-stats.h"
+
 #include <ns3/enum.h>
 #include <ns3/log.h>
-#include <ns3/magister-stats.h>
 #include <ns3/simulator.h>
 
 NS_LOG_COMPONENT_DEFINE("ScalarCollector");
@@ -103,8 +104,9 @@ ScalarCollector::GetTypeId()
                           "this separation, output data type from trace sources are "
                           "still fixed to double in any case.",
                           EnumValue(ScalarCollector::INPUT_DATA_TYPE_DOUBLE),
-                          MakeEnumAccessor(&ScalarCollector::SetInputDataType,
-                                           &ScalarCollector::GetInputDataType),
+                          MakeEnumAccessor<ScalarCollector::InputDataType_t>(
+                              &ScalarCollector::SetInputDataType,
+                              &ScalarCollector::GetInputDataType),
                           MakeEnumChecker(ScalarCollector::INPUT_DATA_TYPE_DOUBLE,
                                           "DOUBLE",
                                           ScalarCollector::INPUT_DATA_TYPE_UINTEGER,
@@ -115,7 +117,8 @@ ScalarCollector::GetTypeId()
                 "OutputType",
                 "Determines the mechanism of processing the incoming samples.",
                 EnumValue(ScalarCollector::OUTPUT_TYPE_SUM),
-                MakeEnumAccessor(&ScalarCollector::SetOutputType, &ScalarCollector::GetOutputType),
+                MakeEnumAccessor<ScalarCollector::OutputType_t>(&ScalarCollector::SetOutputType,
+                                                                &ScalarCollector::GetOutputType),
                 MakeEnumChecker(ScalarCollector::OUTPUT_TYPE_SUM,
                                 "SUM",
                                 ScalarCollector::OUTPUT_TYPE_NUMBER_OF_SAMPLE,

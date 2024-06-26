@@ -26,7 +26,7 @@
  * - Frans Laakso (frans.laakso@magister.fi)
  */
 
-#include "ns3/address-double-probe.h"
+#include "address-double-probe.h"
 
 #include "ns3/callback.h"
 #include "ns3/config.h"

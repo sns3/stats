@@ -60,18 +60,19 @@ MultiFileAggregator::GetTypeId()
                           StringValue("untitled"),
                           MakeStringAccessor(&MultiFileAggregator::m_outputFileName),
                           MakeStringChecker())
-            .AddAttribute("FileType",
-                          "Determines the kind of file written by the aggregator.",
-                          EnumValue(MultiFileAggregator::SPACE_SEPARATED),
-                          MakeEnumAccessor(&MultiFileAggregator::SetFileType),
-                          MakeEnumChecker(MultiFileAggregator::FORMATTED,
-                                          "FORMATTED",
-                                          MultiFileAggregator::SPACE_SEPARATED,
-                                          "SPACE_SEPARATED",
-                                          MultiFileAggregator::COMMA_SEPARATED,
-                                          "COMMA_SEPARATED",
-                                          MultiFileAggregator::TAB_SEPARATED,
-                                          "TAB_SEPARATED"))
+            .AddAttribute(
+                "FileType",
+                "Determines the kind of file written by the aggregator.",
+                EnumValue(MultiFileAggregator::SPACE_SEPARATED),
+                MakeEnumAccessor<MultiFileAggregator::FileType>(&MultiFileAggregator::SetFileType),
+                MakeEnumChecker(MultiFileAggregator::FORMATTED,
+                                "FORMATTED",
+                                MultiFileAggregator::SPACE_SEPARATED,
+                                "SPACE_SEPARATED",
+                                MultiFileAggregator::COMMA_SEPARATED,
+                                "COMMA_SEPARATED",
+                                MultiFileAggregator::TAB_SEPARATED,
+                                "TAB_SEPARATED"))
             .AddAttribute("MultiFileMode",
                           "If true, write each context to a separate output file. "
                           "Otherwise, write all contexts to a single file.",
@@ -90,7 +91,6 @@ MultiFileAggregator::GetTypeId()
                           StringValue(""),
                           MakeStringAccessor(&MultiFileAggregator::AddGeneralHeading),
                           MakeStringChecker());
-
     return tid;
 }
 

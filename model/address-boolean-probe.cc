@@ -26,7 +26,7 @@
  * - Frans Laakso (frans.laakso@magister.fi)
  */
 
-#include "ns3/address-boolean-probe.h"
+#include "address-boolean-probe.h"
 
 #include "ns3/callback.h"
 #include "ns3/config.h"
