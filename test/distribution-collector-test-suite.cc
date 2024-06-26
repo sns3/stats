@@ -388,7 +388,7 @@ class DistributionCollectorTestSuite : public TestSuite
 };
 
 DistributionCollectorTestSuite::DistributionCollectorTestSuite()
-    : TestSuite("distribution-collector", UNIT)
+    : TestSuite("distribution-collector", Type::UNIT)
 {
     // LogComponentEnable ("DistributionCollectorTest", LOG_LEVEL_ALL);
     // LogComponentEnable ("DistributionCollectorTest", LOG_PREFIX_ALL);
@@ -403,7 +403,7 @@ DistributionCollectorTestSuite::DistributionCollectorTestSuite()
                                           10,
                                           "-10 10 30 50 70 90 110",
                                           "5 1 15 1 25 0 35 1 45 0 55 1 65 0 75 1 85 0 95 2"),
-        TestCase::QUICK);
+        TestCase::Duration::QUICK);
 
     AddTestCase(new DistributionCollectorTestCase("d-2-histogram",
                                                   DistributionCollector::OUTPUT_TYPE_HISTOGRAM,
@@ -412,7 +412,7 @@ DistributionCollectorTestSuite::DistributionCollectorTestSuite()
                                                   5,
                                                   "-30 -10 10 30 50 70 90",
                                                   "-90 0 -70 0 -50 0 -30 1 -10 6"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     AddTestCase(new DistributionCollectorTestCase("d-3-histogram",
                                                   DistributionCollector::OUTPUT_TYPE_HISTOGRAM,
@@ -421,7 +421,7 @@ DistributionCollectorTestSuite::DistributionCollectorTestSuite()
                                                   5,
                                                   "10 9 8 6 5 4 3 2 1 0",
                                                   "1 2 3 2 5 2 7 1 9 3"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     AddTestCase(new DistributionCollectorTestCase("d-3-probability",
                                                   DistributionCollector::OUTPUT_TYPE_PROBABILITY,
@@ -430,7 +430,7 @@ DistributionCollectorTestSuite::DistributionCollectorTestSuite()
                                                   5,
                                                   "10 9 8 6 5 4 3 2 1 0",
                                                   "1 0.2 3 0.2 5 0.2 7 0.1 9 0.3"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     AddTestCase(new DistributionCollectorTestCase("d-3-cumulative",
                                                   DistributionCollector::OUTPUT_TYPE_CUMULATIVE,
@@ -439,7 +439,7 @@ DistributionCollectorTestSuite::DistributionCollectorTestSuite()
                                                   5,
                                                   "10 9 8 6 5 4 3 2 1 0",
                                                   "1 0.2 3 0.4 5 0.6 7 0.7 9 1"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     AddTestCase(new DistributionCollectorTestCase(
                     "d-4-histogram",
@@ -449,7 +449,7 @@ DistributionCollectorTestSuite::DistributionCollectorTestSuite()
                     10,
                     "-33 -32 -31 -77 -76 -75 -74 -73 -72 -71",
                     "-95 0 -85 0 -75 7 -65 0 -55 0 -45 0 -35 3 -25 0 -15 0 -5 0"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     AddTestCase(new DistributionCollectorTestCase(
                     "d-4-probability",
@@ -459,7 +459,7 @@ DistributionCollectorTestSuite::DistributionCollectorTestSuite()
                     10,
                     "-33 -32 -31 -77 -76 -75 -74 -73 -72 -71",
                     "-95 0 -85 0 -75 0.7 -65 0 -55 0 -45 0 -35 0.3 -25 0 -15 0 -5 0"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
     AddTestCase(new DistributionCollectorTestCase(
                     "d-4-cumulative",
@@ -469,7 +469,7 @@ DistributionCollectorTestSuite::DistributionCollectorTestSuite()
                     10,
                     "-33 -32 -31 -77 -76 -75 -74 -73 -72 -71",
                     "-95 0 -85 0 -75 0.7 -65 0.7 -55 0.7 -45 0.7 -35 1 -25 1 -15 1 -5 1"),
-                TestCase::QUICK);
+                TestCase::Duration::QUICK);
 
 } // end of `DistributionCollectorTestSuite ()`
 
