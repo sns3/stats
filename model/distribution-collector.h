@@ -27,6 +27,8 @@
 #include <ns3/data-collection-object.h>
 #include <ns3/traced-callback.h>
 
+#include <list>
+#include <string>
 #include <vector>
 
 namespace ns3

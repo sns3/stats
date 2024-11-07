@@ -27,6 +27,8 @@
 #include <ns3/nstime.h>
 #include <ns3/traced-callback.h>
 
+#include <string>
+
 namespace ns3
 {
 

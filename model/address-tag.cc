@@ -22,6 +22,8 @@
 
 #include <ns3/log.h>
 
+#include <ostream>
+
 NS_LOG_COMPONENT_DEFINE("AddressTag");
 
 namespace ns3

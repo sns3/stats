@@ -27,6 +27,9 @@
 #include <ns3/log.h>
 #include <ns3/simulator.h>
 
+#include <cmath>
+#include <string>
+
 NS_LOG_COMPONENT_DEFINE("UnitConversionCollector");
 
 namespace ns3

@@ -34,6 +34,8 @@
 #include "ns3/names.h"
 #include "ns3/simulator.h"
 
+#include <string>
+
 NS_LOG_COMPONENT_DEFINE("AddressDoubleProbe");
 
 namespace ns3

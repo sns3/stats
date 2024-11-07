@@ -24,6 +24,8 @@
 #include <ns3/fatal-error.h>
 #include <ns3/log.h>
 
+#include <string>
+
 NS_LOG_COMPONENT_DEFINE("CollectorMap");
 
 namespace ns3

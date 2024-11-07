@@ -30,6 +30,7 @@
 #include <ns3/ptr.h>
 
 #include <map>
+#include <string>
 
 namespace ns3
 {

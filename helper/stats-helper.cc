@@ -36,6 +36,7 @@
 
 #include <sstream>
 #include <stdio.h>
+#include <string>
 #include <sys/stat.h>
 
 NS_LOG_COMPONENT_DEFINE("StatsHelper");

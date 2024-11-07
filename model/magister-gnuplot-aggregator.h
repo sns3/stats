@@ -32,8 +32,10 @@
 #include "ns3/data-collection-object.h"
 #include "ns3/gnuplot.h"
 
+#include <fstream>
 #include <map>
 #include <string>
+#include <vector>
 
 namespace ns3
 {

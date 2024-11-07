@@ -33,8 +33,11 @@
 #include <ns3/uinteger.h>
 
 #include <cmath>
+#include <iostream>
 #include <limits>
+#include <list>
 #include <sstream>
+#include <string>
 
 NS_LOG_COMPONENT_DEFINE("DistributionCollector");
 
