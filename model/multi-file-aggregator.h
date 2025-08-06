@@ -44,15 +44,15 @@ namespace ns3
 {
 
 /**
- * \ingroup aggregator
- * \brief This aggregator sends values it receives to one or more files.
+ * @ingroup aggregator
+ * @brief This aggregator sends values it receives to one or more files.
  *
  * ### Input ###
  * This class provides 10 methods for receiving input values in `double`. Each
  * of these methods is a function with a signature similar to the following:
- * \code
+ * @code
  *   void WritePd (std::string context, double v1, double v2, ... double vP);
- * \endcode
+ * @endcode
  * where `P` is a number between 1 and 10. In addition, the class provides the
  * method WriteString() which accepts a string input. These input methods
  * usually act as trace sinks of output from collectors' trace sources.
@@ -79,7 +79,7 @@ namespace ns3
  * attribute, and then followed by the context string. Finally, a ".txt"
  * extension is added at the end.
  *
- * \note All outputs are stored internally in string buffers. Upon destruction,
+ * @note All outputs are stored internally in string buffers. Upon destruction,
  *       e.g., at the end of simulation, the whole buffer content is written to
  *       the destination files.
  */
@@ -96,8 +96,8 @@ class MultiFileAggregator : public DataCollectionObject
     };
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -114,18 +114,18 @@ class MultiFileAggregator : public DataCollectionObject
     virtual ~MultiFileAggregator();
 
     /**
-     * \param fileType file type specifies the separator to use in
+     * @param fileType file type specifies the separator to use in
      * printing the file.
      *
-     * \brief Set the file type to create, which determines the
+     * @brief Set the file type to create, which determines the
      * separator to use when printing values to the file.
      */
     void SetFileType(enum FileType fileType);
 
     /**
-     * \param heading the heading string.
+     * @param heading the heading string.
      *
-     * \brief Adds a heading string that will be printed on the first
+     * @brief Adds a heading string that will be printed on the first
      *        line of each output file, regardless of context.
      *
      * Subsequent calls will append the previous heading string.
@@ -135,10 +135,10 @@ class MultiFileAggregator : public DataCollectionObject
     void AddGeneralHeading(std::string heading);
 
     /**
-     * \param context the specific context where the heading should apply.
-     * \param heading the heading string.
+     * @param context the specific context where the heading should apply.
+     * @param heading the heading string.
      *
-     * \brief Adds a context-specific heading string that will be printed on the
+     * @brief Adds a context-specific heading string that will be printed on the
      *        first line of the context's output file.
      *
      * Subsequent calls will append the previous heading string.
@@ -148,8 +148,8 @@ class MultiFileAggregator : public DataCollectionObject
     void AddContextHeading(std::string context, std::string heading);
 
     /**
-     * \brief Adds a visible warning to the output file name.
-     * \param context the specific context where the warning should apply.
+     * @brief Adds a visible warning to the output file name.
+     * @param context the specific context where the warning should apply.
      *
      * When enabled, the output file name of the given context will be modified
      * to attract the attention of the user. It may be used to clearly indicate
@@ -158,81 +158,81 @@ class MultiFileAggregator : public DataCollectionObject
     void EnableContextWarning(std::string context);
 
     /**
-     * \param format the 1D format string.
+     * @param format the 1D format string.
      *
-     * \brief Sets the 1D format string for the C-style sprintf()
+     * @brief Sets the 1D format string for the C-style sprintf()
      * function.
      */
     void Set1dFormat(const std::string& format);
 
     /**
-     * \param format the 2D format string.
+     * @param format the 2D format string.
      *
-     * \brief Sets the 2D format string for the C-style sprintf()
+     * @brief Sets the 2D format string for the C-style sprintf()
      * function.
      */
     void Set2dFormat(const std::string& format);
 
     /**
-     * \param format the 3D format string.
+     * @param format the 3D format string.
      *
-     * \brief Sets the 3D format string for the C-style sprintf()
+     * @brief Sets the 3D format string for the C-style sprintf()
      * function.
      */
     void Set3dFormat(const std::string& format);
 
     /**
-     * \param format the 4D format string.
+     * @param format the 4D format string.
      *
-     * \brief Sets the 4D format string for the C-style sprintf()
+     * @brief Sets the 4D format string for the C-style sprintf()
      * function.
      */
     void Set4dFormat(const std::string& format);
 
     /**
-     * \param format the 5D format string.
+     * @param format the 5D format string.
      *
-     * \brief Sets the 5D format string for the C-style sprintf()
+     * @brief Sets the 5D format string for the C-style sprintf()
      * function.
      */
     void Set5dFormat(const std::string& format);
 
     /**
-     * \param format the 6D format string.
+     * @param format the 6D format string.
      *
-     * \brief Sets the 6D format string for the C-style sprintf()
+     * @brief Sets the 6D format string for the C-style sprintf()
      * function.
      */
     void Set6dFormat(const std::string& format);
 
     /**
-     * \param format the 7D format string.
+     * @param format the 7D format string.
      *
-     * \brief Sets the 7D format string for the C-style sprintf()
+     * @brief Sets the 7D format string for the C-style sprintf()
      * function.
      */
     void Set7dFormat(const std::string& format);
 
     /**
-     * \param format the 8D format string.
+     * @param format the 8D format string.
      *
-     * \brief Sets the 8D format string for the C-style sprintf()
+     * @brief Sets the 8D format string for the C-style sprintf()
      * function.
      */
     void Set8dFormat(const std::string& format);
 
     /**
-     * \param format the 9D format string.
+     * @param format the 9D format string.
      *
-     * \brief Sets the 9D format string for the C-style sprintf()
+     * @brief Sets the 9D format string for the C-style sprintf()
      * function.
      */
     void Set9dFormat(const std::string& format);
 
     /**
-     * \param format the 10D format string.
+     * @param format the 10D format string.
      *
-     * \brief Sets the 10D format string for the C-style sprintf()
+     * @brief Sets the 10D format string for the C-style sprintf()
      * function.
      */
     void Set10dFormat(const std::string& format);
@@ -242,73 +242,73 @@ class MultiFileAggregator : public DataCollectionObject
     // into callbacks
 
     /**
-     * \param context specifies the 1D dataset these values came from.
-     * \param v1 string value to be printed.
+     * @param context specifies the 1D dataset these values came from.
+     * @param v1 string value to be printed.
      *
-     * \brief Writes 1 arbitrary string value to the file.
+     * @brief Writes 1 arbitrary string value to the file.
      */
     void WriteString(std::string context, std::string v1);
 
     /**
-     * \param context specifies the 1D dataset these values came from.
-     * \param v1 value for the new data point.
+     * @param context specifies the 1D dataset these values came from.
+     * @param v1 value for the new data point.
      *
-     * \brief Writes 1 value to the file.
+     * @brief Writes 1 value to the file.
      */
     void Write1d(std::string context, double v1);
 
     /**
-     * \param context specifies the 2D dataset these values came from.
-     * \param v1 first value for the new data point.
-     * \param v2 second value for the new data point.
+     * @param context specifies the 2D dataset these values came from.
+     * @param v1 first value for the new data point.
+     * @param v2 second value for the new data point.
      *
-     * \brief Writes 2 values to the file.
+     * @brief Writes 2 values to the file.
      */
     void Write2d(std::string context, double v1, double v2);
 
     /**
-     * \param context specifies the 3D dataset these values came from.
-     * \param v1 first value for the new data point.
-     * \param v2 second value for the new data point.
-     * \param v3 third value for the new data point.
+     * @param context specifies the 3D dataset these values came from.
+     * @param v1 first value for the new data point.
+     * @param v2 second value for the new data point.
+     * @param v3 third value for the new data point.
      *
-     * \brief Writes 3 values to the file.
+     * @brief Writes 3 values to the file.
      */
     void Write3d(std::string context, double v1, double v2, double v3);
 
     /**
-     * \param context specifies the 4D dataset these values came from.
-     * \param v1 first value for the new data point.
-     * \param v2 second value for the new data point.
-     * \param v3 third value for the new data point.
-     * \param v4 fourth value for the new data point.
+     * @param context specifies the 4D dataset these values came from.
+     * @param v1 first value for the new data point.
+     * @param v2 second value for the new data point.
+     * @param v3 third value for the new data point.
+     * @param v4 fourth value for the new data point.
      *
-     * \brief Writes 4 values to the file.
+     * @brief Writes 4 values to the file.
      */
     void Write4d(std::string context, double v1, double v2, double v3, double v4);
 
     /**
-     * \param context specifies the 5D dataset these values came from.
-     * \param v1 first value for the new data point.
-     * \param v2 second value for the new data point.
-     * \param v3 third value for the new data point.
-     * \param v4 fourth value for the new data point.
-     * \param v5 fifth value for the new data point.
+     * @param context specifies the 5D dataset these values came from.
+     * @param v1 first value for the new data point.
+     * @param v2 second value for the new data point.
+     * @param v3 third value for the new data point.
+     * @param v4 fourth value for the new data point.
+     * @param v5 fifth value for the new data point.
      *
-     * \brief Writes 5 values to the file.
+     * @brief Writes 5 values to the file.
      */
     void Write5d(std::string context, double v1, double v2, double v3, double v4, double v5);
 
     /**
-     * \param context specifies the 6D dataset these values came from.
-     * \param v1 first value for the new data point.
-     * \param v2 second value for the new data point.
-     * \param v3 third value for the new data point.
-     * \param v4 fourth value for the new data point.
-     * \param v5 fifth value for the new data point.
-     * \param v6 sixth value for the new data point.
+     * @param context specifies the 6D dataset these values came from.
+     * @param v1 first value for the new data point.
+     * @param v2 second value for the new data point.
+     * @param v3 third value for the new data point.
+     * @param v4 fourth value for the new data point.
+     * @param v5 fifth value for the new data point.
+     * @param v6 sixth value for the new data point.
      *
-     * \brief Writes 6 values to the file.
+     * @brief Writes 6 values to the file.
      */
     void Write6d(std::string context,
                  double v1,
@@ -319,16 +319,16 @@ class MultiFileAggregator : public DataCollectionObject
                  double v6);
 
     /**
-     * \param context specifies the 7D dataset these values came from.
-     * \param v1 first value for the new data point.
-     * \param v2 second value for the new data point.
-     * \param v3 third value for the new data point.
-     * \param v4 fourth value for the new data point.
-     * \param v5 fifth value for the new data point.
-     * \param v6 sixth value for the new data point.
-     * \param v7 seventh value for the new data point.
+     * @param context specifies the 7D dataset these values came from.
+     * @param v1 first value for the new data point.
+     * @param v2 second value for the new data point.
+     * @param v3 third value for the new data point.
+     * @param v4 fourth value for the new data point.
+     * @param v5 fifth value for the new data point.
+     * @param v6 sixth value for the new data point.
+     * @param v7 seventh value for the new data point.
      *
-     * \brief Writes 7 values to the file.
+     * @brief Writes 7 values to the file.
      */
     void Write7d(std::string context,
                  double v1,
@@ -340,17 +340,17 @@ class MultiFileAggregator : public DataCollectionObject
                  double v7);
 
     /**
-     * \param context specifies the 8D dataset these values came from.
-     * \param v1 first value for the new data point.
-     * \param v2 second value for the new data point.
-     * \param v3 third value for the new data point.
-     * \param v4 fourth value for the new data point.
-     * \param v5 fifth value for the new data point.
-     * \param v6 sixth value for the new data point.
-     * \param v7 seventh value for the new data point.
-     * \param v8 eighth value for the new data point.
+     * @param context specifies the 8D dataset these values came from.
+     * @param v1 first value for the new data point.
+     * @param v2 second value for the new data point.
+     * @param v3 third value for the new data point.
+     * @param v4 fourth value for the new data point.
+     * @param v5 fifth value for the new data point.
+     * @param v6 sixth value for the new data point.
+     * @param v7 seventh value for the new data point.
+     * @param v8 eighth value for the new data point.
      *
-     * \brief Writes 8 values to the file.
+     * @brief Writes 8 values to the file.
      */
     void Write8d(std::string context,
                  double v1,
@@ -363,18 +363,18 @@ class MultiFileAggregator : public DataCollectionObject
                  double v8);
 
     /**
-     * \param context specifies the 9D dataset these values came from.
-     * \param v1 first value for the new data point.
-     * \param v2 second value for the new data point.
-     * \param v3 third value for the new data point.
-     * \param v4 fourth value for the new data point.
-     * \param v5 fifth value for the new data point.
-     * \param v6 sixth value for the new data point.
-     * \param v7 seventh value for the new data point.
-     * \param v8 eighth value for the new data point.
-     * \param v9 nineth value for the new data point.
+     * @param context specifies the 9D dataset these values came from.
+     * @param v1 first value for the new data point.
+     * @param v2 second value for the new data point.
+     * @param v3 third value for the new data point.
+     * @param v4 fourth value for the new data point.
+     * @param v5 fifth value for the new data point.
+     * @param v6 sixth value for the new data point.
+     * @param v7 seventh value for the new data point.
+     * @param v8 eighth value for the new data point.
+     * @param v9 nineth value for the new data point.
      *
-     * \brief Writes 9 values to the file.
+     * @brief Writes 9 values to the file.
      */
     void Write9d(std::string context,
                  double v1,
@@ -388,19 +388,19 @@ class MultiFileAggregator : public DataCollectionObject
                  double v9);
 
     /**
-     * \param context specifies the 10D dataset these values came from.
-     * \param v1 first value for the new data point.
-     * \param v2 second value for the new data point.
-     * \param v3 third value for the new data point.
-     * \param v4 fourth value for the new data point.
-     * \param v5 fifth value for the new data point.
-     * \param v6 sixth value for the new data point.
-     * \param v7 seventh value for the new data point.
-     * \param v8 eighth value for the new data point.
-     * \param v9 nineth value for the new data point.
-     * \param v10 tenth value for the new data point.
+     * @param context specifies the 10D dataset these values came from.
+     * @param v1 first value for the new data point.
+     * @param v2 second value for the new data point.
+     * @param v3 third value for the new data point.
+     * @param v4 fourth value for the new data point.
+     * @param v5 fifth value for the new data point.
+     * @param v6 sixth value for the new data point.
+     * @param v7 seventh value for the new data point.
+     * @param v8 eighth value for the new data point.
+     * @param v9 nineth value for the new data point.
+     * @param v10 tenth value for the new data point.
      *
-     * \brief Writes 10 values to the file.
+     * @brief Writes 10 values to the file.
      */
     void Write10d(std::string context,
                   double v1,
@@ -416,9 +416,9 @@ class MultiFileAggregator : public DataCollectionObject
 
   private:
     /**
-     * \param context determines to which file to write.
+     * @param context determines to which file to write.
      *
-     * \brief Add this context to the list of known stream and remove old trace file
+     * @brief Add this context to the list of known stream and remove old trace file
      * if it is the first occurence of this context. If the current active mode is
      * single-file, then "0" is used as the key.
      */
@@ -426,15 +426,15 @@ class MultiFileAggregator : public DataCollectionObject
 
     /**
      * Get the full name of a file.
-     * \param context determines which file name stream to get.
-     * \param additionalData add additional characters at the end of file name.
+     * @param context determines which file name stream to get.
+     * @param additionalData add additional characters at the end of file name.
      */
     std::string GetFullName(std::string context, std::string additionalData = "");
 
     /**
      * open a stream to a file
-     * \param context determines which context to write.
-     * \param ofs the stream to write to the file.
+     * @param context determines which context to write.
+     * @param ofs the stream to write to the file.
      */
     void OpenStream(std::string context, std::ofstream* ofs);
 

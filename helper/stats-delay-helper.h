@@ -42,8 +42,8 @@ class DataCollectionObject;
 class DistributionCollector;
 
 /**
- * \ingroup stats
- * \brief Base class for delay statistics helpers.
+ * @ingroup stats
+ * @brief Base class for delay statistics helpers.
  */
 class StatsDelayHelper : public StatsHelper
 {
@@ -62,17 +62,17 @@ class StatsDelayHelper : public StatsHelper
     static TypeId GetTypeId();
 
     /**
-     * \param averagingMode average all samples before passing them to aggregator.
+     * @param averagingMode average all samples before passing them to aggregator.
      */
     void SetAveragingMode(bool averagingMode);
 
     /**
-     * \return the currently active averaging mode.
+     * @return the currently active averaging mode.
      */
     bool GetAveragingMode() const;
 
     /**
-     * \brief Set up several probes or other means of listeners and connect them
+     * @brief Set up several probes or other means of listeners and connect them
      *        to the collectors.
      */
     void InstallProbes();
@@ -82,23 +82,23 @@ class StatsDelayHelper : public StatsHelper
     void DoInstall();
 
     /**
-     * \brief Install callbacks and probes to application trace sources,
+     * @brief Install callbacks and probes to application trace sources,
      * if needed. Implemented by child classes.
      */
     virtual void DoInstallProbes() = 0;
 
     /**
-     * \brief Connect the probe to the right collector.
-     * \param probe
-     * \param identifier
+     * @brief Connect the probe to the right collector.
+     * @param probe
+     * @param identifier
      */
     bool ConnectProbeToCollector(Ptr<Probe> probe, uint32_t identifier);
 
     /**
-     * \brief Find a collector with the right identifier and pass a sample data
+     * @brief Find a collector with the right identifier and pass a sample data
      *        to it.
-     * \param delay
-     * \param identifier
+     * @param delay
+     * @param identifier
      */
     void PassSampleToCollector(Time delay, uint32_t identifier);
 
@@ -124,18 +124,18 @@ class StatsDelayHelper : public StatsHelper
 class Probe;
 
 /**
- * \ingroup stats
- * \brief Produce application-level delay statistics from a simulation.
+ * @ingroup stats
+ * @brief Produce application-level delay statistics from a simulation.
  *
  * The following example can be used:
- * \code
+ * @code
  * Ptr<StatsFwdAppDelayHelper> s = Create<StatsFwdAppDelayHelper> ();
  * s->SetName ("name");
  * s->SetIdentifierType (StatsHelper::IDENTIFIER_GLOBAL);
  * s->SetOutputType (StatsHelper::OUTPUT_SCATTER_FILE);
  * s->InstallNodes (nodes);
  * s->Install ();
- * \endcode
+ * @endcode
  */
 class StatsAppDelayHelper : public StatsDelayHelper
 {
@@ -154,13 +154,13 @@ class StatsAppDelayHelper : public StatsDelayHelper
     static TypeId GetTypeId();
 
     /**
-     * \brief Receive inputs from trace sources and determine the right collector
+     * @brief Receive inputs from trace sources and determine the right collector
      *        to forward the inputs to.
-     * \param helper Pointer to the delay statistics collector helper
-     * \param identifier Identifier used to group statistics.
-     * \param packet the received packet, expected to have been tagged with
+     * @param helper Pointer to the delay statistics collector helper
+     * @param identifier Identifier used to group statistics.
+     * @param packet the received packet, expected to have been tagged with
      *               TrafficTimeTag.
-     * \param from the InetSocketAddress of the sender of the packet.
+     * @param from the InetSocketAddress of the sender of the packet.
      */
     static void RxCallback(Ptr<StatsAppDelayHelper> helper,
                            uint32_t identifier,
@@ -168,11 +168,11 @@ class StatsAppDelayHelper : public StatsDelayHelper
                            const Address& from);
 
     /**
-     * \brief Receive inputs from trace sources and determine the right collector
+     * @brief Receive inputs from trace sources and determine the right collector
      *        to forward the inputs to.
-     * \param helper Pointer to the delay statistics collector helper
-     * \param identifier Identifier used to group statistics.
-     * \param packet the sent packet, yo which TrafficTimeTag will be attached.
+     * @param helper Pointer to the delay statistics collector helper
+     * @param identifier Identifier used to group statistics.
+     * @param packet the sent packet, yo which TrafficTimeTag will be attached.
      */
     static void TxCallback(Ptr<StatsAppDelayHelper> helper, Ptr<const Packet> packet);
 

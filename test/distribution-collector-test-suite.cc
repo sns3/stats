@@ -20,14 +20,14 @@
  */
 
 /**
- * \file distribution-collector-test-suite.cc
- * \ingroup stats
- * \brief Test cases for DistributionCollector.
+ * @file distribution-collector-test-suite.cc
+ * @ingroup stats
+ * @brief Test cases for DistributionCollector.
  *
  * Usage example:
- * \code
+ * @code
  *    $ ./test.py --suite=distribution-collector
- * \endcode
+ * @endcode
  */
 
 #include "ns3/core-module.h"
@@ -42,7 +42,7 @@ namespace ns3
 {
 
 /**
- * \ingroup stats
+ * @ingroup stats
  *
  * Part of the `distribution-collector` test suite. Creates a instance of
  * DistributionCollector using a specified configuration parameters, feed it
@@ -53,15 +53,15 @@ class DistributionCollectorTestCase : public TestCase
 {
   public:
     /**
-     * \brief Construct a new test case.
-     * \param name the test case name, which will be printed on the test report.
-     * \param type output that will be produced by the collector.
-     * \param minValue lower bound of the collector coverage.
-     * \param maxValue upper bound of the collector coverage.
-     * \param numOfBins number of internal bins to be used.
-     * \param input a string of space-separated real numbers which will be fed
+     * @brief Construct a new test case.
+     * @param name the test case name, which will be printed on the test report.
+     * @param type output that will be produced by the collector.
+     * @param minValue lower bound of the collector coverage.
+     * @param maxValue upper bound of the collector coverage.
+     * @param numOfBins number of internal bins to be used.
+     * @param input a string of space-separated real numbers which will be fed
      *              to the collector as input samples.
-     * \param expectedOutput a string of pairs of real numbers, with a space
+     * @param expectedOutput a string of pairs of real numbers, with a space
      *                       after every number; each pair represents a single
      *                       output of the collector.
      */
@@ -82,7 +82,7 @@ class DistributionCollectorTestCase : public TestCase
     void FeedInput();
 
     /**
-     * \brief Compare the order and values of the output emitted by the `Output`
+     * @brief Compare the order and values of the output emitted by the `Output`
      *        trace source of #m_collector with the output expected by this test
      *        case (i.e., #m_expectedSample and #m_expectedCount).
      */
@@ -378,7 +378,7 @@ DistributionCollectorTestCase::CollectorOutputSqrSumCallback(double sqrSum)
 }
 
 /**
- * \brief Test suite `distribution-collector`, verifying the
+ * @brief Test suite `distribution-collector`, verifying the
  *        DistributionCollector class.
  */
 class DistributionCollectorTestSuite : public TestSuite

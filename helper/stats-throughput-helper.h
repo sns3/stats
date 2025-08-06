@@ -43,8 +43,8 @@ class DataCollectionObject;
 class DistributionCollector;
 
 /**
- * \ingroup stats
- * \brief Base class for throughput statistics helpers of different levels.
+ * @ingroup stats
+ * @brief Base class for throughput statistics helpers of different levels.
  */
 class StatsThroughputHelper : public StatsHelper
 {
@@ -63,26 +63,26 @@ class StatsThroughputHelper : public StatsHelper
     static TypeId GetTypeId();
 
     /**
-     * \param averagingMode average all samples before passing them to aggregator.
+     * @param averagingMode average all samples before passing them to aggregator.
      */
     void SetAveragingMode(bool averagingMode);
 
     /**
-     * \return the currently active averaging mode.
+     * @return the currently active averaging mode.
      */
     bool GetAveragingMode() const;
 
     /**
-     * \brief Set up several probes or other means of listeners and connect them
+     * @brief Set up several probes or other means of listeners and connect them
      *        to the first-level collectors.
      */
     void InstallProbes();
 
     /**
-     * \brief Receive inputs from trace sources and determine the right collector
+     * @brief Receive inputs from trace sources and determine the right collector
      *        to forward the inputs to.
-     * \param packet received packet data.
-     * \param from the address of the sender of the packet.
+     * @param packet received packet data.
+     * @param from the address of the sender of the packet.
      *
      * Used in received traffic statistics. DoInstallProbes() is expected to connect
      * the right trace sources to this method.
@@ -94,7 +94,7 @@ class StatsThroughputHelper : public StatsHelper
     void DoInstall();
 
     /**
-     * \brief Install probes to trace sources. Implemented by child classes.
+     * @brief Install probes to trace sources. Implemented by child classes.
      */
     virtual void DoInstallProbes() = 0;
 
@@ -123,18 +123,18 @@ class StatsThroughputHelper : public StatsHelper
 class Probe;
 
 /**
- * \ingroup stats
- * \brief Produce application-level throughput statistics from a simulation.
+ * @ingroup stats
+ * @brief Produce application-level throughput statistics from a simulation.
  *
  * The following example can be used:
- * \code
+ * @code
  * Ptr<StatsAppThroughputHelper> s = Create<StatsAppThroughputHelper> (satHelper);
  * s->SetName ("name");
  * s->SetIdentifierType (StatsHelper::IDENTIFIER_GLOBAL);
  * s->SetOutputType (StatsHelper::OUTPUT_SCATTER_FILE);
  * s->InstallNodes (nodes);
  * s->Install ();
- * \endcode
+ * @endcode
  */
 class StatsAppThroughputHelper : public StatsThroughputHelper
 {
