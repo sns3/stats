@@ -30,8 +30,8 @@
  * \endcode
  */
 
-#include <ns3/core-module.h>
-#include <ns3/distribution-collector.h>
+#include "ns3/core-module.h"
+#include "ns3/distribution-collector.h"
 
 #include <list>
 #include <sstream>

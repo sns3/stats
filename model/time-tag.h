@@ -21,8 +21,8 @@
 #ifndef TIME_TAG_H
 #define TIME_TAG_H
 
-#include <ns3/nstime.h>
-#include <ns3/tag.h>
+#include "ns3/nstime.h"
+#include "ns3/tag.h"
 
 #include <ostream>
 

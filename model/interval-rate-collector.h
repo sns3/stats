@@ -22,10 +22,10 @@
 #ifndef INTERVAL_RATE_COLLECTOR_H
 #define INTERVAL_RATE_COLLECTOR_H
 
-#include <ns3/data-collection-object.h>
-#include <ns3/event-id.h>
-#include <ns3/nstime.h>
-#include <ns3/traced-callback.h>
+#include "ns3/data-collection-object.h"
+#include "ns3/event-id.h"
+#include "ns3/nstime.h"
+#include "ns3/traced-callback.h"
 
 #include <string>
 

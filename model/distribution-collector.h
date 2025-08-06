@@ -22,10 +22,10 @@
 #ifndef DISTRIBUTION_COLLECTOR_H
 #define DISTRIBUTION_COLLECTOR_H
 
-#include <ns3/basic-data-calculators.h>
-#include <ns3/callback.h>
-#include <ns3/data-collection-object.h>
-#include <ns3/traced-callback.h>
+#include "ns3/basic-data-calculators.h"
+#include "ns3/callback.h"
+#include "ns3/data-collection-object.h"
+#include "ns3/traced-callback.h"
 
 #include <list>
 #include <string>

@@ -21,8 +21,8 @@
 #ifndef ADDRESS_TAG_H
 #define ADDRESS_TAG_H
 
-#include <ns3/address.h>
-#include <ns3/tag.h>
+#include "ns3/address.h"
+#include "ns3/tag.h"
 
 #include <ostream>
 

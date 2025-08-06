@@ -23,9 +23,9 @@
 
 #include "magister-stats.h"
 
-#include <ns3/enum.h>
-#include <ns3/log.h>
-#include <ns3/simulator.h>
+#include "ns3/enum.h"
+#include "ns3/log.h"
+#include "ns3/simulator.h"
 
 #include <iostream>
 #include <sstream>
