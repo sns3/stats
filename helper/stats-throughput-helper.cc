@@ -397,8 +397,7 @@ StatsThroughputHelper::RxCallback(Ptr<const Packet> packet, const Address& from)
     if (from.IsInvalid())
     {
         NS_LOG_WARN(this << " discarding packet " << packet << " (" << packet->GetSize()
-                         << " bytes)"
-                         << " from statistics collection because of"
+                         << " bytes)" << " from statistics collection because of"
                          << " invalid sender address");
     }
     else
@@ -409,8 +408,7 @@ StatsThroughputHelper::RxCallback(Ptr<const Packet> packet, const Address& from)
         if (it == m_identifierMap.end())
         {
             NS_LOG_WARN(this << " discarding packet " << packet << " (" << packet->GetSize()
-                             << " bytes)"
-                             << " from statistics collection because of"
+                             << " bytes)" << " from statistics collection because of"
                              << " unknown sender address " << from);
         }
         else
@@ -462,7 +460,9 @@ StatsAppThroughputHelper::DoInstallProbes()
         const int32_t id = (*it)->GetId();
         uint32_t identifier = 0;
         if (GetIdentifierType() == StatsHelper::IDENTIFIER_NODE)
+        {
             identifier = id;
+        }
 
         for (uint32_t i = 0; i < (*it)->GetNApplications(); i++)
         {

@@ -563,7 +563,9 @@ StatsAppDelayHelper::DoInstallProbes()
         const int32_t id = (*it)->GetId();
         uint32_t identifier = 0;
         if (GetIdentifierType() == StatsHelper::IDENTIFIER_NODE)
+        {
             identifier = id;
+        }
 
         for (uint32_t i = 0; i < (*it)->GetNApplications(); i++)
         {
@@ -597,13 +599,13 @@ StatsAppDelayHelper::DoInstallProbes()
 
             if (rxIsConnected)
             {
-                NS_LOG_INFO(this << " successfully connected to Rx "
-                                 << " with node ID " << (*it)->GetId() << " application #" << i);
+                NS_LOG_INFO(this << " successfully connected to Rx " << " with node ID "
+                                 << (*it)->GetId() << " application #" << i);
             }
             if (txIsConnected)
             {
-                NS_LOG_INFO(this << " successfully connected to Tx "
-                                 << " with node ID " << (*it)->GetId() << " application #" << i);
+                NS_LOG_INFO(this << " successfully connected to Tx " << " with node ID "
+                                 << (*it)->GetId() << " application #" << i);
             }
             if (!txIsConnected && !rxIsConnected)
             {
@@ -612,8 +614,8 @@ StatsAppDelayHelper::DoInstallProbes()
                  * not every kind of Application is equipped with the expected
                  * RxDelay or Rx or Tx trace sources.
                  */
-                NS_LOG_WARN(this << " unable to connect"
-                                 << " with node ID " << (*it)->GetId() << " application #" << i);
+                NS_LOG_WARN(this << " unable to connect" << " with node ID " << (*it)->GetId()
+                                 << " application #" << i);
             }
 
         } // end of `for (i = 0; i < (*it)->GetNApplications (); i++)`
@@ -639,8 +641,8 @@ StatsAppDelayHelper::RxCallback(Ptr<StatsAppDelayHelper> helper,
 
         if (item.GetTypeId() == TrafficTimeTag::GetTypeId())
         {
-            NS_LOG_DEBUG("Contains a TrafficTimeTag tag:"
-                         << " start=" << item.GetStart() << " end=" << item.GetEnd());
+            NS_LOG_DEBUG("Contains a TrafficTimeTag tag:" << " start=" << item.GetStart()
+                                                          << " end=" << item.GetEnd());
             TrafficTimeTag timeTag;
             item.GetTag(timeTag);
             const Time delay = Simulator::Now() - timeTag.GetSenderTimestamp();
