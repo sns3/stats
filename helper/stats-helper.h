@@ -23,11 +23,11 @@
 #ifndef STATS_HELPER_H
 #define STATS_HELPER_H
 
-#include <ns3/attribute.h>
-#include <ns3/net-device-container.h>
-#include <ns3/node-container.h>
-#include <ns3/object.h>
-#include <ns3/ptr.h>
+#include "ns3/attribute.h"
+#include "ns3/net-device-container.h"
+#include "ns3/node-container.h"
+#include "ns3/object.h"
+#include "ns3/ptr.h"
 
 #include <map>
 #include <string>
@@ -40,16 +40,16 @@ class CollectorMap;
 class DataCollectionObject;
 
 /**
- * \ingroup stats
- * \defgroup stats Statistics
+ * @ingroup stats
+ * @defgroup stats Statistics
  *
  * Data Collection Framework (DCF) implementation on Stats module. For
  * usage in simulation script, see comments of inherited classes.
  */
 
 /**
- * \ingroup stats
- * \brief Parent abstract class of other statistics helpers.
+ * @ingroup stats
+ * @brief Parent abstract class of other statistics helpers.
  *
  * A helper is responsible to locate source objects, create probes, collectors,
  * and aggregators, and connect them together in a proper way to produce the
@@ -59,7 +59,7 @@ class DataCollectionObject;
  * name, an identifier type, an output type and nodes which are monitored.
  * After all the necessary inputs have been set, the statistics
  * can be started into action by invoking Install(). For example:
- * \code
+ * @code
  *     NodeContainer nodes;
  *     nodes.Create (2);
  *     // ... (snip) ...
@@ -72,7 +72,7 @@ class DataCollectionObject;
  *     stat->Install ();
  *     // ... (run simulation) ...
  *     stat->Dispose (); // Disposing creates output files
- * \endcode
+ * @endcode
  *
  * This parent abstract class hosts several protected methods which are intended
  * to simplify the development of child classes. These methods handle
@@ -84,8 +84,8 @@ class StatsHelper : public Object
     // COMMON ENUM DATA TYPES ///////////////////////////////////////////////////
 
     /**
-     * \enum IdentifierType_t
-     * \brief Possible categorization of statistics output.
+     * @enum IdentifierType_t
+     * @brief Possible categorization of statistics output.
      */
     typedef enum
     {
@@ -94,14 +94,14 @@ class StatsHelper : public Object
     } IdentifierType_t;
 
     /**
-     * \param identifierType an arbitrary identifier type.
-     * \return representation of the identifier type in string.
+     * @param identifierType an arbitrary identifier type.
+     * @return representation of the identifier type in string.
      */
     static std::string GetIdentifierTypeName(IdentifierType_t identifierType);
 
     /**
-     * \enum OutputType_t
-     * \brief Possible types and formats of statistics output.
+     * @enum OutputType_t
+     * @brief Possible types and formats of statistics output.
      */
     typedef enum
     {
@@ -119,15 +119,15 @@ class StatsHelper : public Object
     } OutputType_t;
 
     /**
-     * \param outputType an arbitrary output type.
-     * \return representation of the output type in string.
+     * @param outputType an arbitrary output type.
+     * @return representation of the output type in string.
      */
     static std::string GetOutputTypeName(OutputType_t outputType);
 
     // CONSTRUCTOR AND DESTRUCTOR ///////////////////////////////////////////////
 
     /**
-     * \brief Creates a new helper instance.
+     * @brief Creates a new helper instance.
      */
     StatsHelper();
 
@@ -143,14 +143,14 @@ class StatsHelper : public Object
 
     /**
      * Check if a directory is valid.
-     * \param path Path that is checked
+     * @param path Path that is checked
      */
     static bool IsValidDirectory(std::string path);
 
     // PUBLIC METHODS ///////////////////////////////////////////////////////////
 
     /**
-     * \brief Install the probes, collectors, and aggregators necessary to
+     * @brief Install the probes, collectors, and aggregators necessary to
      *        produce the statistics output.
      *
      * Behaviour should be implemented by child class in DoInstall().
@@ -160,57 +160,57 @@ class StatsHelper : public Object
     // SETTER AND GETTER METHODS ////////////////////////////////////////////////
 
     /**
-     * \param name string to be prepended on every output file name.
+     * @param name string to be prepended on every output file name.
      */
     void SetName(std::string name);
 
     /**
-     * \return the name of this helper instance.
+     * @return the name of this helper instance.
      */
     std::string GetName() const;
 
     /**
      * Install nodes to this helper instance.
-     * \param nodes Nodes to which statistics collectors are installed
+     * @param nodes Nodes to which statistics collectors are installed
      */
     void InstallNodes(NodeContainer nodes);
 
     /**
      * Install node to this helper instance.
-     * \param node Node to which statistics collector is installed
+     * @param node Node to which statistics collector is installed
      */
     void InstallNodes(Ptr<Node> node);
 
     /**
-     * \param identifierType categorization of statistics output.
-     * \warning Does not have any effect if invoked after Install().
+     * @param identifierType categorization of statistics output.
+     * @warning Does not have any effect if invoked after Install().
      */
     void SetIdentifierType(IdentifierType_t identifierType);
 
     /**
-     * \return the currently active categorization of statistics output.
+     * @return the currently active categorization of statistics output.
      */
     IdentifierType_t GetIdentifierType() const;
 
     /**
-     * \param outputType types and formats of statistics output.
-     * \warning Does not have any effect if invoked after Install().
+     * @param outputType types and formats of statistics output.
+     * @warning Does not have any effect if invoked after Install().
      */
     void SetOutputType(OutputType_t outputType);
 
     /**
-     * \return the currently active types and formats of statistics output.
+     * @return the currently active types and formats of statistics output.
      */
     OutputType_t GetOutputType() const;
 
     /**
-     * \return true if Install() has been invoked, otherwise false.
+     * @return true if Install() has been invoked, otherwise false.
      */
     bool IsInstalled() const;
 
   protected:
     /**
-     * \brief Install the probes, collectors, and aggregators necessary to
+     * @brief Install the probes, collectors, and aggregators necessary to
      *        produce the statistics output.
      *
      * An abstract method of StatsHelper which must be implemented by child
@@ -219,63 +219,63 @@ class StatsHelper : public Object
     virtual void DoInstall() = 0;
 
     /**
-     * \return the path where statistics output file should be created.
+     * @return the path where statistics output file should be created.
      *
      * Path is determined by OutputPath attribute.
      */
     virtual std::string GetOutputPath() const;
 
     /**
-     * \param the path where statistics output should be written to.
+     * @param the path where statistics output should be written to.
      *
      * Set the default output path.
      */
     virtual void SetOutputPath(std::string outputPath);
 
     /**
-     * \brief Compute the path and file name where statistics output should be
+     * @brief Compute the path and file name where statistics output should be
      *        written to.
-     * \return path and file name (without extension)
+     * @return path and file name (without extension)
      *
      * Path is determined by by OutputPath attribute.
      */
     virtual std::string GetOutputFileName() const;
 
     /**
-     * \param dataLabel the short name of the main data of this statistics
-     * \return a string to be printed as the first line of output, consisting of
+     * @param dataLabel the short name of the main data of this statistics
+     * @return a string to be printed as the first line of output, consisting of
      *         the identifier title and the given data label
      */
     virtual std::string GetIdentifierHeading(std::string dataLabel) const;
 
     /**
-     * \param dataLabel the short name of the main data of this statistics
-     * \return a string to be printed as the first line of output, consisting of
+     * @param dataLabel the short name of the main data of this statistics
+     * @return a string to be printed as the first line of output, consisting of
      *         the title of the time column and the given data label
      */
     virtual std::string GetTimeHeading(std::string dataLabel) const;
 
     /**
-     * \param dataLabel the short name of the main data of this statistics
-     * \return a string to be printed as the first line of output, consisting of
+     * @param dataLabel the short name of the main data of this statistics
+     * @return a string to be printed as the first line of output, consisting of
      *         the given data label and the title of the distribution column
      */
     virtual std::string GetDistributionHeading(std::string dataLabel) const;
 
     /**
-     * \brief Create the aggregator according to the output type.
-     * \param aggregatorTypeId the type of aggregator to be created.
-     * \param n1 the name of the attribute to be set on the aggregator created.
-     * \param v1 the value of the attribute to be set on the aggregator created.
-     * \param n2 the name of the attribute to be set on the aggregator created.
-     * \param v2 the value of the attribute to be set on the aggregator created.
-     * \param n3 the name of the attribute to be set on the aggregator created.
-     * \param v3 the value of the attribute to be set on the aggregator created.
-     * \param n4 the name of the attribute to be set on the aggregator created.
-     * \param v4 the value of the attribute to be set on the aggregator created.
-     * \param n5 the name of the attribute to be set on the aggregator created.
-     * \param v5 the value of the attribute to be set on the aggregator created.
-     * \return a pointer to the created aggregator.
+     * @brief Create the aggregator according to the output type.
+     * @param aggregatorTypeId the type of aggregator to be created.
+     * @param n1 the name of the attribute to be set on the aggregator created.
+     * @param v1 the value of the attribute to be set on the aggregator created.
+     * @param n2 the name of the attribute to be set on the aggregator created.
+     * @param v2 the value of the attribute to be set on the aggregator created.
+     * @param n3 the name of the attribute to be set on the aggregator created.
+     * @param v3 the value of the attribute to be set on the aggregator created.
+     * @param n4 the name of the attribute to be set on the aggregator created.
+     * @param v4 the value of the attribute to be set on the aggregator created.
+     * @param n5 the name of the attribute to be set on the aggregator created.
+     * @param v5 the value of the attribute to be set on the aggregator created.
+     * @return a pointer to the created aggregator.
      */
     Ptr<DataCollectionObject> CreateAggregator(std::string aggregatorTypeId,
                                                std::string n1 = "",
@@ -290,9 +290,9 @@ class StatsHelper : public Object
                                                const AttributeValue& v5 = EmptyAttributeValue());
 
     /**
-     * \brief Create one collector instance for each identifier in the simulation.
-     * \param collectorMap the CollectorMap where the collectors will be created.
-     * \return number of collector instances created.
+     * @brief Create one collector instance for each identifier in the simulation.
+     * @param collectorMap the CollectorMap where the collectors will be created.
+     * @return number of collector instances created.
      *
      * The identifier is determined by the currently active identifier type, as
      * previously selected by SetIdentifierType() method or `IdentifierType`
@@ -304,8 +304,8 @@ class StatsHelper : public Object
     uint32_t CreateCollectorPerIdentifier(CollectorMap& collectorMap) const;
 
     /**
-     * \brief Get nodes installed to this helper instance.
-     * \return nodes installed
+     * @brief Get nodes installed to this helper instance.
+     * @return nodes installed
      */
     inline NodeContainer GetNodes()
     {

@@ -41,7 +41,7 @@ namespace ns3
 {
 
 /**
- * \ingroup aggregator
+ * @ingroup aggregator
  * This aggregator produces output used to make gnuplot plots.
  **/
 class MagisterGnuplotAggregator : public DataCollectionObject
@@ -57,8 +57,8 @@ class MagisterGnuplotAggregator : public DataCollectionObject
     };
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -80,23 +80,23 @@ class MagisterGnuplotAggregator : public DataCollectionObject
     // into callbacks
 
     /**
-     * \param context specifies the gnuplot 2D dataset for these values
-     * \param x x coordinate for the new data point
-     * \param y y coordinate for the new data point
+     * @param context specifies the gnuplot 2D dataset for these values
+     * @param x x coordinate for the new data point
+     * @param y y coordinate for the new data point
      *
-     * \brief Writes a 2D value to a 2D gnuplot dataset.
+     * @brief Writes a 2D value to a 2D gnuplot dataset.
      *
      * Use this method with error bar style NONE.
      */
     void Write2d(std::string context, double x, double y);
 
     /**
-     * \param context specifies the gnuplot 2D dataset for these values
-     * \param x x coordinate for the new data point
-     * \param y y coordinate for the new data point
-     * \param errorDelta x data point uncertainty
+     * @param context specifies the gnuplot 2D dataset for these values
+     * @param x x coordinate for the new data point
+     * @param y y coordinate for the new data point
+     * @param errorDelta x data point uncertainty
      *
-     * \brief Writes a 2D value to a 2D gnuplot dataset with error bars
+     * @brief Writes a 2D value to a 2D gnuplot dataset with error bars
      * in the x direction.
      *
      * Use this method with error bar style X.
@@ -104,12 +104,12 @@ class MagisterGnuplotAggregator : public DataCollectionObject
     void Write2dWithXErrorDelta(std::string context, double x, double y, double errorDelta);
 
     /**
-     * \param context specifies the gnuplot 2D dataset for these values
-     * \param x x coordinate for the new data point
-     * \param y y coordinate for the new data point
-     * \param errorDelta y data point uncertainty
+     * @param context specifies the gnuplot 2D dataset for these values
+     * @param x x coordinate for the new data point
+     * @param y y coordinate for the new data point
+     * @param errorDelta y data point uncertainty
      *
-     * \brief Writes a 2D value to a 2D gnuplot dataset with error bars
+     * @brief Writes a 2D value to a 2D gnuplot dataset with error bars
      * in the y direction.
      *
      * Use this method with error bar style Y.
@@ -117,13 +117,13 @@ class MagisterGnuplotAggregator : public DataCollectionObject
     void Write2dWithYErrorDelta(std::string context, double x, double y, double errorDelta);
 
     /**
-     * \param context specifies the gnuplot 2D dataset for these values
-     * \param x x coordinate for the new data point
-     * \param y y coordinate for the new data point
-     * \param xErrorDelta x data point uncertainty
-     * \param yErrorDelta y data point uncertainty
+     * @param context specifies the gnuplot 2D dataset for these values
+     * @param x x coordinate for the new data point
+     * @param y y coordinate for the new data point
+     * @param xErrorDelta x data point uncertainty
+     * @param yErrorDelta y data point uncertainty
      *
-     * \brief Writes a 2D value to a 2D gnuplot dataset with error bars
+     * @brief Writes a 2D value to a 2D gnuplot dataset with error bars
      * in the x and y directions.
      *
      * Use this method with error bar style XY.
@@ -137,39 +137,39 @@ class MagisterGnuplotAggregator : public DataCollectionObject
     // Methods to configure the plot
 
     /**
-     * \param terminal terminal setting string for output. The default terminal
+     * @param terminal terminal setting string for output. The default terminal
      * string is "png"
      */
     void SetTerminal(const std::string& terminal);
 
     /**
-     * \param title set new plot title string to use for this plot.
+     * @param title set new plot title string to use for this plot.
      */
     void SetTitle(const std::string& title);
 
     /**
-     * \param xLegend the legend for the x horizontal axis
-     * \param yLegend the legend for the y vertical axis
+     * @param xLegend the legend for the x horizontal axis
+     * @param yLegend the legend for the y vertical axis
      */
     void SetLegend(const std::string& xLegend, const std::string& yLegend);
 
     /**
-     * \param extra set extra gnuplot directive for output.
+     * @param extra set extra gnuplot directive for output.
      */
     void SetExtra(const std::string& extra);
 
     /**
-     * \param extra append extra gnuplot directive for output.
+     * @param extra append extra gnuplot directive for output.
      */
     void AppendExtra(const std::string& extra);
 
     // Methods for datasets
 
     /**
-     * \param dataset the gnuplot 2D dataset to be plotted.
-     * \param title the title to be associated to this dataset.
+     * @param dataset the gnuplot 2D dataset to be plotted.
+     * @param title the title to be associated to this dataset.
      *
-     * \brief Adds a 2D dataset to the plot.
+     * @brief Adds a 2D dataset to the plot.
      *
      * Creates an empty dataset. Usually, the dataset's title is
      * displayed in the legend box.
@@ -180,18 +180,18 @@ class MagisterGnuplotAggregator : public DataCollectionObject
     void Add2dDataset(const std::string& dataset, const std::string& title);
 
     /**
-     * \param extra       extra formatting
+     * @param extra       extra formatting
      *
-     * \brief Change extra formatting style parameters for newly created
+     * @brief Change extra formatting style parameters for newly created
      * objects.
      */
     static void Set2dDatasetDefaultExtra(const std::string& extra);
 
     /**
-     * \param dataset the gnuplot 2D dataset to be plotted.
-     * \param extra       extra formatting
+     * @param dataset the gnuplot 2D dataset to be plotted.
+     * @param extra       extra formatting
      *
-     * \brief Add extra formatting parameters to this dataset.
+     * @brief Add extra formatting parameters to this dataset.
      *
      * The string in dataset should match the context for the Collector
      * it is connected to.
@@ -199,9 +199,9 @@ class MagisterGnuplotAggregator : public DataCollectionObject
     void Set2dDatasetExtra(const std::string& dataset, const std::string& extra);
 
     /**
-     * \param dataset the gnuplot 2D dataset to be plotted.
+     * @param dataset the gnuplot 2D dataset to be plotted.
      *
-     * \brief Add an empty line in the data output sequence.
+     * @brief Add an empty line in the data output sequence.
      *
      * Writes an empty line in the plot data, which breaks continuous
      * lines and does other things in the output.
@@ -212,17 +212,17 @@ class MagisterGnuplotAggregator : public DataCollectionObject
     void Write2dDatasetEmptyLine(const std::string& dataset);
 
     /**
-     * \param style the style of plotting to use for newly created datasets.
+     * @param style the style of plotting to use for newly created datasets.
      *
-     * \brief Change default style for all newly created objects.
+     * @brief Change default style for all newly created objects.
      */
     static void Set2dDatasetDefaultStyle(enum Gnuplot2dDataset::Style style);
 
     /**
-     * \param dataset the gnuplot 2D dataset to be plotted.
-     * \param style the style of plotting to use for this dataset.
+     * @param dataset the gnuplot 2D dataset to be plotted.
+     * @param style the style of plotting to use for this dataset.
      *
-     * \brief Set the style of plotting to use for this dataset.
+     * @brief Set the style of plotting to use for this dataset.
      *
      * The string in dataset should match the context for the Collector
      * it is connected to.
@@ -230,17 +230,17 @@ class MagisterGnuplotAggregator : public DataCollectionObject
     void Set2dDatasetStyle(const std::string& dataset, enum Gnuplot2dDataset::Style style);
 
     /**
-     * \param errorBars the style of errorbars to use for newly created datasets.
+     * @param errorBars the style of errorbars to use for newly created datasets.
      *
-     * \brief Change default errorbars style for all newly created objects.
+     * @brief Change default errorbars style for all newly created objects.
      */
     static void Set2dDatasetDefaultErrorBars(enum Gnuplot2dDataset::ErrorBars errorBars);
 
     /**
-     * \param dataset the gnuplot 2D dataset to be plotted.
-     * \param errorBars the style of errorbars to display.
+     * @param dataset the gnuplot 2D dataset to be plotted.
+     * @param errorBars the style of errorbars to display.
      *
-     * \brief Set the error bars to use for this dataset.
+     * @brief Set the error bars to use for this dataset.
      *
      * If you use any style other than none, you need
      * to make sure you store the delta information in
@@ -254,18 +254,18 @@ class MagisterGnuplotAggregator : public DataCollectionObject
                                enum Gnuplot2dDataset::ErrorBars errorBars);
 
     /**
-     * \param keyLocation the location of the key in the plot.
+     * @param keyLocation the location of the key in the plot.
      *
-     * \brief Set the location of the key in the plot.
+     * @brief Set the location of the key in the plot.
      */
     void SetKeyLocation(enum KeyLocation keyLocation);
 
     /**
      * TODO
-     * \param dataFileName The name of file to open.
-     * \param ofs The stream writing to the file.
+     * @param dataFileName The name of file to open.
+     * @param ofs The stream writing to the file.
      *
-     * \brief open a file for reading and gets the associated stream.
+     * @brief open a file for reading and gets the associated stream.
      */
     void GetDataStream(std::string dataFileName, std::ofstream* ofs);
 

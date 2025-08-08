@@ -40,7 +40,7 @@ namespace ns3
 {
 
 /**
- * \brief Probe to translate from a TraceSource to two more easily parsed TraceSources.
+ * @brief Probe to translate from a TraceSource to two more easily parsed TraceSources.
  *
  * This class is designed to probe an underlying ns3 TraceSource exporting a
  * time information and a socket address.  This probe exports a trace
@@ -54,43 +54,43 @@ class AddressTimeProbe : public Probe
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     AddressTimeProbe();
     virtual ~AddressTimeProbe();
 
     /**
-     * \brief Set a probe value
+     * @brief Set a probe value
      *
-     * \param timeValue set the traced time value equal to this
-     * \param address set the socket address for the traced packet equal to this
+     * @param timeValue set the traced time value equal to this
+     * @param address set the socket address for the traced packet equal to this
      */
     void SetValue(Time timeValue, const Address& address);
 
     /**
-     * \brief Set a probe value by its name in the Config system
+     * @brief Set a probe value by its name in the Config system
      *
-     * \param path config path to access the probe
-     * \param timeValue set the traced time value equal to this
-     * \param address set the socket address for the traced packet equal to this
+     * @param path config path to access the probe
+     * @param timeValue set the traced time value equal to this
+     * @param address set the socket address for the traced packet equal to this
      */
     static void SetValueByPath(std::string path, Time timeValue, const Address& address);
 
     /**
-     * \brief connect to a trace source attribute provided by a given object
+     * @brief connect to a trace source attribute provided by a given object
      *
-     * \param traceSource the name of the attribute TraceSource to connect to
-     * \param obj ns3::Object to connect to
-     * \return true if the trace source was successfully connected
+     * @param traceSource the name of the attribute TraceSource to connect to
+     * @param obj ns3::Object to connect to
+     * @return true if the trace source was successfully connected
      */
     virtual bool ConnectByObject(std::string traceSource, Ptr<Object> obj);
 
     /**
-     * \brief connect to a trace source provided by a config path
+     * @brief connect to a trace source provided by a config path
      *
-     * \param path Config path to bind to
+     * @param path Config path to bind to
      *
      * Note, if an invalid path is provided, the probe will not be connected
      * to anything.
@@ -98,30 +98,30 @@ class AddressTimeProbe : public Probe
     virtual void ConnectByPath(std::string path);
 
     /**
-     * \brief Callback signature for time value and address.
+     * @brief Callback signature for time value and address.
      *
-     * \param timeValue the time value
-     * \param address the socket address for the packet
+     * @param timeValue the time value
+     * @param address the socket address for the packet
      *
-     * \todo Optimize by using const-reference of Time.
+     * @todo Optimize by using const-reference of Time.
      */
     typedef void (*TimeAddressCallback)(Time timeValue, const Address& address);
 
     /**
-     * \brief Callback signature for changes in time value.
+     * @brief Callback signature for changes in time value.
      *
-     * \param oldValue the previous time value in seconds
-     * \param newValue the actual time value in seconds
+     * @param oldValue the previous time value in seconds
+     * @param newValue the actual time value in seconds
      */
     typedef void (*TimeCallback)(double oldValue, double newValue);
 
   private:
     /**
-     * \brief Method to connect to an underlying ns3::TraceSource with
+     * @brief Method to connect to an underlying ns3::TraceSource with
      * arguments of type Time value and const Address&
      *
-     * \param timeValue the traced time value
-     * \param address the socket address for the traced packet
+     * @param timeValue the traced time value
+     * @param address the socket address for the traced packet
      *
      */
     void TraceSink(Time timeValue, const Address& address);

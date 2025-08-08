@@ -22,9 +22,9 @@
 #ifndef SCALAR_COLLECTOR_H
 #define SCALAR_COLLECTOR_H
 
-#include <ns3/data-collection-object.h>
-#include <ns3/nstime.h>
-#include <ns3/traced-callback.h>
+#include "ns3/data-collection-object.h"
+#include "ns3/nstime.h"
+#include "ns3/traced-callback.h"
 
 #include <string>
 
@@ -32,16 +32,16 @@ namespace ns3
 {
 
 /**
- * \ingroup aggregator
- * \brief Collector which sums all the input data and emits the sum as a single
+ * @ingroup aggregator
+ * @brief Collector which sums all the input data and emits the sum as a single
  *        scalar output value.
  *
  * ### Input ###
  * This class provides 5 trace sinks for receiving inputs. Each trace sink
  * is a function with a signature similar to the following:
- * \code
+ * @code
  *   void TraceSinkP (P oldData, P newData);
- * \endcode
+ * @endcode
  * where `P` is one of the 5 supported data types. This type of signature
  * follows the trace source signature types commonly exported by probes. The
  * input data is processed using either `double` (the default) or `uint64_t`
@@ -64,8 +64,8 @@ class ScalarCollector : public DataCollectionObject
 {
   public:
     /**
-     * \enum InputDataType_t
-     * \brief Data types that can serve as inputs for this class.
+     * @enum InputDataType_t
+     * @brief Data types that can serve as inputs for this class.
      */
     typedef enum
     {
@@ -75,14 +75,14 @@ class ScalarCollector : public DataCollectionObject
     } InputDataType_t;
 
     /**
-     * \param inputDataType an arbitrary input data type.
-     * \return representation of the input data type in string.
+     * @param inputDataType an arbitrary input data type.
+     * @return representation of the input data type in string.
      */
     static std::string GetInputDataTypeName(InputDataType_t inputDataType);
 
     /**
-     * \enum OutputType_t
-     * \brief Type of output supported by this class.
+     * @enum OutputType_t
+     * @brief Type of output supported by this class.
      */
     typedef enum
     {
@@ -107,8 +107,8 @@ class ScalarCollector : public DataCollectionObject
     } OutputType_t;
 
     /**
-     * \param outputType an arbitrary output type.
-     * \return representation of the output type in string.
+     * @param outputType an arbitrary output type.
+     * @return representation of the output type in string.
      */
     static std::string GetOutputTypeName(OutputType_t outputType);
 
@@ -121,31 +121,31 @@ class ScalarCollector : public DataCollectionObject
     // ATTRIBUTE SETTERS AND GETTERS ////////////////////////////////////////////
 
     /**
-     * \param inputDataType the data type accepted as input.
+     * @param inputDataType the data type accepted as input.
      */
     void SetInputDataType(InputDataType_t inputDataType);
 
     /**
-     * \return the data type accepted as input.
+     * @return the data type accepted as input.
      */
     InputDataType_t GetInputDataType() const;
 
     /**
-     * \param outputType the processing mechanism used by this instance.
+     * @param outputType the processing mechanism used by this instance.
      */
     void SetOutputType(OutputType_t outputType);
 
     /**
-     * \return the processing mechanism used by this instance.
+     * @return the processing mechanism used by this instance.
      */
     OutputType_t GetOutputType() const;
 
     // TRACE SINKS //////////////////////////////////////////////////////////////
 
     /**
-     * \brief Trace sink for receiving data from `double` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `double` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `double` valued trace sources.
      *
@@ -156,9 +156,9 @@ class ScalarCollector : public DataCollectionObject
     void TraceSinkDouble(double oldData, double newData);
 
     /**
-     * \brief Trace sink for receiving data from `uint8_t` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `uint8_t` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `uint8_t` valued trace sources.
      * The data will be converted to `uint64_t` and then simply passed to the
@@ -171,9 +171,9 @@ class ScalarCollector : public DataCollectionObject
     void TraceSinkUinteger8(uint8_t oldData, uint8_t newData);
 
     /**
-     * \brief Trace sink for receiving data from `uint16_t` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `uint16_t` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `uint16_t` valued trace sources.
      * The data will be converted to `uint64_t` and then simply passed to the
@@ -186,9 +186,9 @@ class ScalarCollector : public DataCollectionObject
     void TraceSinkUinteger16(uint16_t oldData, uint16_t newData);
 
     /**
-     * \brief Trace sink for receiving data from `uint32_t` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `uint32_t` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `uint32_t` valued trace sources.
      * The data will be converted to `uint64_t` and then simply passed to the
@@ -201,9 +201,9 @@ class ScalarCollector : public DataCollectionObject
     void TraceSinkUinteger32(uint32_t oldData, uint32_t newData);
 
     /**
-     * \brief Trace sink for receiving data from `uint64_t` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `uint64_t` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `uint64_t` valued trace sources.
      *
@@ -214,9 +214,9 @@ class ScalarCollector : public DataCollectionObject
     void TraceSinkUinteger64(uint64_t oldData, uint64_t newData);
 
     /**
-     * \brief Trace sink for receiving data from `bool` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `bool` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `bool` valued trace sources.
      *

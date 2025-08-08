@@ -22,28 +22,28 @@
 
 #include "stats-throughput-helper.h"
 
-#include <ns3/application-packet-probe.h>
-#include <ns3/application.h>
-#include <ns3/boolean.h>
-#include <ns3/callback.h>
-#include <ns3/data-collection-object.h>
-#include <ns3/distribution-collector.h>
-#include <ns3/enum.h>
-#include <ns3/inet-socket-address.h>
-#include <ns3/interval-rate-collector.h>
-#include <ns3/ipv4.h>
-#include <ns3/log.h>
-#include <ns3/mac48-address.h>
-#include <ns3/magister-gnuplot-aggregator.h>
-#include <ns3/multi-file-aggregator.h>
-#include <ns3/net-device.h>
-#include <ns3/node-container.h>
-#include <ns3/packet.h>
-#include <ns3/probe.h>
-#include <ns3/scalar-collector.h>
-#include <ns3/singleton.h>
-#include <ns3/string.h>
-#include <ns3/unit-conversion-collector.h>
+#include "ns3/application-packet-probe.h"
+#include "ns3/application.h"
+#include "ns3/boolean.h"
+#include "ns3/callback.h"
+#include "ns3/data-collection-object.h"
+#include "ns3/distribution-collector.h"
+#include "ns3/enum.h"
+#include "ns3/inet-socket-address.h"
+#include "ns3/interval-rate-collector.h"
+#include "ns3/ipv4.h"
+#include "ns3/log.h"
+#include "ns3/mac48-address.h"
+#include "ns3/magister-gnuplot-aggregator.h"
+#include "ns3/multi-file-aggregator.h"
+#include "ns3/net-device.h"
+#include "ns3/node-container.h"
+#include "ns3/packet.h"
+#include "ns3/probe.h"
+#include "ns3/scalar-collector.h"
+#include "ns3/singleton.h"
+#include "ns3/string.h"
+#include "ns3/unit-conversion-collector.h"
 
 #include <map>
 #include <sstream>
@@ -252,7 +252,7 @@ StatsThroughputHelper::DoInstall()
     }
 
     case StatsHelper::OUTPUT_SCALAR_PLOT:
-        /// \todo Add support for boxes in Gnuplot.
+        /// @todo Add support for boxes in Gnuplot.
         NS_FATAL_ERROR(GetOutputTypeName(GetOutputType())
                        << " is not a valid output type for this statistics.");
         break;
@@ -320,7 +320,7 @@ StatsThroughputHelper::DoInstall()
         plotAggregator->SetLegend("Received throughput (in kilobits per second)", "Frequency");
         plotAggregator->Set2dDatasetDefaultStyle(Gnuplot2dDataset::LINES);
         plotAggregator->Add2dDataset(GetName(), GetName());
-        /// \todo Find a better dataset name.
+        /// @todo Find a better dataset name.
 
         // Setup the final-level collector.
         m_averagingCollector = CreateObject<DistributionCollector>();
@@ -340,7 +340,7 @@ StatsThroughputHelper::DoInstall()
             "Output",
             GetName(),
             MakeCallback(&MagisterGnuplotAggregator::Write2d, plotAggregator));
-        /// \todo Find a better dataset name.
+        /// @todo Find a better dataset name.
 
         // Setup second-level collectors.
         m_terminalCollectors.SetType("ns3::ScalarCollector");
@@ -397,8 +397,7 @@ StatsThroughputHelper::RxCallback(Ptr<const Packet> packet, const Address& from)
     if (from.IsInvalid())
     {
         NS_LOG_WARN(this << " discarding packet " << packet << " (" << packet->GetSize()
-                         << " bytes)"
-                         << " from statistics collection because of"
+                         << " bytes)" << " from statistics collection because of"
                          << " invalid sender address");
     }
     else
@@ -409,8 +408,7 @@ StatsThroughputHelper::RxCallback(Ptr<const Packet> packet, const Address& from)
         if (it == m_identifierMap.end())
         {
             NS_LOG_WARN(this << " discarding packet " << packet << " (" << packet->GetSize()
-                             << " bytes)"
-                             << " from statistics collection because of"
+                             << " bytes)" << " from statistics collection because of"
                              << " unknown sender address " << from);
         }
         else
@@ -462,7 +460,9 @@ StatsAppThroughputHelper::DoInstallProbes()
         const int32_t id = (*it)->GetId();
         uint32_t identifier = 0;
         if (GetIdentifierType() == StatsHelper::IDENTIFIER_NODE)
+        {
             identifier = id;
+        }
 
         for (uint32_t i = 0; i < (*it)->GetNApplications(); i++)
         {

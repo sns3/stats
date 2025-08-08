@@ -40,7 +40,7 @@ namespace ns3
 {
 
 /**
- * \brief Probe to translate from a TraceSource to two more easily parsed TraceSources.
+ * @brief Probe to translate from a TraceSource to two more easily parsed TraceSources.
  *
  * This class is designed to probe an underlying ns3 TraceSource exporting a
  * boolean information and a socket address.  This probe exports a trace
@@ -53,43 +53,43 @@ class AddressBooleanProbe : public Probe
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     AddressBooleanProbe();
     virtual ~AddressBooleanProbe();
 
     /**
-     * \brief Set a probe value
+     * @brief Set a probe value
      *
-     * \param booleanValue set the traced boolean equal to this
-     * \param address set the socket address for the traced packet equal to this
+     * @param booleanValue set the traced boolean equal to this
+     * @param address set the socket address for the traced packet equal to this
      */
     void SetValue(bool booleanValue, const Address& address);
 
     /**
-     * \brief Set a probe value by its name in the Config system
+     * @brief Set a probe value by its name in the Config system
      *
-     * \param path config path to access the probe
-     * \param booleanValue set the traced boolean equal to this
-     * \param address set the socket address for the traced packet equal to this
+     * @param path config path to access the probe
+     * @param booleanValue set the traced boolean equal to this
+     * @param address set the socket address for the traced packet equal to this
      */
     static void SetValueByPath(std::string path, bool booleanValue, const Address& address);
 
     /**
-     * \brief connect to a trace source attribute provided by a given object
+     * @brief connect to a trace source attribute provided by a given object
      *
-     * \param traceSource the name of the attribute TraceSource to connect to
-     * \param obj ns3::Object to connect to
-     * \return true if the trace source was successfully connected
+     * @param traceSource the name of the attribute TraceSource to connect to
+     * @param obj ns3::Object to connect to
+     * @return true if the trace source was successfully connected
      */
     virtual bool ConnectByObject(std::string traceSource, Ptr<Object> obj);
 
     /**
-     * \brief connect to a trace source provided by a config path
+     * @brief connect to a trace source provided by a config path
      *
-     * \param path Config path to bind to
+     * @param path Config path to bind to
      *
      * Note, if an invalid path is provided, the probe will not be connected
      * to anything.
@@ -97,29 +97,29 @@ class AddressBooleanProbe : public Probe
     virtual void ConnectByPath(std::string path);
 
     /**
-     * \brief Callback signature for boolean and address.
+     * @brief Callback signature for boolean and address.
      *
-     * \param value the packet delay
-     * \param address the socket address for the packet
+     * @param value the packet delay
+     * @param address the socket address for the packet
      *
      */
     typedef void (*BooleanAddressCallback)(bool value, const Address& address);
 
     /**
-     * \brief Callback signature for changes in boolean.
+     * @brief Callback signature for changes in boolean.
      *
-     * \param oldValue the previous boolean
-     * \param newValue the actual boolean
+     * @param oldValue the previous boolean
+     * @param newValue the actual boolean
      */
     typedef void (*BooleanCallback)(bool oldValue, bool newValue);
 
   private:
     /**
-     * \brief Method to connect to an underlying ns3::TraceSource with
+     * @brief Method to connect to an underlying ns3::TraceSource with
      * arguments of type bool value and const Address&
      *
-     * \param booleanValue the traced boolean
-     * \param address the socket address for the traced packet
+     * @param booleanValue the traced boolean
+     * @param address the socket address for the traced packet
      *
      */
     void TraceSink(bool booleanValue, const Address& address);

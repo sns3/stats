@@ -21,29 +21,29 @@
 
 #include "stats-delay-helper.h"
 
-#include <ns3/address-time-probe.h>
-#include <ns3/application.h>
-#include <ns3/boolean.h>
-#include <ns3/callback.h>
-#include <ns3/data-collection-object.h>
-#include <ns3/distribution-collector.h>
-#include <ns3/enum.h>
-#include <ns3/inet-socket-address.h>
-#include <ns3/ipv4.h>
-#include <ns3/log.h>
-#include <ns3/mac48-address.h>
-#include <ns3/magister-gnuplot-aggregator.h>
-#include <ns3/multi-file-aggregator.h>
-#include <ns3/net-device.h>
-#include <ns3/node-container.h>
-#include <ns3/nstime.h>
-#include <ns3/packet.h>
-#include <ns3/probe.h>
-#include <ns3/scalar-collector.h>
-#include <ns3/singleton.h>
-#include <ns3/string.h>
-#include <ns3/traffic-time-tag.h>
-#include <ns3/unit-conversion-collector.h>
+#include "ns3/address-time-probe.h"
+#include "ns3/application.h"
+#include "ns3/boolean.h"
+#include "ns3/callback.h"
+#include "ns3/data-collection-object.h"
+#include "ns3/distribution-collector.h"
+#include "ns3/enum.h"
+#include "ns3/inet-socket-address.h"
+#include "ns3/ipv4.h"
+#include "ns3/log.h"
+#include "ns3/mac48-address.h"
+#include "ns3/magister-gnuplot-aggregator.h"
+#include "ns3/multi-file-aggregator.h"
+#include "ns3/net-device.h"
+#include "ns3/node-container.h"
+#include "ns3/nstime.h"
+#include "ns3/packet.h"
+#include "ns3/probe.h"
+#include "ns3/scalar-collector.h"
+#include "ns3/singleton.h"
+#include "ns3/string.h"
+#include "ns3/traffic-time-tag.h"
+#include "ns3/unit-conversion-collector.h"
 
 #include <sstream>
 #include <string>
@@ -254,7 +254,7 @@ StatsDelayHelper::DoInstall()
     }
 
     case StatsHelper::OUTPUT_SCALAR_PLOT:
-        /// \todo Add support for boxes in Gnuplot.
+        /// @todo Add support for boxes in Gnuplot.
         NS_FATAL_ERROR(GetOutputTypeName(GetOutputType())
                        << " is not a valid output type for this statistics.");
         break;
@@ -309,7 +309,7 @@ StatsDelayHelper::DoInstall()
             plotAggregator->SetLegend("Packet delay (in seconds)", "Frequency");
             plotAggregator->Set2dDatasetDefaultStyle(Gnuplot2dDataset::LINES);
             plotAggregator->Add2dDataset(GetName(), GetName());
-            /// \todo Find a better dataset name.
+            /// @todo Find a better dataset name.
 
             // Setup the final-level collector.
             m_averagingCollector = CreateObject<DistributionCollector>();
@@ -329,7 +329,7 @@ StatsDelayHelper::DoInstall()
                 "Output",
                 GetName(),
                 MakeCallback(&MagisterGnuplotAggregator::Write2d, plotAggregator));
-            /// \todo Find a better dataset name.
+            /// @todo Find a better dataset name.
 
             // Setup collectors.
             m_terminalCollectors.SetType("ns3::ScalarCollector");
@@ -563,7 +563,9 @@ StatsAppDelayHelper::DoInstallProbes()
         const int32_t id = (*it)->GetId();
         uint32_t identifier = 0;
         if (GetIdentifierType() == StatsHelper::IDENTIFIER_NODE)
+        {
             identifier = id;
+        }
 
         for (uint32_t i = 0; i < (*it)->GetNApplications(); i++)
         {
@@ -597,13 +599,13 @@ StatsAppDelayHelper::DoInstallProbes()
 
             if (rxIsConnected)
             {
-                NS_LOG_INFO(this << " successfully connected to Rx "
-                                 << " with node ID " << (*it)->GetId() << " application #" << i);
+                NS_LOG_INFO(this << " successfully connected to Rx " << " with node ID "
+                                 << (*it)->GetId() << " application #" << i);
             }
             if (txIsConnected)
             {
-                NS_LOG_INFO(this << " successfully connected to Tx "
-                                 << " with node ID " << (*it)->GetId() << " application #" << i);
+                NS_LOG_INFO(this << " successfully connected to Tx " << " with node ID "
+                                 << (*it)->GetId() << " application #" << i);
             }
             if (!txIsConnected && !rxIsConnected)
             {
@@ -612,8 +614,8 @@ StatsAppDelayHelper::DoInstallProbes()
                  * not every kind of Application is equipped with the expected
                  * RxDelay or Rx or Tx trace sources.
                  */
-                NS_LOG_WARN(this << " unable to connect"
-                                 << " with node ID " << (*it)->GetId() << " application #" << i);
+                NS_LOG_WARN(this << " unable to connect" << " with node ID " << (*it)->GetId()
+                                 << " application #" << i);
             }
 
         } // end of `for (i = 0; i < (*it)->GetNApplications (); i++)`
@@ -639,8 +641,8 @@ StatsAppDelayHelper::RxCallback(Ptr<StatsAppDelayHelper> helper,
 
         if (item.GetTypeId() == TrafficTimeTag::GetTypeId())
         {
-            NS_LOG_DEBUG("Contains a TrafficTimeTag tag:"
-                         << " start=" << item.GetStart() << " end=" << item.GetEnd());
+            NS_LOG_DEBUG("Contains a TrafficTimeTag tag:" << " start=" << item.GetStart()
+                                                          << " end=" << item.GetEnd());
             TrafficTimeTag timeTag;
             item.GetTag(timeTag);
             const Time delay = Simulator::Now() - timeTag.GetSenderTimestamp();

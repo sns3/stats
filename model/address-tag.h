@@ -21,8 +21,8 @@
 #ifndef ADDRESS_TAG_H
 #define ADDRESS_TAG_H
 
-#include <ns3/address.h>
-#include <ns3/tag.h>
+#include "ns3/address.h"
+#include "ns3/tag.h"
 
 #include <ostream>
 
@@ -30,8 +30,8 @@ namespace ns3
 {
 
 /**
- * \ingroup magister-stats
- * \brief This class implements a tag that carries the MAC address of the sender
+ * @ingroup magister-stats
+ * @brief This class implements a tag that carries the MAC address of the sender
  *        of the packet. Address tag is used for statistics purposes.
  */
 class AddressTag : public Tag
@@ -43,20 +43,20 @@ class AddressTag : public Tag
     AddressTag();
 
     /**
-     * \brief Creates a AddressTag instance with the given source address.
-     * \param addr the source address.
+     * @brief Creates a AddressTag instance with the given source address.
+     * @param addr the source address.
      */
     AddressTag(Address addr);
 
     /**
-     * \brief Set the source address.
-     * \param addr the source address.
+     * @brief Set the source address.
+     * @param addr the source address.
      */
     void SetSourceAddress(Address addr);
 
     /**
-     * \brief Get the source address.
-     * \return the source address.
+     * @brief Get the source address.
+     * @return the source address.
      */
     Address GetSourceAddress() const;
 
@@ -66,8 +66,8 @@ class AddressTag : public Tag
     static TypeId GetTypeId();
 
     /**
-     * \brief Get the type ID of instance
-     * \return the object TypeId
+     * @brief Get the type ID of instance
+     * @return the object TypeId
      */
     virtual TypeId GetInstanceTypeId() const;
 
@@ -78,19 +78,19 @@ class AddressTag : public Tag
 
     /**
      * Serializes information to buffer from this instance of Inherited
-     * \param buf Buffer in which the information is serialized
+     * @param buf Buffer in which the information is serialized
      */
     virtual void Serialize(TagBuffer buf) const;
 
     /**
      * Deserializes information from buffer to this instance of Inherited
-     * \param buf Buffer from which the information is deserialized
+     * @param buf Buffer from which the information is deserialized
      */
     virtual void Deserialize(TagBuffer buf);
 
     /**
      * Print time stamp of this instance of Inherited
-     * \param &os Output stream to which tag timestamp is printed.
+     * @param &os Output stream to which tag timestamp is printed.
      */
     virtual void Print(std::ostream& os) const;
 

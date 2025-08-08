@@ -38,7 +38,7 @@ namespace ns3
 {
 
 /**
- * \ingroup probes
+ * @ingroup probes
  *
  * This class is designed to probe an underlying ns3 TraceSource exporting
  * a uint32_t which represents a size in bytes.  This probe exports a trace
@@ -59,44 +59,44 @@ class BytesProbe : public Probe
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     BytesProbe();
     virtual ~BytesProbe();
 
     /**
-     * \return the most recent value
+     * @return the most recent value
      */
     uint32_t GetValue(void) const;
 
     /**
-     * \param value set the traced uint32_t to a new value
+     * @param value set the traced uint32_t to a new value
      */
     void SetValue(uint32_t value);
 
     /**
-     * \brief Set a probe value by its name in the Config system
+     * @brief Set a probe value by its name in the Config system
      *
-     * \param path Config path to access the probe
-     * \param value set the traced uint32_t to a new value
+     * @param path Config path to access the probe
+     * @param value set the traced uint32_t to a new value
      */
     static void SetValueByPath(std::string path, uint32_t value);
 
     /**
-     * \brief connect to a trace source attribute provided by a given object
+     * @brief connect to a trace source attribute provided by a given object
      *
-     * \param traceSource the name of the attribute TraceSource to connect to
-     * \param obj ns3::Object to connect to
-     * \return true if the trace source was successfully connected
+     * @param traceSource the name of the attribute TraceSource to connect to
+     * @param obj ns3::Object to connect to
+     * @return true if the trace source was successfully connected
      */
     virtual bool ConnectByObject(std::string traceSource, Ptr<Object> obj);
 
     /**
-     * \brief connect to a trace source provided by a config path
+     * @brief connect to a trace source provided by a config path
      *
-     * \param path Config path to bind to
+     * @param path Config path to bind to
      *
      * Note, if an invalid path is provided, the probe will not be connected
      * to anything.
@@ -105,9 +105,9 @@ class BytesProbe : public Probe
 
   private:
     /**
-     * \brief Method to connect to an underlying ns3::TraceSource of type uint32_t
+     * @brief Method to connect to an underlying ns3::TraceSource of type uint32_t
      *
-     * \param bytes value of the uint32_t
+     * @param bytes value of the uint32_t
      */
     void TraceSink(uint32_t bytes);
 

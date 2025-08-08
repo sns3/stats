@@ -22,10 +22,10 @@
 #ifndef UNIT_CONVERSION_COLLECTOR_H
 #define UNIT_CONVERSION_COLLECTOR_H
 
-#include <ns3/data-collection-object.h>
-#include <ns3/nstime.h>
-#include <ns3/traced-callback.h>
-#include <ns3/traced-value.h>
+#include "ns3/data-collection-object.h"
+#include "ns3/nstime.h"
+#include "ns3/traced-callback.h"
+#include "ns3/traced-value.h"
 
 #include <string>
 
@@ -33,15 +33,15 @@ namespace ns3
 {
 
 /**
- * \ingroup aggregator
- * \brief Collector which converts input sample data to a different unit.
+ * @ingroup aggregator
+ * @brief Collector which converts input sample data to a different unit.
  *
  * ### Input ###
  * This class provides 9 trace sinks for receiving inputs. Each trace sink
  * is a function with a signature similar to the following:
- * \code
+ * @code
  *   void TraceSinkP (P oldData, P newData);
- * \endcode
+ * @endcode
  * where `P` is one of the 9 supported data types. This type of signature
  * follows the trace source signature types commonly exported by probes.
  * Although different data types are accepted, they are all internally
@@ -76,10 +76,10 @@ class UnitConversionCollector : public DataCollectionObject
 {
   public:
     /**
-     * \enum ConversionType_t
-     * \brief Types of unit conversion procedure supported by this class.
+     * @enum ConversionType_t
+     * @brief Types of unit conversion procedure supported by this class.
      *
-     * \note Conversion to dB and dBm units expect strictly positive input value.
+     * @note Conversion to dB and dBm units expect strictly positive input value.
      */
     typedef enum
     {
@@ -93,8 +93,8 @@ class UnitConversionCollector : public DataCollectionObject
     } ConversionType_t;
 
     /**
-     * \param conversionType an arbitrary type of unit conversion procedure.
-     * \return representation of the type in string.
+     * @param conversionType an arbitrary type of unit conversion procedure.
+     * @return representation of the type in string.
      */
     static std::string GetConversionTypeName(ConversionType_t conversionType);
 
@@ -107,150 +107,150 @@ class UnitConversionCollector : public DataCollectionObject
     // ATTRIBUTE SETTERS AND GETTERS ////////////////////////////////////////////
 
     /**
-     * \param conversionType the type of unit conversion procedure to be utilized
+     * @param conversionType the type of unit conversion procedure to be utilized
      *                       by this collector instance to process the incoming
      *                       samples.
      */
     void SetConversionType(ConversionType_t conversionType);
 
     /**
-     * \return the type of unit conversion procedure to be utilized by this
+     * @return the type of unit conversion procedure to be utilized by this
      *         collector instance to process the incoming samples.
      */
     ConversionType_t GetConversionType() const;
 
     /**
-     * \param unit the unit used for the time output.
+     * @param unit the unit used for the time output.
      */
     void SetTimeUnit(Time::Unit unit);
 
     /**
-     * \return the unit used for the time output.
+     * @return the unit used for the time output.
      */
     Time::Unit GetTimeUnit() const;
 
     // TRACE SINKS //////////////////////////////////////////////////////////////
 
     /**
-     * \brief Trace sink for receiving data from `double` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `double` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `double` valued trace sources.
      *
-     * \warning In order to avoid processing uninitialized values, the `oldData`
+     * @warning In order to avoid processing uninitialized values, the `oldData`
      *          argument is regarded as zero at the very first sample.
      */
     void TraceSinkDouble(double oldData, double newData);
 
     /**
-     * \brief Trace sink for receiving data from `int8_t` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `int8_t` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `int8_t` valued trace sources.
      * The data will be converted to double and then simply passed to the
      * TraceSinkDouble() method.
      *
-     * \warning In order to avoid processing uninitialized values, the `oldData`
+     * @warning In order to avoid processing uninitialized values, the `oldData`
      *          argument is regarded as zero at the very first sample.
      */
     void TraceSinkInteger8(int8_t oldData, int8_t newData);
 
     /**
-     * \brief Trace sink for receiving data from `int16_t` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `int16_t` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `int16_t` valued trace sources.
      * The data will be converted to double and then simply passed to the
      * TraceSinkDouble() method.
      *
-     * \warning In order to avoid processing uninitialized values, the `oldData`
+     * @warning In order to avoid processing uninitialized values, the `oldData`
      *          argument is regarded as zero at the very first sample.
      */
     void TraceSinkInteger16(int16_t oldData, int16_t newData);
 
     /**
-     * \brief Trace sink for receiving data from `int32_t` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `int32_t` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `int32_t` valued trace sources.
      * The data will be converted to double and then simply passed to the
      * TraceSinkDouble() method.
      *
-     * \warning In order to avoid processing uninitialized values, the `oldData`
+     * @warning In order to avoid processing uninitialized values, the `oldData`
      *          argument is regarded as zero at the very first sample.
      */
     void TraceSinkInteger32(int32_t oldData, int32_t newData);
 
     /**
-     * \brief Trace sink for receiving data from `int64_t` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `int64_t` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `int64_t` valued trace sources.
      * The data will be converted to double and then simply passed to the
      * TraceSinkDouble() method.
      *
-     * \warning In order to avoid processing uninitialized values, the `oldData`
+     * @warning In order to avoid processing uninitialized values, the `oldData`
      *          argument is regarded as zero at the very first sample.
      */
     void TraceSinkInteger64(int64_t oldData, int64_t newData);
 
     /**
-     * \brief Trace sink for receiving data from `uint8_t` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `uint8_t` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `uint8_t` valued trace sources.
      * The data will be converted to double and then simply passed to the
      * TraceSinkDouble() method.
      *
-     * \warning In order to avoid processing uninitialized values, the `oldData`
+     * @warning In order to avoid processing uninitialized values, the `oldData`
      *          argument is regarded as zero at the very first sample.
      */
     void TraceSinkUinteger8(uint8_t oldData, uint8_t newData);
 
     /**
-     * \brief Trace sink for receiving data from `uint16_t` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `uint16_t` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `uint16_t` valued trace sources.
      * The data will be converted to double and then simply passed to the
      * TraceSinkDouble() method.
      *
-     * \warning In order to avoid processing uninitialized values, the `oldData`
+     * @warning In order to avoid processing uninitialized values, the `oldData`
      *          argument is regarded as zero at the very first sample.
      */
     void TraceSinkUinteger16(uint16_t oldData, uint16_t newData);
 
     /**
-     * \brief Trace sink for receiving data from `uint32_t` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `uint32_t` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `uint32_t` valued trace sources.
      * The data will be converted to double and then simply passed to the
      * TraceSinkDouble() method.
      *
-     * \warning In order to avoid processing uninitialized values, the `oldData`
+     * @warning In order to avoid processing uninitialized values, the `oldData`
      *          argument is regarded as zero at the very first sample.
      */
     void TraceSinkUinteger32(uint32_t oldData, uint32_t newData);
 
     /**
-     * \brief Trace sink for receiving data from `uint64_t` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `uint64_t` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `uint64_t` valued trace sources.
      * The data will be converted to double and then simply passed to the
      * TraceSinkDouble() method.
      *
-     * \warning In order to avoid processing uninitialized values, the `oldData`
+     * @warning In order to avoid processing uninitialized values, the `oldData`
      *          argument is regarded as zero at the very first sample.
      */
     void TraceSinkUinteger64(uint64_t oldData, uint64_t newData);
@@ -260,9 +260,9 @@ class UnitConversionCollector : public DataCollectionObject
     virtual void DoDispose();
 
     /**
-     * \internal
-     * \param original the new sample data received by trace sink.
-     * \return the sample data converted by the selected unit conversion
+     * @internal
+     * @param original the new sample data received by trace sink.
+     * @return the sample data converted by the selected unit conversion
      *         procedure.
      *
      * The unit conversion procedure can be selected by calling
@@ -272,7 +272,7 @@ class UnitConversionCollector : public DataCollectionObject
 
   private:
     /**
-     * \brief Indicate that the next sample would be the first sample received.
+     * @brief Indicate that the next sample would be the first sample received.
      *
      * The first sample of data received from the probe usually contains
      * uninitialized old data values. This fact makes Valgrind unhappy. Because

@@ -24,13 +24,13 @@
 
 #include "magister-stats.h"
 
-#include <ns3/boolean.h>
-#include <ns3/double.h>
-#include <ns3/enum.h>
-#include <ns3/log.h>
-#include <ns3/pointer.h>
-#include <ns3/simulator.h>
-#include <ns3/uinteger.h>
+#include "ns3/boolean.h"
+#include "ns3/double.h"
+#include "ns3/enum.h"
+#include "ns3/log.h"
+#include "ns3/pointer.h"
+#include "ns3/simulator.h"
+#include "ns3/uinteger.h"
 
 #include <cmath>
 #include <iostream>
@@ -477,9 +477,8 @@ DistributionCollector::InaccuracyCallback(double commonValue)
     NS_LOG_FUNCTION(this << commonValue);
     NS_LOG_WARN(this << " Collector " << GetName()
                      << " is unable to predict the sample distribution"
-                     << " because each of the received samples"
-                     << " (" << m_bins->GetNumOfSamples() << " samples)"
-                     << " holds the value " << commonValue);
+                     << " because each of the received samples" << " (" << m_bins->GetNumOfSamples()
+                     << " samples)" << " holds the value " << commonValue);
     m_warning(); // propagate accordingly
 }
 
@@ -929,8 +928,7 @@ AdaptiveBins::SettleBins()
     NS_ASSERT_MSG(m_numOfSamples > 1, "More samples are needed before this function is available.");
 
     // Compute the overall coverage of the bins.
-    NS_LOG_DEBUG(this << " settling samples:"
-                      << " smallest=" << m_smallestSettlingSamples
+    NS_LOG_DEBUG(this << " settling samples:" << " smallest=" << m_smallestSettlingSamples
                       << " largest=" << m_largestSettlingSamples);
     double originalRange = m_largestSettlingSamples - m_smallestSettlingSamples;
 
@@ -1069,8 +1067,7 @@ StaticBins::SettleBins()
                   "More samples are needed before this function is available.");
 
     // Compute the overall coverage of the bins.
-    NS_LOG_DEBUG(this << " settling samples:"
-                      << " smallest=" << m_smallestSettlingSamples
+    NS_LOG_DEBUG(this << " settling samples:" << " smallest=" << m_smallestSettlingSamples
                       << " largest=" << m_largestSettlingSamples);
     double originalRange = m_largestSettlingSamples - m_smallestSettlingSamples;
 

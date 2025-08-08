@@ -21,8 +21,8 @@
 
 #include "collector-map.h"
 
-#include <ns3/fatal-error.h>
-#include <ns3/log.h>
+#include "ns3/fatal-error.h"
+#include "ns3/log.h"
 
 #include <string>
 
@@ -55,8 +55,7 @@ CollectorMap::SetType(std::string type)
 
         if (!isCollector)
         {
-            NS_FATAL_ERROR("Type " << type << " is not a child of"
-                                   << " ns3::DataCollectionObject");
+            NS_FATAL_ERROR("Type " << type << " is not a child of" << " ns3::DataCollectionObject");
         }
         else
         {

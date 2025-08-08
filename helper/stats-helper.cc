@@ -22,17 +22,17 @@
 
 #include "stats-helper.h"
 
-#include <ns3/address.h>
-#include <ns3/collector-map.h>
-#include <ns3/data-collection-object.h>
-#include <ns3/enum.h>
-#include <ns3/log.h>
-#include <ns3/mac48-address.h>
-#include <ns3/node-container.h>
-#include <ns3/object-factory.h>
-#include <ns3/singleton.h>
-#include <ns3/string.h>
-#include <ns3/type-id.h>
+#include "ns3/address.h"
+#include "ns3/collector-map.h"
+#include "ns3/data-collection-object.h"
+#include "ns3/enum.h"
+#include "ns3/log.h"
+#include "ns3/mac48-address.h"
+#include "ns3/node-container.h"
+#include "ns3/object-factory.h"
+#include "ns3/singleton.h"
+#include "ns3/string.h"
+#include "ns3/type-id.h"
 
 #include <sstream>
 #include <stdio.h>
@@ -225,8 +225,8 @@ StatsHelper::SetIdentifierType(StatsHelper::IdentifierType_t identifierType)
 
     if (m_isInstalled && (m_identifierType != identifierType))
     {
-        NS_LOG_WARN(this << " cannot modify the current identifier type"
-                         << " (" << GetIdentifierTypeName(m_identifierType) << ")"
+        NS_LOG_WARN(this << " cannot modify the current identifier type" << " ("
+                         << GetIdentifierTypeName(m_identifierType) << ")"
                          << " because this instance have already been installed");
     }
     else
@@ -248,8 +248,8 @@ StatsHelper::SetOutputType(StatsHelper::OutputType_t outputType)
 
     if (m_isInstalled && (m_outputType != outputType))
     {
-        NS_LOG_WARN(this << " cannot modify the current output type"
-                         << " (" << GetIdentifierTypeName(m_identifierType) << ")"
+        NS_LOG_WARN(this << " cannot modify the current output type" << " ("
+                         << GetIdentifierTypeName(m_identifierType) << ")"
                          << " because this instance have already been installed");
     }
     else
@@ -330,8 +330,8 @@ StatsHelper::CreateCollectorPerIdentifier(CollectorMap& collectorMap) const
         break;
     }
 
-    NS_LOG_INFO(this << " created " << n << " instance(s)"
-                     << " of " << collectorMap.GetType().GetName() << " for "
+    NS_LOG_INFO(this << " created " << n << " instance(s)" << " of "
+                     << collectorMap.GetType().GetName() << " for "
                      << GetIdentifierTypeName(GetIdentifierType()));
 
     return n;

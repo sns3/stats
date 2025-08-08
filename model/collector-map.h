@@ -22,13 +22,13 @@
 #ifndef COLLECTOR_MAP_H
 #define COLLECTOR_MAP_H
 
-#include <ns3/assert.h>
-#include <ns3/attribute.h>
-#include <ns3/data-collection-object.h>
-#include <ns3/object-factory.h>
-#include <ns3/probe.h>
-#include <ns3/ptr.h>
-#include <ns3/type-id.h>
+#include "ns3/assert.h"
+#include "ns3/attribute.h"
+#include "ns3/data-collection-object.h"
+#include "ns3/object-factory.h"
+#include "ns3/probe.h"
+#include "ns3/ptr.h"
+#include "ns3/type-id.h"
 
 #include <iostream>
 #include <map>
@@ -38,8 +38,8 @@ namespace ns3
 {
 
 /**
- * \ingroup aggregator
- * \brief Keep track and manipulate a set of statistics collectors within the
+ * @ingroup aggregator
+ * @brief Keep track and manipulate a set of statistics collectors within the
  *        data collection framework.
  *
  * The map contains a set of collectors of the same type. Each of them is
@@ -50,7 +50,7 @@ namespace ns3
  *
  * The constructor creates an empty map. The following example demonstrates
  * adding two collectors into a new map.
- * \code
+ * @code
  *   // Create a new map with zero collector.
  *   CollectorMap c;
  *
@@ -74,7 +74,7 @@ namespace ns3
  *
  *   // Create a collector with identifier `3`.
  *   c.Create (3);
- * \endcode
+ * @endcode
  */
 class CollectorMap
 {
@@ -83,33 +83,33 @@ class CollectorMap
     CollectorMap();
 
     /**
-     * \param type the type of collectors to be created.
+     * @param type the type of collectors to be created.
      *
-     * \warning Will raise an error if the TypeId referred by the `type` argument
+     * @warning Will raise an error if the TypeId referred by the `type` argument
      *          does not refer to a class derived from DataCollectionObject class.
      */
     void SetType(std::string type);
 
     /**
-     * \return the type information used for creating collectors.
+     * @return the type information used for creating collectors.
      */
     TypeId GetType() const;
 
     /**
-     * \param n the name of the attribute to be set on each collector created.
-     * \param v the value of the attribute to be set on each collector created.
+     * @param n the name of the attribute to be set on each collector created.
+     * @param v the value of the attribute to be set on each collector created.
      */
     void SetAttribute(std::string n, const AttributeValue& v);
 
     /**
-     * \brief Create a single collector and append it to this map.
-     * \param identifier the identifier to be associated with the new collector.
+     * @brief Create a single collector and append it to this map.
+     * @param identifier the identifier to be associated with the new collector.
      *
      * The collector will be created based on the type information previously set
      * using SetType() and then configured using attribute values previously
      * declared using SetAttribute().
      *
-     * \warning If a collector with the same identifier has already existed in
+     * @warning If a collector with the same identifier has already existed in
      *          the map, it will be replaced by the newly created collector.
      *          Because of this, the destructor of the previous collector might
      *          be triggered. In most cases, this will trigger the previous
@@ -118,75 +118,75 @@ class CollectorMap
     void Create(uint32_t identifier);
 
     /**
-     * \brief Append a single collector to this map.
-     * \param identifier the identifier to be associated with the new collector.
-     * \param the new collector.
+     * @brief Append a single collector to this map.
+     * @param identifier the identifier to be associated with the new collector.
+     * @param the new collector.
      */
     void Insert(uint32_t identifier, Ptr<DataCollectionObject> dataCollectionObject);
 
     /**
-     * \return true if the map contains zero collector, or false otherwise.
+     * @return true if the map contains zero collector, or false otherwise.
      */
     bool IsEmpty() const;
 
     /**
-     * \param identifier the identifier of the collector to be queried.
-     * \return true if a collector with the specified identifier exists in the
+     * @param identifier the identifier of the collector to be queried.
+     * @return true if a collector with the specified identifier exists in the
      *         map, or false otherwise.
      */
     bool IsExists(uint32_t identifier) const;
 
     /**
-     * \return the number of collectors stored in this map.
+     * @return the number of collectors stored in this map.
      */
     uint32_t GetN() const;
 
     typedef std::map<uint32_t, Ptr<DataCollectionObject>>::const_iterator Iterator;
 
     /**
-     * \brief Get an iterator which refers to the first collector in the map.
-     * \return an iterator which refers to the first collector in the map.
+     * @brief Get an iterator which refers to the first collector in the map.
+     * @return an iterator which refers to the first collector in the map.
      *
      * Collectors can be retrieved from the map in two ways.  First, directly
      * using the identifier of the container, and second, using an iterator.
      * This method is used in the iterator method and is typically used in a
      * for-loop to run through the collectors.
      *
-     * \code
+     * @code
      *   CollectorMap::Iterator i;
      *   for (i = container.Begin (); i != container.End (); ++i)
      *     {
      *       std::cout << i->first << std::endl;  // the collector's identifier
      *       i->second->method ();  // some collector method
      *     }
-     * \endcode
+     * @endcode
      */
     Iterator Begin() const;
 
     /**
-     * \brief Get an iterator which indicates past-the-last collector in the map.
-     * \return an iterator which indicates an ending condition for a loop.
+     * @brief Get an iterator which indicates past-the-last collector in the map.
+     * @return an iterator which indicates an ending condition for a loop.
      *
      * Collectors can be retrieved from the map in two ways.  First, directly
      * using the identifier of the container, and second, using an iterator.
      * This method is used in the iterator method and is typically used in a
      * for-loop to run through the collectors.
      *
-     * \code
+     * @code
      *   CollectorMap::Iterator i;
      *   for (i = container.Begin (); i != container.End (); ++i)
      *     {
      *       std::cout << i->first << std::endl;  // the collector's identifier
      *       i->second->method ();  // some collector method
      *     }
-     * \endcode
+     * @endcode
      */
     Iterator End() const;
 
     /**
-     * \brief Get the collector stored in this map.
-     * \param identifier the identifier of the requested collector.
-     * \return a pointer to the requested collector, or zero if the requested
+     * @brief Get the collector stored in this map.
+     * @param identifier the identifier of the requested collector.
+     * @return a pointer to the requested collector, or zero if the requested
      *         collector is not found.
      *
      * Collectors can be retrieved from the map in two ways.  First, directly
@@ -197,17 +197,17 @@ class CollectorMap
     Ptr<DataCollectionObject> Get(uint32_t identifier) const;
 
     /**
-     * \brief Connect a probe with one of the collectors inside the map.
-     * \param probe a pointer to the probe.
-     * \param probeTraceSourceName the name of the trace source of the probe to
+     * @brief Connect a probe with one of the collectors inside the map.
+     * @param probe a pointer to the probe.
+     * @param probeTraceSourceName the name of the trace source of the probe to
      *                             be connected with the collector.
-     * \param collectorIdentifier the identifier of the collector.
-     * \param collectorTraceSink a pointer to a function of the collector which
+     * @param collectorIdentifier the identifier of the collector.
+     * @param collectorTraceSink a pointer to a function of the collector which
      *                           acts as a trace sink.
-     * \return true if a connection is successfully made, or false otherwise
+     * @return true if a connection is successfully made, or false otherwise
      *         (e.g., because of invalid probe trace source name).
      *
-     * \warning May cause undefined behaviour if the collector with the given
+     * @warning May cause undefined behaviour if the collector with the given
      *          identifier is not found within the map.
      *
      * Upon connection, the probe's output will become the input of the collector.
@@ -223,21 +223,21 @@ class CollectorMap
                           R (C::*collectorTraceSink)(P, P)) const;
 
     /**
-     * \brief Disconnect a probe from one of the collectors inside the map.
-     * \param probe a pointer to the probe.
-     * \param probeTraceSourceName the name of the trace source of the probe to
+     * @brief Disconnect a probe from one of the collectors inside the map.
+     * @param probe a pointer to the probe.
+     * @param probeTraceSourceName the name of the trace source of the probe to
      *                             be connected with the collector.
-     * \param collectorIdentifier the identifier of the collector.
-     * \param collectorTraceSink a pointer to a function of the collector which
+     * @param collectorIdentifier the identifier of the collector.
+     * @param collectorTraceSink a pointer to a function of the collector which
      *                           acts as a trace sink.
-     * \return true if a connection is successfully made, or false otherwise
+     * @return true if a connection is successfully made, or false otherwise
      *         (e.g., invalid probe trace source name).
      *
      * The collector's trace sink function must be an accessible (e.g., public)
      * class method which accepts two input arguments of the same type. For
      * example: `&IntervalRateCollector::TraceSinkDouble`.
      *
-     * \todo To remember the collector which a probe is currently connected to,
+     * @todo To remember the collector which a probe is currently connected to,
      *       so that disconnecting can be done without mentioning the identifier.
      */
     template <typename R, typename C, typename P>
@@ -247,14 +247,14 @@ class CollectorMap
                              R (C::*collectorTraceSink)(P, P)) const;
 
     /**
-     * \brief Connect each collector in this map with a corresponding collector
+     * @brief Connect each collector in this map with a corresponding collector
      *        in the target map.
-     * \param traceSourceName the name of the trace source of the collectors in
+     * @param traceSourceName the name of the trace source of the collectors in
      *                        this map to be connected with the target map.
-     * \param targetMap map of downstream collectors.
-     * \param traceSink a pointer to a function of the collectors in the target
+     * @param targetMap map of downstream collectors.
+     * @param traceSink a pointer to a function of the collectors in the target
      *                  map which acts as a trace sink.
-     * \return true if connections are created successfully, or false otherwise.
+     * @return true if connections are created successfully, or false otherwise.
      *
      * The connections created are one-to-one, where collectors with the same
      * identifier are connected. Upon connected, statistics data will flow from
@@ -265,7 +265,7 @@ class CollectorMap
      * class method which accepts two input arguments of the same type. For
      * example: `&IntervalRateCollector::TraceSinkDouble`.
      *
-     * \warning May cause undefined behaviour if the target CollectorMap has
+     * @warning May cause undefined behaviour if the target CollectorMap has
      *          different number of collectors or different set of identifiers.
      */
     template <typename R, typename C, typename P>
@@ -274,11 +274,11 @@ class CollectorMap
                             R (C::*traceSink)(P, P));
 
     /**
-     * \brief Connect each collector in the map to an aggregator.
-     * \param traceSourceName the name of the trace source of the collectors in
+     * @brief Connect each collector in the map to an aggregator.
+     * @param traceSourceName the name of the trace source of the collectors in
      *                        this map to be connected with the aggregator.
-     * \param aggregator a pointer to the aggregator.
-     * \param aggregatorTraceSink a pointer to a function of the aggregator which
+     * @param aggregator a pointer to the aggregator.
+     * @param aggregatorTraceSink a pointer to a function of the aggregator which
      *                            which acts as a trace sink.
      *
      * Upon connection, the collectors' output will become the input of the
@@ -295,11 +295,11 @@ class CollectorMap
                              R (C::*aggregatorTraceSink)(P1)) const;
 
     /**
-     * \brief Connect each collector in the map to an aggregator.
-     * \param traceSourceName the name of the trace source of the collectors in
+     * @brief Connect each collector in the map to an aggregator.
+     * @param traceSourceName the name of the trace source of the collectors in
      *                        this map to be connected with the aggregator.
-     * \param aggregator a pointer to the aggregator.
-     * \param aggregatorTraceSink a pointer to a function of the aggregator which
+     * @param aggregator a pointer to the aggregator.
+     * @param aggregatorTraceSink a pointer to a function of the aggregator which
      *                            which acts as a trace sink.
      *
      * Upon connection, the collectors' output will become the input of the
@@ -317,11 +317,11 @@ class CollectorMap
                              R (C::*aggregatorTraceSink)(P1, V1)) const;
 
     /**
-     * \brief Connect each collector in the map to an aggregator.
-     * \param traceSourceName the name of the trace source of the collectors in
+     * @brief Connect each collector in the map to an aggregator.
+     * @param traceSourceName the name of the trace source of the collectors in
      *                        this map to be connected with the aggregator.
-     * \param aggregator a pointer to the aggregator.
-     * \param aggregatorTraceSink a pointer to a function of the aggregator which
+     * @param aggregator a pointer to the aggregator.
+     * @param aggregatorTraceSink a pointer to a function of the aggregator which
      *                            which acts as a trace sink.
      *
      * Upon connection, the collectors' output will become the input of the

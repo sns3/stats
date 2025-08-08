@@ -22,10 +22,10 @@
 #ifndef DISTRIBUTION_COLLECTOR_H
 #define DISTRIBUTION_COLLECTOR_H
 
-#include <ns3/basic-data-calculators.h>
-#include <ns3/callback.h>
-#include <ns3/data-collection-object.h>
-#include <ns3/traced-callback.h>
+#include "ns3/basic-data-calculators.h"
+#include "ns3/callback.h"
+#include "ns3/data-collection-object.h"
+#include "ns3/traced-callback.h"
 
 #include <list>
 #include <string>
@@ -35,8 +35,8 @@ namespace ns3
 {
 
 /**
- * \ingroup aggregator
- * \brief Parent class for the bins.
+ * @ingroup aggregator
+ * @brief Parent class for the bins.
  */
 class DistributionBins : public Object
 {
@@ -47,8 +47,8 @@ class DistributionBins : public Object
     DistributionBins();
 
     /**
-     * \brief Create an empty set of bins which will adapt its structure.
-     * \param numOfBins a positive number indicating the number of bins.
+     * @brief Create an empty set of bins which will adapt its structure.
+     * @param numOfBins a positive number indicating the number of bins.
      */
     DistributionBins(uint32_t numOfBins);
 
@@ -56,110 +56,110 @@ class DistributionBins : public Object
     static TypeId GetTypeId();
 
     /**
-     * \return the number of samples received so far.
+     * @return the number of samples received so far.
      */
     uint32_t GetNumOfSamples() const;
 
     /**
-     * \brief Instruct the class to construct the bins.
+     * @brief Instruct the class to construct the bins.
      */
     virtual void SettleBins() = 0;
 
     /**
-     * \brief Instruct the class to construct the bins using the given parameters.
-     * \param minValue the lower bound of the first bin
-     * \param maxValue the upper bound of the last bin
+     * @brief Instruct the class to construct the bins using the given parameters.
+     * @param minValue the lower bound of the first bin
+     * @param maxValue the upper bound of the last bin
      *
-     * \warning Must have not been settled before.
+     * @warning Must have not been settled before.
      */
     void SettleBins(double minValue, double maxValue);
 
     /**
-     * \return true if the bins' structure have been fixed.
+     * @return true if the bins' structure have been fixed.
      */
     bool IsSettled() const;
 
     /**
-     * \return the lower bound of the first bin.
-     * \warning Requires IsSettled() to be true.
+     * @return the lower bound of the first bin.
+     * @warning Requires IsSettled() to be true.
      */
     double GetMinValue() const;
 
     /**
-     * \return the upper bound of the last bin.
-     * \warning Requires IsSettled() to be true.
+     * @return the upper bound of the last bin.
+     * @warning Requires IsSettled() to be true.
      */
     double GetMaxValue() const;
 
     /**
-     * \return the length of each bin.
-     * \warning Requires IsSettled() to be true.
+     * @return the length of each bin.
+     * @warning Requires IsSettled() to be true.
      */
     double GetBinLength() const;
 
     /**
-     * \return the number of bins maintained in this instance.
+     * @return the number of bins maintained in this instance.
      */
     uint32_t GetNumOfBins() const;
 
     /**
-     * \param value the smallest settling value.
+     * @param value the smallest settling value.
      */
     void SetSmallestSettlingValue(double value);
 
     /**
-     * \return the smallest settling value.
+     * @return the smallest settling value.
      */
     double GetSmallestSettlingValue() const;
 
     /**
-     * \param value the largest settling value.
+     * @param value the largest settling value.
      */
     void SetLargestSettlingValue(double value);
 
     /**
-     * \return the largest settling value.
+     * @return the largest settling value.
      */
     double GetLargestSettlingValue() const;
 
     /**
-     * \param value allow only positive values setting.
+     * @param value allow only positive values setting.
      */
     void SetAllowOnlyPositiveValues(bool value);
 
     /**
-     * \return the allow only positive values setting.
+     * @return the allow only positive values setting.
      */
     bool GetAllowOnlyPositiveValues() const;
 
     /**
-     * \brief Receive the given sample.
+     * @brief Receive the given sample.
      */
     virtual void NewSample(double newSample) = 0;
 
     /**
-     * \return the current value of the counter of a certain bin.
-     * \warning Requires IsSettled() to be true.
+     * @return the current value of the counter of a certain bin.
+     * @warning Requires IsSettled() to be true.
      */
     uint32_t GetCountOfBin(uint32_t binIndex) const;
 
     /**
-     * \return the sum of lower bound and upper bound divided by two.
-     * \warning Requires IsSettled() to be true.
+     * @return the sum of lower bound and upper bound divided by two.
+     * @warning Requires IsSettled() to be true.
      */
     double GetCenterOfBin(uint32_t binIndex) const;
 
     /**
-     * \param sample a new sample.
-     * \return the bin index where the given sample should belong to.
-     * \warning Requires IsSettled() to be true.
-     * \note Any calls with sample that fall outside the set of bins will
+     * @param sample a new sample.
+     * @return the bin index where the given sample should belong to.
+     * @warning Requires IsSettled() to be true.
+     * @note Any calls with sample that fall outside the set of bins will
      *       increase the number of out of bounds.
      */
     uint32_t DetermineBin(double sample);
 
     /**
-     * \param callback a simple function that will be invoked when inaccuracy
+     * @param callback a simple function that will be invoked when inaccuracy
      *                 problem is encountered.
      *
      * The problem provoking the callback is described in the following. When the
@@ -172,7 +172,7 @@ class DistributionBins : public Object
     void SetInaccuracyCallback(Callback<void, double> callback);
 
     /**
-     * \return the number of samples determined to fall outside the bins.
+     * @return the number of samples determined to fall outside the bins.
      */
     uint32_t GetNumOfOutOfBounds() const;
 
@@ -208,8 +208,8 @@ class DistributionBins : public Object
 }; // end of class DistributionBins
 
 /**
- * \ingroup aggregator
- * \brief Bins which categorize and count samples, with the ability to predict
+ * @ingroup aggregator
+ * @brief Bins which categorize and count samples, with the ability to predict
  *        its structure based on the received samples.
  *
  * After receiving a number of samples (the `NumOfSettlingSamples` attribute,
@@ -231,8 +231,8 @@ class AdaptiveBins : public DistributionBins
     AdaptiveBins();
 
     /**
-     * \brief Create an empty set of bins which will adapt its structure.
-     * \param numOfBins a positive number indicating the number of bins.
+     * @brief Create an empty set of bins which will adapt its structure.
+     * @param numOfBins a positive number indicating the number of bins.
      */
     AdaptiveBins(uint32_t numOfBins);
 
@@ -244,21 +244,21 @@ class AdaptiveBins : public DistributionBins
     virtual void DoDispose(void);
 
     /**
-     * \brief Instruct the class to construct the bins, based on the samples
+     * @brief Instruct the class to construct the bins, based on the samples
      *        received so far.
      *
      * Bins' structure will be automatically derived from the distribution of the
      * samples received and the offset attributes.
      *
-     * \warning Must have not been settled before and must have received at least
+     * @warning Must have not been settled before and must have received at least
      *          one sample.
      */
     virtual void SettleBins();
 
     /**
-     * \brief Receive the given sample, thereby increasing the counter of the bin
+     * @brief Receive the given sample, thereby increasing the counter of the bin
      *        associated with the given sample by 1.
-     * \param newSample a new sample to be received
+     * @param newSample a new sample to be received
      */
     virtual void NewSample(double newSample);
 
@@ -267,8 +267,8 @@ class AdaptiveBins : public DistributionBins
 }; // end of class AdaptiveBins
 
 /**
- * \ingroup aggregator
- * \brief Bins which categorize and count samples.
+ * @ingroup aggregator
+ * @brief Bins which categorize and count samples.
  */
 class StaticBins : public DistributionBins
 {
@@ -281,8 +281,8 @@ class StaticBins : public DistributionBins
     StaticBins();
 
     /**
-     * \brief Create an empty set of bins.
-     * \param numOfBins a positive number indicating the number of bins.
+     * @brief Create an empty set of bins.
+     * @param numOfBins a positive number indicating the number of bins.
      */
     StaticBins(uint32_t numOfBins);
 
@@ -294,16 +294,16 @@ class StaticBins : public DistributionBins
     virtual void DoDispose(void);
 
     /**
-     * \brief Instruct the class to construct the bins.
+     * @brief Instruct the class to construct the bins.
      *
-     * \warning Must have not been settled before.
+     * @warning Must have not been settled before.
      */
     virtual void SettleBins();
 
     /**
-     * \brief Receive the given sample, thereby increasing the counter of the bin
+     * @brief Receive the given sample, thereby increasing the counter of the bin
      *        associated with the given sample by 1.
-     * \param newSample a new sample to be received
+     * @param newSample a new sample to be received
      */
     virtual void NewSample(double newSample);
 
@@ -312,15 +312,15 @@ class StaticBins : public DistributionBins
 }; // end of class StaticBins
 
 /**
- * \ingroup aggregator
- * \brief Collector which computes the value distribution of the input samples.
+ * @ingroup aggregator
+ * @brief Collector which computes the value distribution of the input samples.
  *
  * ### Input ###
  * This class provides 9 trace sinks for receiving inputs. Each trace sink
  * is a function with a signature similar to the following:
- * \code
+ * @code
  *   void TraceSinkP (P oldData, P newData);
- * \endcode
+ * @endcode
  * where `P` is one of the 9 supported data types. This type of signature
  * follows the trace source signature types commonly exported by probes.
  * Although different data types are accepted, they are all internally
@@ -381,7 +381,7 @@ class StaticBins : public DistributionBins
  * are also emitted in string format through the `OutputString` trace source.
  * The resulting string also includes the parameters used to collect the
  * samples. Example `OutputString` output:
- * \code
+ * @code
  * % min_value: 0
  * % max_value: 1
  * % bin_length: 0.02
@@ -400,14 +400,14 @@ class StaticBins : public DistributionBins
  * % percentile_50: 0.245
  * % percentile_75: 0.265
  * % percentile_95: 0.9855
- * \endcode
+ * @endcode
  */
 class DistributionCollector : public DataCollectionObject
 {
   public:
     /**
-     * \enum OutputType_t
-     * \brief Type of output supported by this class.
+     * @enum OutputType_t
+     * @brief Type of output supported by this class.
      */
     typedef enum
     {
@@ -432,8 +432,8 @@ class DistributionCollector : public DataCollectionObject
     } OutputType_t;
 
     /**
-     * \enum DistributionBinType_t
-     * \brief Type of bins supported by this class.
+     * @enum DistributionBinType_t
+     * @brief Type of bins supported by this class.
      */
     typedef enum
     {
@@ -442,14 +442,14 @@ class DistributionCollector : public DataCollectionObject
     } DistributionBinType_t;
 
     /**
-     * \param outputType an arbitrary output type.
-     * \return representation of the output type in string.
+     * @param outputType an arbitrary output type.
+     * @return representation of the output type in string.
      */
     static std::string GetOutputTypeName(OutputType_t outputType);
 
     /**
-     * \param binType an arbitrary bin type.
-     * \return representation of the bin type in string.
+     * @param binType an arbitrary bin type.
+     * @return representation of the bin type in string.
      */
     static std::string GetBinTypeName(DistributionCollector::DistributionBinType_t binType);
 
@@ -460,7 +460,7 @@ class DistributionCollector : public DataCollectionObject
     static TypeId GetTypeId();
 
     /**
-     * \brief Create internal bins for categorization purpose.
+     * @brief Create internal bins for categorization purpose.
      *
      * Automatically invoked at the beginning of simulation, but can be safely
      * executed manually too.
@@ -470,88 +470,88 @@ class DistributionCollector : public DataCollectionObject
     // ATTRIBUTE SETTERS AND GETTERS ////////////////////////////////////////////
 
     /**
-     * \param numOfBins a positive number indicating the resolution.
+     * @param numOfBins a positive number indicating the resolution.
      */
     void SetNumOfBins(uint32_t numOfBins);
 
     /**
-     * \return the resolution.
+     * @return the resolution.
      */
     uint32_t GetNumOfBins() const;
 
     /**
-     * \param outputType the processing mechanism used by this instance.
+     * @param outputType the processing mechanism used by this instance.
      */
     void SetOutputType(OutputType_t outputType);
 
     /**
-     * \return the processing mechanism used by this instance.
+     * @return the processing mechanism used by this instance.
      */
     OutputType_t GetOutputType() const;
 
     /**
-     * \param binType the bin type used by this instance.
+     * @param binType the bin type used by this instance.
      */
     void SetBinType(DistributionBinType_t binType);
 
     /**
-     * \return the bin type used by this instance.
+     * @return the bin type used by this instance.
      */
     DistributionBinType_t GetBinType() const;
 
     /**
-     * \param value the smallest settling value.
+     * @param value the smallest settling value.
      */
     void SetSmallestSettlingValue(double value);
 
     /**
-     * \return the smallest settling value.
+     * @return the smallest settling value.
      */
     double GetSmallestSettlingValue() const;
 
     /**
-     * \param value the largest settling value.
+     * @param value the largest settling value.
      */
     void SetLargestSettlingValue(double value);
 
     /**
-     * \return the largest settling value.
+     * @return the largest settling value.
      */
     double GetLargestSettlingValue() const;
 
     /**
-     * \param value the allow only positive values setting.
+     * @param value the allow only positive values setting.
      */
     void SetAllowOnlyPositiveValues(bool value);
 
     /**
-     * \return the allow only positive values setting.
+     * @return the allow only positive values setting.
      */
     bool GetAllowOnlyPositiveValues() const;
 
     // TRACE SINKS //////////////////////////////////////////////////////////////
 
     /**
-     * \brief Trace sink for receiving data from `double` valued trace sources.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `double` valued trace sources.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `double` valued trace sources.
      */
     void TraceSinkDouble1(double newData);
 
     /**
-     * \brief Trace sink for receiving data from `double` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `double` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `double` valued trace sources.
      */
     void TraceSinkDouble(double oldData, double newData);
 
     /**
-     * \brief Trace sink for receiving data from `int8_t` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `int8_t` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `int8_t` valued trace sources.
      * The data will be converted to double and then simply passed to the
@@ -560,9 +560,9 @@ class DistributionCollector : public DataCollectionObject
     void TraceSinkInteger8(int8_t oldData, int8_t newData);
 
     /**
-     * \brief Trace sink for receiving data from `int16_t` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `int16_t` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `int16_t` valued trace sources.
      * The data will be converted to double and then simply passed to the
@@ -571,9 +571,9 @@ class DistributionCollector : public DataCollectionObject
     void TraceSinkInteger16(int16_t oldData, int16_t newData);
 
     /**
-     * \brief Trace sink for receiving data from `int32_t` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `int32_t` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `int32_t` valued trace sources.
      * The data will be converted to double and then simply passed to the
@@ -582,9 +582,9 @@ class DistributionCollector : public DataCollectionObject
     void TraceSinkInteger32(int32_t oldData, int32_t newData);
 
     /**
-     * \brief Trace sink for receiving data from `int64_t` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `int64_t` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `int64_t` valued trace sources.
      * The data will be converted to double and then simply passed to the
@@ -593,9 +593,9 @@ class DistributionCollector : public DataCollectionObject
     void TraceSinkInteger64(int64_t oldData, int64_t newData);
 
     /**
-     * \brief Trace sink for receiving data from `uint8_t` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `uint8_t` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `uint8_t` valued trace sources.
      * The data will be converted to double and then simply passed to the
@@ -604,9 +604,9 @@ class DistributionCollector : public DataCollectionObject
     void TraceSinkUinteger8(uint8_t oldData, uint8_t newData);
 
     /**
-     * \brief Trace sink for receiving data from `uint16_t` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `uint16_t` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `uint16_t` valued trace sources.
      * The data will be converted to double and then simply passed to the
@@ -615,9 +615,9 @@ class DistributionCollector : public DataCollectionObject
     void TraceSinkUinteger16(uint16_t oldData, uint16_t newData);
 
     /**
-     * \brief Trace sink for receiving data from `uint32_t` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `uint32_t` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `uint32_t` valued trace sources.
      * The data will be converted to double and then simply passed to the
@@ -626,9 +626,9 @@ class DistributionCollector : public DataCollectionObject
     void TraceSinkUinteger32(uint32_t oldData, uint32_t newData);
 
     /**
-     * \brief Trace sink for receiving data from `uint64_t` valued trace sources.
-     * \param oldData the original value.
-     * \param newData the new value.
+     * @brief Trace sink for receiving data from `uint64_t` valued trace sources.
+     * @param oldData the original value.
+     * @param newData the new value.
      *
      * This method serves as a trace sink to `uint64_t` valued trace sources.
      * The data will be converted to double and then simply passed to the
@@ -638,79 +638,79 @@ class DistributionCollector : public DataCollectionObject
 
     /**
      * Callback signature for `Output` trace source.
-     * \param centerOfBin the center value of a distribution bin, identifying the
+     * @param centerOfBin the center value of a distribution bin, identifying the
      *                    bin.
-     * \param value the value which corresponds to the bin; the type of the value
+     * @param value the value which corresponds to the bin; the type of the value
      *              is determined by the `OutputType` attribute of the collector.
      */
     typedef void (*OutputCallback)(double centerOfBin, double value);
     /**
      * Callback signature for `Output5thPercentile` trace source.
-     * \param value the 5th percentile of samples received by the collector.
+     * @param value the 5th percentile of samples received by the collector.
      */
     typedef void (*Output5thPercentileCallback)(double value);
     /**
      * Callback signature for `Output25thPercentile` trace source.
-     * \param value the 25th percentile (i.e., first quartile) of samples
+     * @param value the 25th percentile (i.e., first quartile) of samples
      *              received by the collector.
      */
     typedef void (*Output25thPercentileCallback)(double value);
     /**
      * Callback signature for `Output50thPercentile` trace source.
-     * \param value the 50th percentile (i.e., median) of samples received by
+     * @param value the 50th percentile (i.e., median) of samples received by
      *              the collector.
      */
     typedef void (*Output50thPercentileCallback)(double value);
     /**
      * Callback signature for `Output75thPercentile` trace source.
-     * \param value the 75th percentile (i.e., third quartile) of samples
+     * @param value the 75th percentile (i.e., third quartile) of samples
      *              received by the collector.
      */
     typedef void (*Output75thPercentileCallback)(double value);
     /**
      * Callback signature for `Output95thPercentile` trace source.
-     * \param value the 95th percentile of samples received by the collector.
+     * @param value the 95th percentile of samples received by the collector.
      */
     typedef void (*Output95thPercentileCallback)(double value);
     /**
      * Callback signature for `OutputCount` trace source.
-     * \param count the number of samples received by the collector.
+     * @param count the number of samples received by the collector.
      */
     typedef void (*OutputCountCallback)(double count);
     /**
      * Callback signature for `OutputSum` trace source.
-     * \param sum the sum of the samples received by the collector.
+     * @param sum the sum of the samples received by the collector.
      */
     typedef void (*OutputSumCallback)(double sum);
     /**
      * Callback signature for `OutputMin` trace source.
-     * \param min the minimum value of the samples received by the collector.
+     * @param min the minimum value of the samples received by the collector.
      */
     typedef void (*OutputMinCallback)(double min);
     /**
      * Callback signature for `OutputMax` trace source.
-     * \param max the maximum value of the samples received by the collector.
+     * @param max the maximum value of the samples received by the collector.
      */
     typedef void (*OutputMaxCallback)(double max);
     /**
      * Callback signature for `OutputMean` trace source.
-     * \param mean the mean of the samples received by the collector.
+     * @param mean the mean of the samples received by the collector.
      */
     typedef void (*OutputMeanCallback)(double mean);
     /**
      * Callback signature for `OutputStddev` trace source.
-     * \param stddev the standard deviation of the samples received by the
+     * @param stddev the standard deviation of the samples received by the
      *               collector.
      */
     typedef void (*OutputStddevCallback)(double stddev);
     /**
      * Callback signature for `OutputVariance` trace source.
-     * \param variance the variance of the samples received by the collector.
+     * @param variance the variance of the samples received by the collector.
      */
     typedef void (*OutputVarianceCallback)(double variance);
     /**
      * Callback signature for `OutputSqrSum` trace source.
-     * \param sqrSum the sum of squares of the samples received by the collector.
+     * @param sqrSum the sum of squares of the samples received by the collector.
      */
     typedef void (*OutputSqrSumCallback)(double sqrSum);
     /**
@@ -724,8 +724,8 @@ class DistributionCollector : public DataCollectionObject
 
   private:
     /**
-     * \internal
-     * \code
+     * @internal
+     * @code
      *   Y
      *   ^        + (x2, y2)
      *   |       /
@@ -735,7 +735,7 @@ class DistributionCollector : public DataCollectionObject
      *   |   + (x0, y0)
      *   |
      *   +-----------------> X
-     * \endcode
+     * @endcode
      *
      * We assume \f$x_0\f$ and \f$x_2\f$ are the center of two adjacent bins.
      * Thus, it follows that \f$x_2 - x_0\f$ equals to bin length \f$b\f$. The
@@ -748,8 +748,8 @@ class DistributionCollector : public DataCollectionObject
     double GetInterpolatedX1(double x0, double y0, double y1, double y2) const;
 
     /**
-     * \brief Receive notification of inaccuracy from the underlying bins.
-     * \param commonValue the value which is shared by all the samples received
+     * @brief Receive notification of inaccuracy from the underlying bins.
+     * @param commonValue the value which is shared by all the samples received
      *                    by the bins.
      */
     void InaccuracyCallback(double commonValue);
