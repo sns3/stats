@@ -28,6 +28,8 @@
 
 namespace ns3
 {
+namespace stats_extensions
+{
 
 /**
  * @ingroup magister-stats
@@ -98,6 +100,7 @@ class AddressTag : public Tag
     Address m_sourceAddress; ///< The source address.
 };
 
+}
 } // namespace ns3
 
 #endif /* ADDRESS_TAG_H */

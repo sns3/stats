@@ -33,6 +33,8 @@
 
 namespace ns3
 {
+namespace stats_extensions
+{
 
 /**
  * @ingroup aggregator
@@ -792,6 +794,7 @@ class DistributionCollector : public DataCollectionObject
 
 }; // end of class DistributionCollector
 
+}
 } // end of namespace ns3
 
 #endif /* DISTRIBUTION_COLLECTOR_H */

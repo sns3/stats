@@ -1,5 +1,5 @@
-Magister Statistics Module Documentation
-----------------------------------------
+Statistics Extensions Module Documentation
+------------------------------------------
 
 .. heading hierarchy:
    ------------- Chapter
@@ -7,10 +7,11 @@ Magister Statistics Module Documentation
    ============= Subsection (#.#.#)
    ############# Paragraph (no number)
 
-Magister Statistics module provides statistics model additions to default stats
-module of NS-3. The models are mainly used for statistics of the Satellite module,
-but by deploying the provided generic statistics helpers, one can easily use the
-helpers outside of SNS3.
+Statistics Extensions module (previously Magister Statistics module) provides
+statistics model additions to default stats module of NS-3. The models are
+mainly used for statistics of the Satellite module, but by deploying the
+provided generic statistics helpers, one can easily use the helpers outside
+of SNS3.
 
 Aggregators
 ***********
@@ -21,7 +22,7 @@ MultiFileAggregator
 This aggregator sends values it receives to one or more files.
 
 Input
-~~~~~
+#####
 
 This class provides 10 methods for receiving input values in `double`. Each
 of these methods is a function with a signature similar to the following:
@@ -35,7 +36,7 @@ method WriteString() which accepts a string input. These input methods
 usually act as trace sinks of output from collectors' trace sources.
 
 Output
-~~~~~~
+######
 
 Each invocation to the input methods described above will produce a single
 line of output. The `double` input arguments will be printed using the
@@ -63,11 +64,12 @@ e.g., at the end of simulation, the whole buffer content is written to
 the destination files.
 
 Examples
-~~~~~~~~
+########
 
 Statistics helper classes derived from StatsHelper utilize MultiFileAggregator
-to produce separate statistics files for each identifier. User does not necessarily
-need to handle MultiFileaggregator, but rather let the helpers do the complicated tasks.
+to produce separate statistics files for each identifier. User does not
+necessarily need to handle MultiFileaggregator, but rather let the helpers do
+the complicated tasks.
 
 Collectors
 **********
@@ -78,7 +80,7 @@ DistributionCollector
 Collector which computes the value distribution of the input samples.
 
 Input
-~~~~~
+#####
 
 This class provides 9 trace sinks for receiving inputs. Each trace sink
 is a function with a signature similar to the following:
@@ -93,7 +95,7 @@ Although different data types are accepted, they are all internally
 processed using `double` data type.
 
 Processing
-~~~~~~~~~~
+##########
 
 This class begins by setting up a set of _bins_. Each bin covers an equal
 length of input value range which does not overlap with the range of other
@@ -116,7 +118,7 @@ do not fit into the predicted range are handled as follows.
   are categorized into the last bin.
 
 Output
-~~~~~~
+######
 
 At the end of the instance's life (e.g., when the simulation ends), the
 `Output` trace source is fired, typically several times in a row, to export
@@ -186,7 +188,7 @@ intervals and produce the sum of input sample data during each
 interval as output.
 
 Input
-~~~~~
+#####
 
 This class provides 5 trace sinks for receiving inputs. Each trace sink
 is a function with a signature similar to the following:
@@ -202,7 +204,7 @@ data types, depending on the input data type selected by calling the
 SetInputDataType() method or setting the `InputDataType` attribute.
 
 Processing
-~~~~~~~~~~
+##########
 
 Upon created, this class instance begins an interval. It lasts for a fixed
 time duration (one second by default) that can be specified by calling the
@@ -213,7 +215,7 @@ output and reset back to zero. For boolean data type, a `true` value is
 regarded as 1, while a `false` value is regarded as 0.
 
 Output
-~~~~~~
+######
 
 Samples received are *consolidated* using one of 3 available ways (e.g., sum,
 count, average). It can be selected by calling the SetOutputType() method or
@@ -253,7 +255,7 @@ Collector which sums all the input data and emits the sum as a single
 scalar output value.
 
 Input
-~~~~~
+#####
 
 This class provides 5 trace sinks for receiving inputs. Each trace sink
 is a function with a signature similar to the following:
@@ -269,7 +271,7 @@ data types, depending on the input data type selected by calling the
 SetInputDataType() method or setting the `InputDataType` attribute.
 
 Processing
-~~~~~~~~~~
+##########
 
 This class sums all the received input values. The operation utilized to sum
 those values is by default a simple addition operation. Additional operation,
@@ -278,7 +280,7 @@ or setting the `OutputType` attribute. For boolean data type, a `true` value
 is regarded as 1, while a `false` value is regarded as 0.
 
 Output
-~~~~~~
+######
 
 At the end of the instance's life (e.g., when the simulation ends), the
 `Output` trace source is fired to export the output. It contains a single
@@ -291,7 +293,7 @@ UnitConversionCollector
 Collector which converts input sample data to a different unit.
 
 Input
-~~~~~
+#####
 
 This class provides 9 trace sinks for receiving inputs. Each trace sink
 is a function with a signature similar to the following:
@@ -306,7 +308,7 @@ Although different data types are accepted, they are all internally
 processed using `double` data type.
 
 Processing
-~~~~~~~~~~
+##########
 
 This class provides 7 types of unit conversion procedure. It can be selected
 by calling the SetConversionType() method or setting the `ConversionType`
@@ -321,7 +323,7 @@ attribute.
 - `FROM_LINEAR_TO_DBM`
 
 Output
-~~~~~~
+######
 
 This class utilizes 3 trace sources to export the converted data:
 
@@ -380,7 +382,7 @@ to simplify the development of child classes. These methods handle
 tasks related to DCF components.
 
 Output path and file naming
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+###########################
 
 To select the output directory for the statistics files, StatsHelper has an
 OutputPath attribute. By default, its value is ns-3-root-directory/output/.
@@ -398,7 +400,7 @@ Note that there may be other file extensions, or node ID suffixes in the file na
 based on output type.
 
 Identifier types
-~~~~~~~~~~~~~~~~
+################
 
 By default, there are two identifier types available: IDENTIFIER_GLOBAL and
 IDENTIFIER_NODE. IDENTIFIER_GLOBAL causes statistics from all installed nodes
@@ -409,7 +411,7 @@ type of identifier ID creation in DoInstallProbes method of inherited helper
 classes.
 
 Output types
-~~~~~~~~~~~~
+############
 
 There are several output types available:
 

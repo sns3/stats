@@ -31,6 +31,8 @@
 
 namespace ns3
 {
+namespace stats_extensions
+{
 
 /**
  * @ingroup aggregator
@@ -290,6 +292,7 @@ class UnitConversionCollector : public DataCollectionObject
 
 }; // end of class UnitConversionCollector
 
+}
 } // end of namespace ns3
 
 #endif /* UNIT_CONVERSION_COLLECTOR_H */

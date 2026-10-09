@@ -26,10 +26,12 @@
 
 #include <string>
 
-NS_LOG_COMPONENT_DEFINE("CollectorMap");
-
 namespace ns3
 {
+namespace stats_extensions
+{
+
+NS_LOG_COMPONENT_DEFINE("CollectorMap");
 
 CollectorMap::CollectorMap()
 {
@@ -138,4 +140,5 @@ CollectorMap::Get(uint32_t identifier) const
     }
 }
 
+}
 } // end of namespace ns3

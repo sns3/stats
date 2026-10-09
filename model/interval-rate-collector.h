@@ -31,6 +31,8 @@
 
 namespace ns3
 {
+namespace stats_extensions
+{
 
 /**
  * @ingroup aggregator
@@ -327,6 +329,7 @@ class IntervalRateCollector : public DataCollectionObject
 
 }; // end of class IntervalRateCollector
 
+}
 } // end of namespace ns3
 
 #endif /* INTERVAL_RATE_COLLECTOR_H */

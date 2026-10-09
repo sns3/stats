@@ -39,10 +39,12 @@
 #include <sstream>
 #include <string>
 
-NS_LOG_COMPONENT_DEFINE("DistributionCollector");
-
 namespace ns3
 {
+namespace stats_extensions
+{
+
+NS_LOG_COMPONENT_DEFINE("DistributionCollector");
 
 NS_OBJECT_ENSURE_REGISTERED(DistributionCollector);
 
@@ -1133,4 +1135,5 @@ StaticBins::NewSample(double newSample)
     }
 }
 
+}
 } // end of namespace ns3

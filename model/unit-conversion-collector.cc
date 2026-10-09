@@ -30,10 +30,12 @@
 #include <cmath>
 #include <string>
 
-NS_LOG_COMPONENT_DEFINE("UnitConversionCollector");
-
 namespace ns3
 {
+namespace stats_extensions
+{
+
+NS_LOG_COMPONENT_DEFINE("UnitConversionCollector");
 
 NS_OBJECT_ENSURE_REGISTERED(UnitConversionCollector);
 
@@ -338,4 +340,5 @@ UnitConversionCollector::Convert(double original) const
     return original;
 }
 
+}
 } // end of namespace ns3

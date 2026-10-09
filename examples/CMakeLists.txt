@@ -15,7 +15,6 @@ foreach(
     ${libnetwork}
     ${libpoint-to-point}
     ${libstats}
-    ${libmagister-stats}
-    ${libtraffic}
+    ${libstats-extensions}
   )
 endforeach()

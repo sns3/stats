@@ -36,6 +36,8 @@
 
 namespace ns3
 {
+namespace stats_extensions
+{
 
 /**
  * @ingroup probes
@@ -117,6 +119,7 @@ class BytesProbe : public Probe
     uint32_t m_bytesOld;
 };
 
+}
 } // namespace ns3
 
 #endif // BYTES_PROBE_H

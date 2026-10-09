@@ -36,10 +36,12 @@
 #include <list>
 #include <sstream>
 
-NS_LOG_COMPONENT_DEFINE("DistributionCollectorTest");
-
 namespace ns3
 {
+namespace stats_extensions
+{
+
+NS_LOG_COMPONENT_DEFINE("DistributionCollectorTest");
 
 /**
  * @ingroup stats
@@ -473,6 +475,7 @@ DistributionCollectorTestSuite::DistributionCollectorTestSuite()
 
 } // end of `DistributionCollectorTestSuite ()`
 
-static DistributionCollectorTestSuite g_distributionCollectorTestSuiteInstance;
-
+}
 } // end of namespace ns3
+
+static ns3::stats_extensions::DistributionCollectorTestSuite g_distributionCollectorTestSuiteInstance;

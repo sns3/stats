@@ -45,6 +45,8 @@
 
 namespace ns3
 {
+namespace stats_extensions
+{
 
 NS_LOG_COMPONENT_DEFINE("MultiFileAggregator");
 
@@ -932,4 +934,5 @@ MultiFileAggregator::GetFullName(std::string context, std::string additionalData
     return fileName.str();
 }
 
+}
 } // namespace ns3

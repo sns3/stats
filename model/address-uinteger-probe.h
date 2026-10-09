@@ -38,6 +38,8 @@
 
 namespace ns3
 {
+namespace stats_extensions
+{
 
 /**
  * @brief Probe to translate from a TraceSource to two more easily parsed TraceSources.
@@ -136,6 +138,7 @@ class AddressUintegerProbe : public Probe
     Address m_address;
 };
 
+}
 } // namespace ns3
 
 #endif // MAG_ADDRESS_UINTEGER_PROBE_H

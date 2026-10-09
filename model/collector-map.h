@@ -36,6 +36,8 @@
 
 namespace ns3
 {
+namespace stats_extensions
+{
 
 /**
  * @ingroup aggregator
@@ -494,6 +496,7 @@ CollectorMap::ConnectToAggregator(std::string traceSourceName,
     return true;
 }
 
+}
 } // end of namespace ns3
 
 #endif /* COLLECTOR_MAP_H */

@@ -36,8 +36,12 @@ namespace ns3
 {
 
 class Node;
-class CollectorMap;
 class DataCollectionObject;
+
+namespace stats_extensions
+{
+
+class CollectorMap;
 
 /**
  * @ingroup stats
@@ -322,6 +326,7 @@ class StatsHelper : public Object
 
 }; // end of class StatsHelper
 
+}
 } // end of namespace ns3
 
 #endif /* STATS_HELPER_H */

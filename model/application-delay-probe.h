@@ -38,6 +38,8 @@
 
 namespace ns3
 {
+namespace stats_extensions
+{
 
 /**
  * @brief Probe to translate from a TraceSource to two more easily parsed TraceSources.
@@ -139,6 +141,7 @@ class ApplicationDelayProbe : public Probe
     double m_delayOld;
 };
 
+}
 } // namespace ns3
 
 #endif // APPLICATION_DELAY_PROBE_H

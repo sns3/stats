@@ -34,11 +34,16 @@
 namespace ns3
 {
 
-// BASE CLASS /////////////////////////////////////////////////////////////////
-
 class Node;
 class Time;
+class Probe;
 class DataCollectionObject;
+
+namespace stats_extensions
+{
+
+// BASE CLASS /////////////////////////////////////////////////////////////////
+
 class DistributionCollector;
 
 /**
@@ -121,8 +126,6 @@ class StatsDelayHelper : public StatsHelper
 
 // APPLICATION-LEVEL /////////////////////////////////////////////
 
-class Probe;
-
 /**
  * @ingroup stats
  * @brief Produce application-level delay statistics from a simulation.
@@ -186,6 +189,7 @@ class StatsAppDelayHelper : public StatsDelayHelper
 
 }; // end of class StatsAppDelayHelper
 
+}
 } // namespace ns3
 
 #endif /* STATS_DELAY_HELPER_H */

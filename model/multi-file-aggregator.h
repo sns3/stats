@@ -42,6 +42,8 @@
 
 namespace ns3
 {
+namespace stats_extensions
+{
 
 /**
  * @ingroup aggregator
@@ -478,6 +480,7 @@ class MultiFileAggregator : public DataCollectionObject
 
 }; // class MultiFileAggregator
 
+}
 } // namespace ns3
 
 #endif // MULTI_FILE_AGGREGATOR_H

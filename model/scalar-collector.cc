@@ -29,10 +29,12 @@
 
 #include <string>
 
-NS_LOG_COMPONENT_DEFINE("ScalarCollector");
-
 namespace ns3
 {
+namespace stats_extensions
+{
+
+NS_LOG_COMPONENT_DEFINE("ScalarCollector");
 
 NS_OBJECT_ENSURE_REGISTERED(ScalarCollector);
 
@@ -339,4 +341,5 @@ ScalarCollector::TraceSinkBoolean(bool oldData, bool newData)
     }
 }
 
+}
 } // end of namespace ns3

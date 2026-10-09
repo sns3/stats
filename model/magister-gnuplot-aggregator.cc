@@ -39,8 +39,11 @@
 
 namespace ns3
 {
+namespace stats_extensions
+{
 
 NS_LOG_COMPONENT_DEFINE("MagisterGnuplotAggregator");
+
 NS_OBJECT_ENSURE_REGISTERED(MagisterGnuplotAggregator);
 
 TypeId
@@ -435,4 +438,5 @@ MagisterGnuplotAggregator::GetDataStream(std::string dataFileName, std::ofstream
     }
 }
 
+}
 } // namespace ns3

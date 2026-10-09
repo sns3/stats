@@ -35,11 +35,16 @@
 namespace ns3
 {
 
-// BASE CLASS /////////////////////////////////////////////////////////////////
-
 class Node;
 class Packet;
+class Probe;
 class DataCollectionObject;
+
+// BASE CLASS /////////////////////////////////////////////////////////////////
+
+namespace stats_extensions
+{
+
 class DistributionCollector;
 
 /**
@@ -120,8 +125,6 @@ class StatsThroughputHelper : public StatsHelper
 
 // APPLICATION-LEVEL /////////////////////////////////////////////
 
-class Probe;
-
 /**
  * @ingroup stats
  * @brief Produce application-level throughput statistics from a simulation.
@@ -162,6 +165,7 @@ class StatsAppThroughputHelper : public StatsThroughputHelper
 
 }; // end of class StatsAppThroughputHelper
 
+}
 } // end of namespace ns3
 
 #endif /* STATS_THROUGHPUT_HELPER_H */

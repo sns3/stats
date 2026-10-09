@@ -30,6 +30,8 @@
 
 namespace ns3
 {
+namespace stats_extensions
+{
 
 /**
  * @ingroup aggregator
@@ -255,6 +257,7 @@ class ScalarCollector : public DataCollectionObject
 
 }; // end of class ScalarCollector
 
+}
 } // end of namespace ns3
 
 #endif /* SCALAR_COLLECTOR_H */

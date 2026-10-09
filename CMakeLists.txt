@@ -48,7 +48,7 @@ set(test_sources
 )
 
 build_lib(
-  LIBNAME magister-stats
+  LIBNAME stats-extensions
   SOURCE_FILES ${source_files}
   HEADER_FILES ${header_files}
   LIBRARIES_TO_LINK

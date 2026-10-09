@@ -39,6 +39,8 @@
 
 namespace ns3
 {
+namespace stats_extensions
+{
 
 /**
  * @ingroup aggregator
@@ -312,6 +314,7 @@ class MagisterGnuplotAggregator : public DataCollectionObject
 
 }; // class MagisterGnuplotAggregator
 
+}
 } // namespace ns3
 
 #endif // MAGISTER_GNUPLOT_AGGREGATOR_H

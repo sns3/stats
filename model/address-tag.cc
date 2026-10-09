@@ -24,10 +24,12 @@
 
 #include <ostream>
 
-NS_LOG_COMPONENT_DEFINE("AddressTag");
-
 namespace ns3
 {
+namespace stats_extensions
+{
+
+NS_LOG_COMPONENT_DEFINE("AddressTag");
 
 NS_OBJECT_ENSURE_REGISTERED(AddressTag);
 
@@ -99,4 +101,5 @@ AddressTag::GetSourceAddress() const
     return m_sourceAddress;
 }
 
+}
 } // namespace ns3

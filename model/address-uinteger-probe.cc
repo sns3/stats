@@ -36,10 +36,12 @@
 
 #include <string>
 
-NS_LOG_COMPONENT_DEFINE("AddressUintegerProbe");
-
 namespace ns3
 {
+namespace stats_extensions
+{
+
+NS_LOG_COMPONENT_DEFINE("AddressUintegerProbe");
 
 NS_OBJECT_ENSURE_REGISTERED(AddressUintegerProbe);
 
@@ -102,7 +104,7 @@ AddressUintegerProbe::ConnectByObject(std::string traceSource, Ptr<Object> obj)
     NS_LOG_DEBUG("Name of probe (if any) in names database: " << Names::FindPath(obj));
     bool connected =
         obj->TraceConnectWithoutContext(traceSource,
-                                        MakeCallback(&ns3::AddressUintegerProbe::TraceSink, this));
+                                        MakeCallback(&ns3::stats_extensions::AddressUintegerProbe::TraceSink, this));
     return connected;
 }
 
@@ -111,7 +113,7 @@ AddressUintegerProbe::ConnectByPath(std::string path)
 {
     NS_LOG_FUNCTION(this << path);
     NS_LOG_DEBUG("Name of probe to search for in config database: " << path);
-    Config::ConnectWithoutContext(path, MakeCallback(&ns3::AddressUintegerProbe::TraceSink, this));
+    Config::ConnectWithoutContext(path, MakeCallback(&ns3::stats_extensions::AddressUintegerProbe::TraceSink, this));
 }
 
 void
@@ -127,4 +129,5 @@ AddressUintegerProbe::TraceSink(uint32_t uintegerValue, const Address& address)
     }
 }
 
+}
 } // namespace ns3

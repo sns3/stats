@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace stats_extensions
+{
 
 /**
  * @brief Common signature used by callback to collector's trace source.
@@ -56,6 +58,7 @@ typedef void (*Collector2dOutputCallback)(double time, double value);
  */
 typedef void (*CollectorInformationCallback)(std::string info);
 
+}
 } // end of namespace ns3
 
 #endif /* MAGISTER_STATS_H */

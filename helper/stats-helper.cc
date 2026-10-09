@@ -39,10 +39,12 @@
 #include <string>
 #include <sys/stat.h>
 
-NS_LOG_COMPONENT_DEFINE("StatsHelper");
-
 namespace ns3
 {
+namespace stats_extensions
+{
+
+NS_LOG_COMPONENT_DEFINE("StatsHelper");
 
 NS_OBJECT_ENSURE_REGISTERED(StatsHelper);
 
@@ -419,4 +421,5 @@ StatsHelper::GetDistributionHeading(std::string dataLabel) const
     return "% " + dataLabel + " freq";
 }
 
+}
 } // end of namespace ns3

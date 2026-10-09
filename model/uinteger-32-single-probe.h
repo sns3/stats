@@ -36,6 +36,8 @@
 
 namespace ns3
 {
+namespace stats_extensions
+{
 
 /**
  * @ingroup probes
@@ -117,6 +119,7 @@ class Uinteger32SingleProbe : public Probe
     uint32_t m_uintegerValue;
 };
 
+}
 } // namespace ns3
 
 #endif // UINTEGER_32_SINGLE_PROBE_H

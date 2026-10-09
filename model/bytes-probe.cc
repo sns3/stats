@@ -35,10 +35,12 @@
 
 #include <string>
 
-NS_LOG_COMPONENT_DEFINE("BytesProbe");
-
 namespace ns3
 {
+namespace stats_extensions
+{
+
+NS_LOG_COMPONENT_DEFINE("BytesProbe");
 
 NS_OBJECT_ENSURE_REGISTERED(BytesProbe);
 
@@ -96,7 +98,7 @@ BytesProbe::ConnectByObject(std::string traceSource, Ptr<Object> obj)
     NS_LOG_DEBUG("Name of probe (if any) in names database: " << Names::FindPath(obj));
     bool connected =
         obj->TraceConnectWithoutContext(traceSource,
-                                        MakeCallback(&ns3::BytesProbe::TraceSink, this));
+                                        MakeCallback(&ns3::stats_extensions::BytesProbe::TraceSink, this));
     return connected;
 }
 
@@ -105,7 +107,7 @@ BytesProbe::ConnectByPath(std::string path)
 {
     NS_LOG_FUNCTION(this << path);
     NS_LOG_DEBUG("Name of probe to search for in config database: " << path);
-    Config::ConnectWithoutContext(path, MakeCallback(&ns3::BytesProbe::TraceSink, this));
+    Config::ConnectWithoutContext(path, MakeCallback(&ns3::stats_extensions::BytesProbe::TraceSink, this));
 }
 
 void
@@ -119,4 +121,5 @@ BytesProbe::TraceSink(uint32_t bytes)
     }
 }
 
+}
 } // namespace ns3

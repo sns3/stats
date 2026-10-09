@@ -35,10 +35,12 @@
 
 #include <string>
 
-NS_LOG_COMPONENT_DEFINE("Uinteger32SingleProbe");
-
 namespace ns3
 {
+namespace stats_extensions
+{
+
+NS_LOG_COMPONENT_DEFINE("Uinteger32SingleProbe");
 
 NS_OBJECT_ENSURE_REGISTERED(Uinteger32SingleProbe);
 
@@ -98,7 +100,7 @@ Uinteger32SingleProbe::ConnectByObject(std::string traceSource, Ptr<Object> obj)
     NS_LOG_DEBUG("Name of probe (if any) in names database: " << Names::FindPath(obj));
     bool connected =
         obj->TraceConnectWithoutContext(traceSource,
-                                        MakeCallback(&ns3::Uinteger32SingleProbe::TraceSink, this));
+                                        MakeCallback(&ns3::stats_extensions::Uinteger32SingleProbe::TraceSink, this));
     return connected;
 }
 
@@ -107,7 +109,7 @@ Uinteger32SingleProbe::ConnectByPath(std::string path)
 {
     NS_LOG_FUNCTION(this << path);
     NS_LOG_DEBUG("Name of probe to search for in config database: " << path);
-    Config::ConnectWithoutContext(path, MakeCallback(&ns3::Uinteger32SingleProbe::TraceSink, this));
+    Config::ConnectWithoutContext(path, MakeCallback(&ns3::stats_extensions::Uinteger32SingleProbe::TraceSink, this));
 }
 
 void
@@ -121,4 +123,5 @@ Uinteger32SingleProbe::TraceSink(uint32_t uintegerValue)
     }
 }
 
+}
 } // namespace ns3

@@ -49,10 +49,12 @@
 #include <sstream>
 #include <string>
 
-NS_LOG_COMPONENT_DEFINE("StatsThroughputHelper");
-
 namespace ns3
 {
+namespace stats_extensions
+{
+
+NS_LOG_COMPONENT_DEFINE("StatsThroughputHelper");
 
 NS_OBJECT_ENSURE_REGISTERED(StatsThroughputHelper);
 
@@ -509,4 +511,5 @@ StatsAppThroughputHelper::DoInstallProbes()
 
 } // end of `void DoInstallProbes ();`
 
+}
 } // end of namespace ns3

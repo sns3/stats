@@ -42,16 +42,18 @@
 #include "ns3/scalar-collector.h"
 #include "ns3/singleton.h"
 #include "ns3/string.h"
-#include "ns3/traffic-time-tag.h"
 #include "ns3/unit-conversion-collector.h"
+#include "ns3/time-tag.h"
 
 #include <sstream>
 #include <string>
 
-NS_LOG_COMPONENT_DEFINE("StatsDelayHelper");
-
 namespace ns3
 {
+namespace stats_extensions
+{
+
+NS_LOG_COMPONENT_DEFINE("StatsDelayHelper");
 
 NS_OBJECT_ENSURE_REGISTERED(StatsDelayHelper);
 
@@ -686,4 +688,5 @@ StatsAppDelayHelper::TxCallback(Ptr<StatsAppDelayHelper> helper, Ptr<const Packe
                        << packet->GetSize());
 }
 
+}
 } // end of namespace ns3

@@ -36,10 +36,12 @@
 
 #include <string>
 
-NS_LOG_COMPONENT_DEFINE("ApplicationDelayProbe");
-
 namespace ns3
 {
+namespace stats_extensions
+{
+
+NS_LOG_COMPONENT_DEFINE("ApplicationDelayProbe");
 
 NS_OBJECT_ENSURE_REGISTERED(ApplicationDelayProbe);
 
@@ -131,4 +133,5 @@ ApplicationDelayProbe::TraceSink(const Time& delay, const Address& address)
     }
 }
 
+}
 } // namespace ns3

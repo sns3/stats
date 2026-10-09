@@ -31,10 +31,12 @@
 #include <sstream>
 #include <string>
 
-NS_LOG_COMPONENT_DEFINE("IntervalRateCollector");
-
 namespace ns3
 {
+namespace stats_extensions
+{
+
+NS_LOG_COMPONENT_DEFINE("IntervalRateCollector");
 
 NS_OBJECT_ENSURE_REGISTERED(IntervalRateCollector);
 
@@ -486,4 +488,5 @@ IntervalRateCollector::TraceSinkBoolean(bool oldData, bool newData)
     }
 }
 
+}
 } // end of namespace ns3

@@ -21,7 +21,7 @@
 #include "ns3/applications-module.h"
 #include "ns3/core-module.h"
 #include "ns3/internet-module.h"
-#include "ns3/magister-stats-module.h"
+#include "ns3/stats-extensions-module.h"
 #include "ns3/network-module.h"
 #include "ns3/point-to-point-module.h"
 #include "ns3/stats-module.h"
@@ -29,6 +29,9 @@
 #include <string>
 
 using namespace ns3;
+using ns3::stats_extensions::StatsHelper;
+using ns3::stats_extensions::StatsAppDelayHelper;
+using ns3::stats_extensions::StatsAppThroughputHelper;
 
 NS_LOG_COMPONENT_DEFINE("StatsHelperExample");
 
