@@ -8,4 +8,4 @@
 
      ln -s path/to/sns3/stats/ stats-extensions
 
-.. include:: doc/stats-extensions.rst
+Read the full documentation at `<doc/stats-extensions.rst>`_.
